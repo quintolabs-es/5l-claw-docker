@@ -27,14 +27,12 @@ TARGET_DOCKERFILE="${ROOT_DIR}/Dockerfile"
 TARGET_README="${ROOT_DIR}/README.md"
 TARGET_README_ONBOARD="${ROOT_DIR}/README.onboard.md"
 TARGET_README_RUN="${ROOT_DIR}/README.run.md"
-TARGET_OPENCLAW_DIR="${ROOT_DIR}/openclaw-data/.openclaw"
 
 assert_missing "$TARGET_DOCKER_COMPOSE"
 assert_missing "$TARGET_DOCKERFILE"
 assert_missing "$TARGET_README"
 assert_missing "$TARGET_README_ONBOARD"
 assert_missing "$TARGET_README_RUN"
-assert_missing "$TARGET_OPENCLAW_DIR"
 
 write_file "$TARGET_DOCKER_COMPOSE" <<'EOF'
 x-openclaw-env: &openclaw-env
@@ -310,15 +308,12 @@ docker compose down
 ```
 EOF
 
-mkdir -p "$TARGET_OPENCLAW_DIR"
-
 echo "Created:"
 echo "  docker-compose.yml"
 echo "  Dockerfile"
 echo "  README.md"
 echo "  README.onboard.md"
 echo "  README.run.md"
-echo "  openclaw-data/.openclaw/"
 echo
 echo "Next:"
 echo "  To continue with onboarding, read README.onboard.md"
