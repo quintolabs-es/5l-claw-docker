@@ -147,6 +147,16 @@ The container is disposable. Durable OpenClaw state lives in a local project fol
 
 The image build disables installer onboarding with `OPENCLAW_NO_ONBOARD=1` so `docker build` can complete without an interactive TTY. In this Docker setup, `openclaw onboard --install-daemon` is not used; Docker Compose is the process supervisor and starts the gateway with `openclaw gateway run`.
 
+## Why This Exists
+
+Unlike the official Docker setup, which writes config and workspace on the host under `~/.openclaw/` and `~/.openclaw/workspace`, this packaging keeps all OpenClaw state inside this project folder so the environment stays repo-local and can be versioned.
+
+## Initialize
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/init-clow-docker.sh | bash
+```
+
 ## Runtime
 
 - Persisted state:

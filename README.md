@@ -1,14 +1,19 @@
 # OpenClaw Docker Packaging
 
-This repo packages OpenClaw in Docker using the official installer command from the OpenClaw website:
-
-```bash
-curl -fsSL https://openclaw.ai/install.sh | bash
-```
+This repo packages OpenClaw in Docker using the official installer command from the OpenClaw website.
 
 The container is disposable. Durable OpenClaw state lives in a local project folder so you can rebuild the image and recover the same agent state.
 
 The image build disables installer onboarding with `OPENCLAW_NO_ONBOARD=1` so `docker build` can complete without an interactive TTY. In this Docker setup, `openclaw onboard --install-daemon` is not used; Docker Compose is the process supervisor and starts the gateway with `openclaw gateway run`.
+
+## Why This Exists
+
+Unlike the official Docker setup, which writes config and workspace on the host under `~/.openclaw/` and `~/.openclaw/workspace`, this packaging keeps all OpenClaw state inside this project folder so the environment stays repo-local and can be versioned.
+
+## Install
+```bash
+curl -fsSL https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/init-clow-docker.sh | bash
+```
 
 ## Runtime
 
@@ -19,7 +24,9 @@ The image build disables installer onboarding with `OPENCLAW_NO_ONBOARD=1` so `d
 - Human-edited memory/workspace:
   `./openclaw-data/.openclaw/workspace/`
 - Services:
-  `openclaw-onboard` is used for pre-start setup commands. `openclaw-gateway` runs continuously. `openclaw-cli` runs on demand after the gateway is up and shares the gateway network.
+  * `openclaw-onboard` is used for pre-start setup commands. 
+  * `openclaw-gateway` runs continuously. 
+  * `openclaw-cli` runs on demand after the gateway is up and shares the gateway network.
 
 ## Gateway
 
