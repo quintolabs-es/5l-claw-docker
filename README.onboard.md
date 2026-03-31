@@ -12,19 +12,26 @@ Use `openclaw-onboard` for `onboard` and initial config, since `openclaw-cli` is
 ```bash
 # run the gateway and bash into the terminal
 OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --no-deps --entrypoint bash openclaw-onboard
+
 # run Onboard
 openclaw onboard --mode local --no-install-daemon
-## exit the terminal
 
-# back on the host, delete git repo created by openclaw during onboarding
+## exit the container terminal
+```
+
+Back on the host terminal
+```bash
+# delete useless git repo created by openclaw during onboarding
 rm -rf ./openclaw-data/.openclaw/workspace/.git
 
 # configure Gateway For Docker from the host
 OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --no-deps openclaw-onboard openclaw config set gateway.mode local
 OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --no-deps openclaw-onboard openclaw config set gateway.bind lan
 OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --no-deps openclaw-onboard openclaw config set gateway.controlUi.allowedOrigins '["http://localhost:18789"]' --strict-json
+```
 
-# OR, use one-off commands only
+OR alternatively, use one-off commands for all the above
+```bash
 OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --no-deps openclaw-onboard openclaw onboard --mode local --no-install-daemon
 rm -rf ./openclaw-data/.openclaw/workspace/.git
 OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --no-deps openclaw-onboard openclaw config set gateway.mode local

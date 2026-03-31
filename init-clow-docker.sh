@@ -319,3 +319,7 @@ echo "  README.md"
 echo "  README.onboard.md"
 echo "  README.run.md"
 echo "  openclaw-data/.openclaw/"
+echo
+echo "Next:"
+echo "  To continue with onboarding, read README.onboard.md"
+echo "  and run the onboard steps from that file."
