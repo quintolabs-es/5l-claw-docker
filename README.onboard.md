@@ -16,6 +16,11 @@ OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --
 # run Onboard
 openclaw onboard --mode local --no-install-daemon
 
+# configure Gateway For Docker
+openclaw config set gateway.mode local
+openclaw config set gateway.bind lan
+openclaw config set gateway.controlUi.allowedOrigins '["http://localhost:18789"]' --strict-json
+
 ## exit the container terminal
 ```
 
@@ -23,11 +28,6 @@ Back on the host terminal
 ```bash
 # delete useless git repo created by openclaw during onboarding
 rm -rf ./openclaw-data/.openclaw/workspace/.git
-
-# configure Gateway For Docker from the host
-OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --no-deps openclaw-onboard openclaw config set gateway.mode local
-OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --no-deps openclaw-onboard openclaw config set gateway.bind lan
-OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --no-deps openclaw-onboard openclaw config set gateway.controlUi.allowedOrigins '["http://localhost:18789"]' --strict-json
 ```
 
 OR alternatively, use one-off commands for all the above
@@ -51,6 +51,7 @@ openclaw gateway status --url ws://127.0.0.1:18789 --token "$OPENCLAW_GATEWAY_TO
 # OR one-off command
 OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm openclaw-cli gateway status --url ws://127.0.0.1:18789 --token openclaw-gateway-default-token
 ```
+Expected that `systemd` check fails, because it's not used in docker.
 
 ## Open Control UI
 
