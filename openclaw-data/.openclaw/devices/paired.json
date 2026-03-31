@@ -1,0 +1,31 @@
+{
+  "4cb54bd994a4edf129f81274248be390bd37a1ebc3e9da87b9ad4c99493f0ba2": {
+    "deviceId": "4cb54bd994a4edf129f81274248be390bd37a1ebc3e9da87b9ad4c99493f0ba2",
+    "publicKey": "SQb9NoyKp8VCHekYYuOv8EAw1OQTXTnORZsRjE7nxgw",
+    "platform": "linux",
+    "clientId": "gateway-client",
+    "clientMode": "backend",
+    "role": "operator",
+    "roles": [
+      "operator"
+    ],
+    "scopes": [
+      "operator.read"
+    ],
+    "approvedScopes": [
+      "operator.read"
+    ],
+    "tokens": {
+      "operator": {
+        "token": "8BFWfX8KJhHpaEv6b5kb8cI8BWvT1fG8YJMYqw93o1Q",
+        "role": "operator",
+        "scopes": [
+          "operator.read"
+        ],
+        "createdAtMs": 1774971106701
+      }
+    },
+    "createdAtMs": 1774971106701,
+    "approvedAtMs": 1774971106701
+  }
+}

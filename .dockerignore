@@ -1,0 +1,7 @@
+.git
+**/.git
+openclaw-data
+**/node_modules
+aie-os/node_modules
+aie-os/dist
+.DS_Store
