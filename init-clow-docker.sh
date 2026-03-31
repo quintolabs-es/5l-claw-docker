@@ -28,7 +28,6 @@ TARGET_README="${ROOT_DIR}/README.md"
 TARGET_README_ONBOARD="${ROOT_DIR}/README.onboard.md"
 TARGET_README_RUN="${ROOT_DIR}/README.run.md"
 TARGET_OPENCLAW_DIR="${ROOT_DIR}/openclaw-data/.openclaw"
-TARGET_OPENCLAW_JSON="${TARGET_OPENCLAW_DIR}/openclaw.json"
 
 assert_missing "$TARGET_DOCKER_COMPOSE"
 assert_missing "$TARGET_DOCKERFILE"
@@ -36,7 +35,6 @@ assert_missing "$TARGET_README"
 assert_missing "$TARGET_README_ONBOARD"
 assert_missing "$TARGET_README_RUN"
 assert_missing "$TARGET_OPENCLAW_DIR"
-assert_missing "$TARGET_OPENCLAW_JSON"
 
 write_file "$TARGET_DOCKER_COMPOSE" <<'EOF'
 x-openclaw-env: &openclaw-env
@@ -312,20 +310,7 @@ docker compose down
 ```
 EOF
 
-write_file "$TARGET_OPENCLAW_JSON" <<'EOF'
-{
-  "gateway": {
-    "mode": "local",
-    "bind": "lan",
-    "controlUi": {
-      "allowInsecureAuth": true,
-      "allowedOrigins": [
-        "http://localhost:18789"
-      ]
-    }
-  }
-}
-EOF
+mkdir -p "$TARGET_OPENCLAW_DIR"
 
 echo "Created:"
 echo "  docker-compose.yml"
@@ -333,4 +318,4 @@ echo "  Dockerfile"
 echo "  README.md"
 echo "  README.onboard.md"
 echo "  README.run.md"
-echo "  openclaw-data/.openclaw/openclaw.json"
+echo "  openclaw-data/.openclaw/"
