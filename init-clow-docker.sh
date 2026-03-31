@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="${PWD}"
 
 fail_existing() {
   local path="$1"
@@ -326,8 +326,6 @@ write_file "$TARGET_OPENCLAW_JSON" <<'EOF'
   }
 }
 EOF
-
-chmod +x "$ROOT_DIR/init-clow-docker.sh"
 
 echo "Created:"
 echo "  docker-compose.yml"
