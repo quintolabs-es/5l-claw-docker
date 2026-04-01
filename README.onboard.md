@@ -10,8 +10,8 @@ docker compose build
 Use `openclaw-onboard` for `onboard` and initial config, since `openclaw-cli` is attached to the running gateway network, so it cannot be used for pre-start setup. 
 
 ```bash
-# run the gateway and bash into the terminal
-OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --no-deps --entrypoint bash openclaw-onboard
+# open a shell in the onboard container
+OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --no-deps openclaw-onboard
 
 # run Onboard
 openclaw onboard --mode local --no-install-daemon
@@ -30,13 +30,11 @@ Back on the host terminal
 rm -rf ./openclaw-data/.openclaw/workspace/.git
 ```
 
-OR alternatively, use one-off commands for all the above
+In general, for one-off commands without bashing into a terminal session:
 ```bash
-OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --no-deps openclaw-onboard openclaw onboard --mode local --no-install-daemon
-rm -rf ./openclaw-data/.openclaw/workspace/.git
-OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --no-deps openclaw-onboard openclaw config set gateway.mode local
-OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --no-deps openclaw-onboard openclaw config set gateway.bind lan
-OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --no-deps openclaw-onboard openclaw config set gateway.controlUi.allowedOrigins '["http://localhost:18789"]' --strict-json
+OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --no-deps --entrypoint openclaw openclaw-onboard <openclaw command>
+# e.g.
+OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --no-deps --entrypoint openclaw openclaw-onboard config set gateway.mode local
 ```
 
 
@@ -44,23 +42,47 @@ OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --
 ```bash
 OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose up -d openclaw-gateway
 
-# bash into terminal and check Gateway Status
-OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --entrypoint bash openclaw-cli
-openclaw gateway status --url ws://127.0.0.1:18789 --token "$OPENCLAW_GATEWAY_TOKEN"
-
-# OR one-off command
-OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm openclaw-cli gateway status --url ws://127.0.0.1:18789 --token openclaw-gateway-default-token
+# check gateway status 
+OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --entrypoint openclaw openclaw-cli gateway status --url ws://127.0.0.1:18789 --token openclaw-gateway-default-token
 ```
-Expected that `systemd` check fails, because it's not used in docker.
+_It's expected that `systemd` check fails, because it's not used in docker._
+
+## Run CLI
+To run cli commands, run the cli container and bash into it
+```bash
+OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm openclaw-cli
+# test it 
+openclaw --help
+```
+
+For one-off commands without bashing into a terminal session:
+```bash
+OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --entrypoint openclaw openclaw-cli <openclaw command args>
+
+# e.g.: openclaw devices list:
+OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --entrypoint openclaw openclaw-cli devices list
+```
+
 
 ## Open Control UI
+Run in CLI
+```bash
+openclaw dashboard
+```
+Get tokenized url or plane url and add the gateway token where requested.
 
-```text
-http://localhost:18789/
+### Device pairing for first connection
+[Official doc](https://docs.openclaw.ai/web/control-ui#device-pairing-first-connection)
+```bash
+openclaw devices list
+openclaw devices approve <requestId>
 ```
 
-## Logs
-
+## One off commands
+For one-off commands without bashing into a terminal session, replace openclaw with `OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --entrypoint openclaw openclaw-cli`
 ```bash
-docker compose logs -f openclaw-gateway
+# e.g.: openclaw devices list:
+openclaw devices list
+# OR
+OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --entrypoint openclaw openclaw-cli devices list
 ```

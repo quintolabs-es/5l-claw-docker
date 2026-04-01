@@ -48,9 +48,10 @@ services:
       context: .
       dockerfile: Dockerfile
     environment: *openclaw-env
+    stdin_open: true
+    tty: true
     init: true
-    entrypoint: ["openclaw"]
-    command: ["--help"]
+    entrypoint: ["bash"]
     restart: "no"
     volumes:
       - ./openclaw-data/.openclaw:/home/node/.openclaw
@@ -86,8 +87,7 @@ services:
     init: true
     depends_on:
       - openclaw-gateway
-    entrypoint: ["openclaw"]
-    command: ["--help"]
+    entrypoint: ["bash"]
     restart: "no"
     volumes:
       - ./openclaw-data/.openclaw:/home/node/.openclaw
@@ -198,8 +198,8 @@ docker compose build
 Use `openclaw-onboard` for `onboard` and initial config, since `openclaw-cli` is attached to the running gateway network, so it cannot be used for pre-start setup. 
 
 ```bash
-# run the gateway and bash into the terminal
-OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --no-deps --entrypoint bash openclaw-onboard
+# open a shell in the onboard container
+OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --no-deps openclaw-onboard
 # run Onboard
 openclaw onboard --mode local --no-install-daemon
 ## exit the terminal
@@ -208,16 +208,16 @@ openclaw onboard --mode local --no-install-daemon
 rm -rf ./openclaw-data/.openclaw/workspace/.git
 
 # configure Gateway For Docker from the host
-OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --no-deps openclaw-onboard openclaw config set gateway.mode local
-OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --no-deps openclaw-onboard openclaw config set gateway.bind lan
-OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --no-deps openclaw-onboard openclaw config set gateway.controlUi.allowedOrigins '["http://localhost:18789"]' --strict-json
+OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --no-deps --entrypoint openclaw openclaw-onboard config set gateway.mode local
+OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --no-deps --entrypoint openclaw openclaw-onboard config set gateway.bind lan
+OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --no-deps --entrypoint openclaw openclaw-onboard config set gateway.controlUi.allowedOrigins '["http://localhost:18789"]' --strict-json
 
 # OR, use one-off commands only
-OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --no-deps openclaw-onboard openclaw onboard --mode local --no-install-daemon
+OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --no-deps --entrypoint openclaw openclaw-onboard onboard --mode local --no-install-daemon
 rm -rf ./openclaw-data/.openclaw/workspace/.git
-OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --no-deps openclaw-onboard openclaw config set gateway.mode local
-OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --no-deps openclaw-onboard openclaw config set gateway.bind lan
-OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --no-deps openclaw-onboard openclaw config set gateway.controlUi.allowedOrigins '["http://localhost:18789"]' --strict-json
+OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --no-deps --entrypoint openclaw openclaw-onboard config set gateway.mode local
+OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --no-deps --entrypoint openclaw openclaw-onboard config set gateway.bind lan
+OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --no-deps --entrypoint openclaw openclaw-onboard config set gateway.controlUi.allowedOrigins '["http://localhost:18789"]' --strict-json
 ```
 
 
@@ -225,12 +225,12 @@ OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --
 ```bash
 OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose up -d openclaw-gateway
 
-# bash into terminal and check Gateway Status
-OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --entrypoint bash openclaw-cli
+# open a shell in the cli container and check Gateway Status
+OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm openclaw-cli
 openclaw gateway status --url ws://127.0.0.1:18789 --token "$OPENCLAW_GATEWAY_TOKEN"
 
 # OR one-off command
-OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm openclaw-cli gateway status --url ws://127.0.0.1:18789 --token openclaw-gateway-default-token
+OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --entrypoint openclaw openclaw-cli gateway status --url ws://127.0.0.1:18789 --token openclaw-gateway-default-token
 ```
 
 ## Open Control UI
@@ -268,7 +268,7 @@ docker compose logs -f openclaw-gateway
 ## Run CLI
 
 ```bash
-OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --entrypoint bash openclaw-cli
+OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm openclaw-cli
 ```
 
 ## Gateway Status
@@ -277,7 +277,7 @@ OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --
 openclaw gateway status --url ws://127.0.0.1:18789 --token "$OPENCLAW_GATEWAY_TOKEN"
 
 # or one-off command
-OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm openclaw-cli gateway status --url ws://127.0.0.1:18789 --token openclaw-gateway-default-token
+OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --entrypoint openclaw openclaw-cli gateway status --url ws://127.0.0.1:18789 --token openclaw-gateway-default-token
 ```
 
 ## Doctor
@@ -286,7 +286,7 @@ OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm op
 openclaw doctor
 
 # or one-off command
-OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm openclaw-cli doctor
+OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --entrypoint openclaw openclaw-cli doctor
 ```
 
 ## Open Control UI

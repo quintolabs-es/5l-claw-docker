@@ -11,9 +11,10 @@ services:
       context: .
       dockerfile: Dockerfile
     environment: *openclaw-env
+    stdin_open: true
+    tty: true
     init: true
-    entrypoint: ["openclaw"]
-    command: ["--help"]
+    entrypoint: ["bash"]
     restart: "no"
     volumes:
       - ./openclaw-data/.openclaw:/home/node/.openclaw
@@ -49,8 +50,7 @@ services:
     init: true
     depends_on:
       - openclaw-gateway
-    entrypoint: ["openclaw"]
-    command: ["--help"]
+    entrypoint: ["bash"]
     restart: "no"
     volumes:
       - ./openclaw-data/.openclaw:/home/node/.openclaw

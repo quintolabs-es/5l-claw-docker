@@ -3,51 +3,37 @@
 For first-time setup, use [README.onboard.md](/Users/luismesa/Documents/src/quintolabs/5l-claw-docker/README.onboard.md).
 
 ## Start Gateway
-
 ```bash
 OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose up -d openclaw-gateway
+
+# status
+OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --entrypoint openclaw openclaw-cli gateway status --url ws://127.0.0.1:18789 --token "$OPENCLAW_GATEWAY_TOKEN"
 ```
 
-The `OPENCLAW_GATEWAY_TOKEN` is the token clients must present to connect to the gateway.
+## Run CLI
+```bash
+OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm openclaw-cli
+```
+
+## Open Control UI
+Browse to `http://localhost:18789/`
+Or run in CLI
+```bash
+openclaw dashboard
+```
+Get tokenized url or plane url and add the gateway token where requested.
+
+## Doctor
+```bash
+openclaw doctor
+```
 
 ## Logs
-
 ```bash
 docker compose logs -f openclaw-gateway
 ```
 
-## Run CLI
-
-```bash
-OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --entrypoint bash openclaw-cli
-```
-
-## Gateway Status
-
-```bash
-openclaw gateway status --url ws://127.0.0.1:18789 --token "$OPENCLAW_GATEWAY_TOKEN"
-
-# or one-off command
-OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm openclaw-cli gateway status --url ws://127.0.0.1:18789 --token openclaw-gateway-default-token
-```
-
-## Doctor
-
-```bash
-openclaw doctor
-
-# or one-off command
-OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm openclaw-cli doctor
-```
-
-## Open Control UI
-
-```text
-http://localhost:18789/
-```
-
 ## State On Host
-
 ```bash
 ls -la ./openclaw-data/.openclaw
 ```
@@ -56,4 +42,14 @@ ls -la ./openclaw-data/.openclaw
 
 ```bash
 docker compose down
+```
+
+
+## One off commands
+For one-off commands without bashing into a terminal session, replace openclaw with `OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --entrypoint openclaw openclaw-cli`
+```bash
+# e.g.: openclaw devices list:
+openclaw devices list
+# OR
+OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --entrypoint openclaw openclaw-cli devices list
 ```
