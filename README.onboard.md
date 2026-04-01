@@ -13,7 +13,7 @@ Use `openclaw-onboard` for `onboard` and initial config, since `openclaw-cli` is
 # open a shell in the onboard container
 OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --no-deps openclaw-onboard
 
-# run Onboard
+# run Onboard and go through the setup
 openclaw onboard --mode local --no-install-daemon
 
 # configure Gateway For Docker
@@ -30,14 +30,6 @@ Back on the host terminal
 rm -rf ./openclaw-data/.openclaw/workspace/.git
 ```
 
-In general, for one-off commands without bashing into a terminal session:
-```bash
-OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --no-deps --entrypoint openclaw openclaw-onboard <openclaw command>
-# e.g.
-OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --no-deps --entrypoint openclaw openclaw-onboard config set gateway.mode local
-```
-
-
 ## Start Gateway
 ```bash
 OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose up -d openclaw-gateway
@@ -47,7 +39,7 @@ OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --
 ```
 _It's expected that `systemd` check fails, because it's not used in docker._
 
-## Run CLI
+## Test run CLI
 To run cli commands, run the cli container and bash into it
 ```bash
 OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm openclaw-cli
@@ -55,17 +47,9 @@ OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm op
 openclaw --help
 ```
 
-For one-off commands without bashing into a terminal session:
-```bash
-OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --entrypoint openclaw openclaw-cli <openclaw command args>
-
-# e.g.: openclaw devices list:
-OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --entrypoint openclaw openclaw-cli devices list
-```
-
-
 ## Open Control UI
-Run in CLI
+Browse to `http://localhost:18789/` 
+Or run in CLI
 ```bash
 openclaw dashboard
 ```
@@ -78,7 +62,9 @@ openclaw devices list
 openclaw devices approve <requestId>
 ```
 
-## One off commands
+---
+
+## One off commands in cli
 For one-off commands without bashing into a terminal session, replace openclaw with `OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --entrypoint openclaw openclaw-cli`
 ```bash
 # e.g.: openclaw devices list:

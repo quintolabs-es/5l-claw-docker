@@ -5,23 +5,21 @@ For first-time setup, use [README.onboard.md](/Users/luismesa/Documents/src/quin
 ## Start Gateway
 ```bash
 OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose up -d openclaw-gateway
-
-# status
-OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --entrypoint openclaw openclaw-cli gateway status --url ws://127.0.0.1:18789 --token "$OPENCLAW_GATEWAY_TOKEN"
-```
-
-## Run CLI
-```bash
-OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm openclaw-cli
 ```
 
 ## Open Control UI
 Browse to `http://localhost:18789/`
+
 Or run in CLI
 ```bash
 openclaw dashboard
 ```
 Get tokenized url or plane url and add the gateway token where requested.
+
+## Run CLI
+```bash
+OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm openclaw-cli
+```
 
 ## Doctor
 ```bash
@@ -39,11 +37,11 @@ ls -la ./openclaw-data/.openclaw
 ```
 
 ## Stop
-
 ```bash
 docker compose down
 ```
 
+---
 
 ## One off commands
 For one-off commands without bashing into a terminal session, replace openclaw with `OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --entrypoint openclaw openclaw-cli`
