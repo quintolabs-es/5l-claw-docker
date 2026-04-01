@@ -2,6 +2,7 @@
 set -euo pipefail
 
 ROOT_DIR="${PWD}"
+RAW_BASE_URL="https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main"
 
 fail_existing() {
   local path="$1"
@@ -22,15 +23,24 @@ write_file() {
   cat > "$path"
 }
 
+download_file() {
+  local remote_name="$1"
+  local target_path="$2"
+  mkdir -p "$(dirname "$target_path")"
+  curl -fsSL "${RAW_BASE_URL}/${remote_name}" -o "$target_path"
+}
+
 TARGET_DOCKER_COMPOSE="${ROOT_DIR}/docker-compose.yml"
 TARGET_DOCKERFILE="${ROOT_DIR}/Dockerfile"
 TARGET_README="${ROOT_DIR}/README.md"
-TARGET_README_ONBOARD="${ROOT_DIR}/README.onboard.md"
-TARGET_README_RUN="${ROOT_DIR}/README.run.md"
+TARGET_README_CLAW="${ROOT_DIR}/README.claw.md"
+TARGET_README_ONBOARD="${ROOT_DIR}/README.claw-onboard.md"
+TARGET_README_RUN="${ROOT_DIR}/README.claw-run.md"
 
 assert_missing "$TARGET_DOCKER_COMPOSE"
 assert_missing "$TARGET_DOCKERFILE"
 assert_missing "$TARGET_README"
+assert_missing "$TARGET_README_CLAW"
 assert_missing "$TARGET_README_ONBOARD"
 assert_missing "$TARGET_README_RUN"
 
@@ -131,190 +141,23 @@ CMD ["openclaw", "gateway", "run", "--bind", "lan", "--port", "18789"]
 EOF
 
 write_file "$TARGET_README" <<'EOF'
-# OpenClaw Docker Packaging
+# README
 
-This repo packages OpenClaw in Docker using the official installer command from the OpenClaw website:
-
-```bash
-curl -fsSL https://openclaw.ai/install.sh | bash
-```
-
-The container is disposable. Durable OpenClaw state lives in a local project folder so you can rebuild the image and recover the same agent state.
-
-The image build disables installer onboarding with `OPENCLAW_NO_ONBOARD=1` so `docker build` can complete without an interactive TTY. In this Docker setup, `openclaw onboard --install-daemon` is not used; Docker Compose is the process supervisor and starts the gateway with `openclaw gateway run`.
-
-## Why This Exists
-
-Unlike the official Docker setup, which writes config and workspace on the host under `~/.openclaw/` and `~/.openclaw/workspace`, this packaging keeps all OpenClaw state inside this project folder so the environment stays repo-local and can be versioned.
-
-## Initialize
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/init-clow-docker.sh | bash
-```
-
-## Runtime
-
-- Persisted state:
-  `./openclaw-data/.openclaw`
-- Main config:
-  `./openclaw-data/.openclaw/openclaw.json`
-- Human-edited memory/workspace:
-  `./openclaw-data/.openclaw/workspace/`
-- Services:
-  `openclaw-onboard` is used for pre-start setup commands. `openclaw-gateway` runs continuously. `openclaw-cli` runs on demand after the gateway is up and shares the gateway network.
-
-## Gateway
-
-- Container port:
-  `18789`
-- Host port:
-  `18789 -> 18789`
-- WebSocket gateway:
-  `ws://localhost:18789/`
-- HTTP surface:
-  `http://localhost:18789/`
-
-The gateway serves the WebSocket API and the browser Control UI on the same port. The Control UI is the small website bundled with OpenClaw. Open it at `http://localhost:18789/` to operate the local gateway.
-
-Control UI origin policy is configured in `./openclaw-data/.openclaw/openclaw.json`. This setup allowlists only `http://localhost:18789`.
-
-## Runbooks
-
-See [README.onboard.md](/Users/luismesa/Documents/src/quintolabs/5l-claw-docker/README.onboard.md) for first-time setup.
-See [README.run.md](/Users/luismesa/Documents/src/quintolabs/5l-claw-docker/README.run.md) for normal run commands.
+Document this claw instance here.
 EOF
 
-write_file "$TARGET_README_ONBOARD" <<'EOF'
-# OpenClaw Onboard
-
-## Build
-
-```bash
-docker compose build
-```
-
-## Onboard
-Use `openclaw-onboard` for `onboard` and initial config, since `openclaw-cli` is attached to the running gateway network, so it cannot be used for pre-start setup. 
-
-```bash
-# open a shell in the onboard container
-OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --no-deps openclaw-onboard
-# run Onboard
-openclaw onboard --mode local --no-install-daemon
-## exit the terminal
-
-# back on the host, delete git repo created by openclaw during onboarding
-rm -rf ./openclaw-data/.openclaw/workspace/.git
-
-# configure Gateway For Docker from the host
-OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --no-deps --entrypoint openclaw openclaw-onboard config set gateway.mode local
-OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --no-deps --entrypoint openclaw openclaw-onboard config set gateway.bind lan
-OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --no-deps --entrypoint openclaw openclaw-onboard config set gateway.controlUi.allowedOrigins '["http://localhost:18789"]' --strict-json
-
-# OR, use one-off commands only
-OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --no-deps --entrypoint openclaw openclaw-onboard onboard --mode local --no-install-daemon
-rm -rf ./openclaw-data/.openclaw/workspace/.git
-OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --no-deps --entrypoint openclaw openclaw-onboard config set gateway.mode local
-OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --no-deps --entrypoint openclaw openclaw-onboard config set gateway.bind lan
-OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --no-deps --entrypoint openclaw openclaw-onboard config set gateway.controlUi.allowedOrigins '["http://localhost:18789"]' --strict-json
-```
-
-
-## Start Gateway
-```bash
-OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose up -d openclaw-gateway
-
-# open a shell in the cli container and check Gateway Status
-OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm openclaw-cli
-openclaw gateway status --url ws://127.0.0.1:18789 --token "$OPENCLAW_GATEWAY_TOKEN"
-
-# OR one-off command
-OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --entrypoint openclaw openclaw-cli gateway status --url ws://127.0.0.1:18789 --token openclaw-gateway-default-token
-```
-
-## Open Control UI
-
-```text
-http://localhost:18789/
-```
-
-## Logs
-
-```bash
-docker compose logs -f openclaw-gateway
-```
-EOF
-
-write_file "$TARGET_README_RUN" <<'EOF'
-# OpenClaw Runbook
-
-For first-time setup, use [README.onboard.md](/Users/luismesa/Documents/src/quintolabs/5l-claw-docker/README.onboard.md).
-
-## Start Gateway
-
-```bash
-OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose up -d openclaw-gateway
-```
-
-The `OPENCLAW_GATEWAY_TOKEN` is the token clients must present to connect to the gateway.
-
-## Logs
-
-```bash
-docker compose logs -f openclaw-gateway
-```
-
-## Run CLI
-
-```bash
-OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm openclaw-cli
-```
-
-## Gateway Status
-
-```bash
-openclaw gateway status --url ws://127.0.0.1:18789 --token "$OPENCLAW_GATEWAY_TOKEN"
-
-# or one-off command
-OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --entrypoint openclaw openclaw-cli gateway status --url ws://127.0.0.1:18789 --token openclaw-gateway-default-token
-```
-
-## Doctor
-
-```bash
-openclaw doctor
-
-# or one-off command
-OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --entrypoint openclaw openclaw-cli doctor
-```
-
-## Open Control UI
-
-```text
-http://localhost:18789/
-```
-
-## State On Host
-
-```bash
-ls -la ./openclaw-data/.openclaw
-```
-
-## Stop
-
-```bash
-docker compose down
-```
-EOF
+download_file "README.md" "$TARGET_README_CLAW"
+download_file "README.claw-onboard.md" "$TARGET_README_ONBOARD"
+download_file "README.claw-run.md" "$TARGET_README_RUN"
 
 echo "Created:"
 echo "  docker-compose.yml"
 echo "  Dockerfile"
 echo "  README.md"
-echo "  README.onboard.md"
-echo "  README.run.md"
+echo "  README.claw.md"
+echo "  README.claw-onboard.md"
+echo "  README.claw-run.md"
 echo
 echo "Next:"
-echo "  To continue with onboarding, read README.onboard.md"
+echo "  To continue with onboarding, read README.claw-onboard.md"
 echo "  and run the onboard steps from that file."
