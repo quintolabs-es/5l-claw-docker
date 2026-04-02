@@ -10,7 +10,7 @@ docker compose build
 Use `openclaw-onboard` for `onboard` and initial config, since `openclaw-cli` is attached to the running gateway network, so it cannot be used for pre-start setup. 
 
 ```bash
-# open a shell in the onboard container
+# open a shell in the onboard container to run onbard command
 OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --no-deps openclaw-onboard
 
 # run Onboard and go through the setup
@@ -58,7 +58,7 @@ openclaw dashboard
 ```
 Get tokenized url or plane url and add the gateway token where requested.
 
-### Device pairing for first connection
+### First time open Control UI: Device pairing required
 [Official doc](https://docs.openclaw.ai/web/control-ui#device-pairing-first-connection)
 ```bash
 openclaw devices list
