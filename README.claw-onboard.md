@@ -22,6 +22,7 @@ openclaw config set gateway.bind lan
 openclaw config set gateway.controlUi.allowedOrigins '["http://localhost:18789"]' --strict-json
 
 ## exit the container terminal
+exit
 ```
 
 Back on the host terminal
