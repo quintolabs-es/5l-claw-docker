@@ -12,8 +12,12 @@ Unlike the official Docker setup, which writes config and workspace on the host 
 
 ## Install
 ```bash
-curl -fsSL https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/init-clow-docker.sh | bash
+mkdir -p claw-agent
+cd claw-agent
+curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/init-clow-docker.sh?skip-cache=$(date +%s)" | bash
 ```
+
+The init script creates the Docker packaging files in the current folder, so run it from the directory where you want this OpenClaw instance to live.
 
 After install, continue with onboarding in [README.claw-onboard.md](/Users/luismesa/Documents/src/quintolabs/5l-claw-docker/README.claw-onboard.md).
 
