@@ -15,6 +15,8 @@ Unlike the official Docker setup, which writes config and workspace on the host 
 mkdir -p claw-agent
 cd claw-agent
 curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/init-clow-docker.sh?skip-cache=$(date +%s)" | bash
+# or specifing a port different than default
+curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/init-clow-docker.sh?skip-cache=$(date +%s)" | bash -s -- --port 19001
 ```
 
 The init script creates the Docker packaging files in the current folder, so run it from the directory where you want this OpenClaw instance to live.
