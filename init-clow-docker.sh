@@ -3,6 +3,7 @@ set -euo pipefail
 
 ROOT_DIR="${PWD}"
 RAW_BASE_URL="https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main"
+GATEWAY_PORT="18789"
 
 fail_existing() {
   local path="$1"
@@ -23,12 +24,66 @@ write_file() {
   cat > "$path"
 }
 
+usage() {
+  cat <<'EOF'
+Usage: init-clow-docker.sh [--port <port>]
+EOF
+}
+
+validate_port() {
+  local port="$1"
+
+  if [[ ! "$port" =~ ^[0-9]+$ ]]; then
+    echo "Error: --port must be a number" >&2
+    exit 1
+  fi
+
+  if (( port < 1 || port > 65535 )); then
+    echo "Error: --port must be between 1 and 65535" >&2
+    exit 1
+  fi
+}
+
 download_file() {
   local remote_name="$1"
   local target_path="$2"
   mkdir -p "$(dirname "$target_path")"
   curl -fsSL "${RAW_BASE_URL}/${remote_name}" -o "$target_path"
 }
+
+rewrite_port_in_file() {
+  local path="$1"
+  PORT="$GATEWAY_PORT" perl -0pi -e 's/18789/$ENV{PORT}/g' "$path"
+}
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --port)
+      if [[ $# -lt 2 ]]; then
+        echo "Error: --port requires a value" >&2
+        usage >&2
+        exit 1
+      fi
+      GATEWAY_PORT="$2"
+      shift 2
+      ;;
+    --port=*)
+      GATEWAY_PORT="${1#*=}"
+      shift
+      ;;
+    -h|--help)
+      usage
+      exit 0
+      ;;
+    *)
+      echo "Error: unknown argument: $1" >&2
+      usage >&2
+      exit 1
+      ;;
+  esac
+done
+
+validate_port "$GATEWAY_PORT"
 
 TARGET_DOCKER_COMPOSE="${ROOT_DIR}/docker-compose.yml"
 TARGET_DOCKERFILE="${ROOT_DIR}/Dockerfile"
@@ -72,9 +127,9 @@ services:
       dockerfile: Dockerfile
     environment: *openclaw-env
     init: true
-    command: ["openclaw", "gateway", "run", "--bind", "lan", "--port", "18789"]
+    command: ["openclaw", "gateway", "run", "--bind", "lan", "--port", "__GATEWAY_PORT__"]
     ports:
-      - "18789:18789"
+      - "__GATEWAY_PORT__:__GATEWAY_PORT__"
     restart: unless-stopped
     volumes:
       - ./openclaw-data/.openclaw:/home/node/.openclaw
@@ -135,9 +190,9 @@ RUN mkdir -p /home/node/.openclaw /home/node/.local/bin /home/node/.npm-global
 
 RUN curl -fsSL https://openclaw.ai/install.sh | bash
 
-EXPOSE 18789
+EXPOSE __GATEWAY_PORT__
 
-CMD ["openclaw", "gateway", "run", "--bind", "lan", "--port", "18789"]
+CMD ["openclaw", "gateway", "run", "--bind", "lan", "--port", "__GATEWAY_PORT__"]
 EOF
 
 write_file "$TARGET_README" <<'EOF'
@@ -149,6 +204,11 @@ EOF
 download_file "README.md" "$TARGET_README_CLAW"
 download_file "README.claw-onboard.md" "$TARGET_README_ONBOARD"
 download_file "README.claw-run.md" "$TARGET_README_RUN"
+
+PORT="$GATEWAY_PORT" perl -0pi -e 's/__GATEWAY_PORT__/$ENV{PORT}/g' "$TARGET_DOCKER_COMPOSE" "$TARGET_DOCKERFILE"
+rewrite_port_in_file "$TARGET_README_CLAW"
+rewrite_port_in_file "$TARGET_README_ONBOARD"
+rewrite_port_in_file "$TARGET_README_RUN"
 
 echo "Created:"
 echo "  docker-compose.yml"
