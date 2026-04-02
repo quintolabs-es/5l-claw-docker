@@ -15,6 +15,8 @@ Unlike the official Docker setup, which writes config and workspace on the host 
 curl -fsSL https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/init-clow-docker.sh | bash
 ```
 
+After install, continue with onboarding in [README.claw-onboard.md](/Users/luismesa/Documents/src/quintolabs/5l-claw-docker/README.claw-onboard.md).
+
 ## Runtime
 
 - Persisted state:
@@ -45,5 +47,5 @@ Control UI origin policy is configured in `./openclaw-data/.openclaw/openclaw.js
 
 ## Runbooks
 
-See [README.onboard.md](/Users/luismesa/Documents/src/quintolabs/5l-claw-docker/README.onboard.md) for first-time setup.
-See [README.run.md](/Users/luismesa/Documents/src/quintolabs/5l-claw-docker/README.run.md) for normal run commands.
+See [README.claw-onboard.md](/Users/luismesa/Documents/src/quintolabs/5l-claw-docker/README.claw-onboard.md) for first-time setup.
+See [README.claw-run.md](/Users/luismesa/Documents/src/quintolabs/5l-claw-docker/README.claw-run.md) for normal run commands.
