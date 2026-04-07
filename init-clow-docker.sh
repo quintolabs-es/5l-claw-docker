@@ -56,6 +56,19 @@ rewrite_port_in_file() {
   PORT="$GATEWAY_PORT" perl -0pi -e 's/18789/$ENV{PORT}/g' "$path"
 }
 
+ensure_onboard_gateway_port_step() {
+  local path="$1"
+  perl -0pi -e '
+    my $anchor = "openclaw config set gateway.bind lan\n";
+    my $step = "openclaw config set gateway.port 18789 --strict-json\n";
+
+    if (index($_, $step) < 0) {
+      s/\Q$anchor\E/$anchor$step/
+        or die "Failed to insert gateway.port onboarding step into $ARGV\n";
+    }
+  ' "$path"
+}
+
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --port)
@@ -204,6 +217,8 @@ EOF
 download_file "README.md" "$TARGET_README_CLAW"
 download_file "README.claw-onboard.md" "$TARGET_README_ONBOARD"
 download_file "README.claw-run.md" "$TARGET_README_RUN"
+
+ensure_onboard_gateway_port_step "$TARGET_README_ONBOARD"
 
 PORT="$GATEWAY_PORT" perl -0pi -e 's/__GATEWAY_PORT__/$ENV{PORT}/g' "$TARGET_DOCKER_COMPOSE" "$TARGET_DOCKERFILE"
 rewrite_port_in_file "$TARGET_README_CLAW"
