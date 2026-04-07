@@ -1,6 +1,6 @@
 # OpenClaw Runbook
 
-For first-time setup, use [README.claw-onboard.md](/Users/luismesa/Documents/src/quintolabs/5l-claw-docker/README.claw-onboard.md).
+For first-time setup, use [README.claw-onboard.md](README.claw-onboard.md).
 
 ## Start Gateway
 ```bash

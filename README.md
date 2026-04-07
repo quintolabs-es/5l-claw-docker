@@ -21,7 +21,7 @@ curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/
 
 The init script creates the Docker packaging files in the current folder, so run it from the directory where you want this OpenClaw instance to live.
 
-After install, continue with onboarding in [README.claw-onboard.md](/Users/luismesa/Documents/src/quintolabs/5l-claw-docker/README.claw-onboard.md).
+After install, continue with onboarding in [README.claw-onboard.md](README.claw-onboard.md).
 
 ## Runtime
 
@@ -53,5 +53,5 @@ Control UI origin policy is configured in `./openclaw-data/.openclaw/openclaw.js
 
 ## Runbooks
 
-See [README.claw-onboard.md](/Users/luismesa/Documents/src/quintolabs/5l-claw-docker/README.claw-onboard.md) for first-time setup.
-See [README.claw-run.md](/Users/luismesa/Documents/src/quintolabs/5l-claw-docker/README.claw-run.md) for normal run commands.
+See [README.claw-onboard.md](README.claw-onboard.md) for first-time setup.
+See [README.claw-run.md](README.claw-run.md) for normal run commands.
