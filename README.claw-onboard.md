@@ -20,7 +20,7 @@ openclaw onboard --mode local --no-install-daemon
 openclaw config set gateway.mode local
 openclaw config set gateway.bind lan
 openclaw config set gateway.port 18789 --strict-json
-openclaw config set gateway.controlUi.allowedOrigins '["http://localhost:18789"]' --strict-json
+openclaw config set gateway.controlUi.allowedOrigins '["http://localhost:18789","http://127.0.0.1:18789"]' --strict-json
 
 ## exit the container terminal
 exit
