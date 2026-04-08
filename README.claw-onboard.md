@@ -22,15 +22,23 @@ openclaw config set gateway.bind lan
 openclaw config set gateway.port 18789 --strict-json
 openclaw config set gateway.controlUi.allowedOrigins '["http://localhost:18789","http://127.0.0.1:18789"]' --strict-json
 
+# remove the git repo OpenClaw creates inside workspace
+rm -rf /home/node/.openclaw/workspace/.git
+
+# initialize the repo-local durable state
+cd /home/node/.openclaw
+git init
+
+# optional: add a remote origin for the durable state repo
+# git authentication for that remote must already be configured in your environment.
+# straightforward instructions for Git auth setup are still pending and will be documented here later.
+git remote add origin git@github.com:<owner>/<repo>.git
+
 ## exit the container terminal
 exit
 ```
 
-Back on the host terminal
-```bash
-# delete useless git repo created by openclaw during onboarding
-rm -rf ./.openclaw/workspace/.git
-```
+
 
 ## Start Gateway
 ```bash
