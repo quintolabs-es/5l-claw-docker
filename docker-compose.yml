@@ -17,7 +17,7 @@ services:
     entrypoint: ["bash"]
     restart: "no"
     volumes:
-      - ./openclaw-data/.openclaw:/home/node/.openclaw
+      - ./.openclaw:/home/node/.openclaw
 
   openclaw-gateway:
     build:
@@ -30,7 +30,7 @@ services:
       - "18789:18789"
     restart: unless-stopped
     volumes:
-      - ./openclaw-data/.openclaw:/home/node/.openclaw
+      - ./.openclaw:/home/node/.openclaw
 
   openclaw-cli:
     build:
@@ -53,4 +53,4 @@ services:
     entrypoint: ["bash"]
     restart: "no"
     volumes:
-      - ./openclaw-data/.openclaw:/home/node/.openclaw
+      - ./.openclaw:/home/node/.openclaw

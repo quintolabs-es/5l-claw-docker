@@ -4,6 +4,18 @@ set -euo pipefail
 ROOT_DIR="${PWD}"
 RAW_BASE_URL="https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main"
 GATEWAY_PORT="18789"
+DOWNLOAD_FILE_SPECS=(
+  ".gitignore:.gitignore"
+  "docker-compose.yml:docker-compose.yml"
+  "Dockerfile:Dockerfile"
+  "README.md:README.claw.md"
+  "README.claw-onboard.md:README.claw-onboard.md"
+  "README.claw-run.md:README.claw-run.md"
+  "journey-to-seed.sh:journey-to-seed.sh"
+)
+EXECUTABLE_DOWNLOADED_FILES=(
+  "journey-to-seed.sh"
+)
 
 fail_existing() {
   local path="$1"
@@ -49,6 +61,33 @@ download_file() {
   local target_path="$2"
   mkdir -p "$(dirname "$target_path")"
   curl -fsSL "${RAW_BASE_URL}/${remote_name}" -o "$target_path"
+}
+
+assert_download_targets_missing() {
+  local spec target_relative
+
+  for spec in "${DOWNLOAD_FILE_SPECS[@]}"; do
+    target_relative="${spec#*:}"
+    assert_missing "${ROOT_DIR}/${target_relative}"
+  done
+}
+
+download_manifest_files() {
+  local spec remote_name target_relative
+
+  for spec in "${DOWNLOAD_FILE_SPECS[@]}"; do
+    remote_name="${spec%%:*}"
+    target_relative="${spec#*:}"
+    download_file "$remote_name" "${ROOT_DIR}/${target_relative}"
+  done
+}
+
+mark_downloaded_executables() {
+  local relative_path
+
+  for relative_path in "${EXECUTABLE_DOWNLOADED_FILES[@]}"; do
+    chmod +x "${ROOT_DIR}/${relative_path}"
+  done
 }
 
 rewrite_port_in_file() {
@@ -105,108 +144,8 @@ TARGET_README_CLAW="${ROOT_DIR}/README.claw.md"
 TARGET_README_ONBOARD="${ROOT_DIR}/README.claw-onboard.md"
 TARGET_README_RUN="${ROOT_DIR}/README.claw-run.md"
 
-assert_missing "$TARGET_DOCKER_COMPOSE"
-assert_missing "$TARGET_DOCKERFILE"
 assert_missing "$TARGET_README"
-assert_missing "$TARGET_README_CLAW"
-assert_missing "$TARGET_README_ONBOARD"
-assert_missing "$TARGET_README_RUN"
-
-write_file "$TARGET_DOCKER_COMPOSE" <<'EOF'
-x-openclaw-env: &openclaw-env
-  HOME: /home/node
-  TERM: xterm-256color
-  OPENCLAW_HOME: /home/node
-  OPENCLAW_STATE_DIR: /home/node/.openclaw
-  OPENCLAW_GATEWAY_TOKEN: ${OPENCLAW_GATEWAY_TOKEN:-missing-openclaw-gateway-token-env-var}
-
-services:
-  openclaw-onboard:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    environment: *openclaw-env
-    stdin_open: true
-    tty: true
-    init: true
-    entrypoint: ["bash"]
-    restart: "no"
-    volumes:
-      - ./openclaw-data/.openclaw:/home/node/.openclaw
-
-  openclaw-gateway:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    environment: *openclaw-env
-    init: true
-    command: ["openclaw", "gateway", "run", "--bind", "lan", "--port", "__GATEWAY_PORT__"]
-    ports:
-      - "__GATEWAY_PORT__:__GATEWAY_PORT__"
-    restart: unless-stopped
-    volumes:
-      - ./openclaw-data/.openclaw:/home/node/.openclaw
-
-  openclaw-cli:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    network_mode: "service:openclaw-gateway"
-    cap_drop:
-      - NET_RAW
-      - NET_ADMIN
-    security_opt:
-      - no-new-privileges:true
-    environment:
-      <<: *openclaw-env
-      BROWSER: echo
-    stdin_open: true
-    tty: true
-    init: true
-    depends_on:
-      - openclaw-gateway
-    entrypoint: ["bash"]
-    restart: "no"
-    volumes:
-      - ./openclaw-data/.openclaw:/home/node/.openclaw
-EOF
-
-write_file "$TARGET_DOCKERFILE" <<'EOF'
-FROM node:24-bookworm-slim
-
-USER root
-
-RUN apt-get update \
- && apt-get install -y --no-install-recommends \
-    bash \
-    ca-certificates \
-    cmake \
-    curl \
-    g++ \
-    git \
-    make \
-    python3 \
- && rm -rf /var/lib/apt/lists/*
-
-USER node
-
-ENV HOME=/home/node \
-    OPENCLAW_HOME=/home/node \
-    OPENCLAW_STATE_DIR=/home/node/.openclaw \
-    OPENCLAW_NO_ONBOARD=1 \
-    OPENCLAW_NO_PROMPT=1 \
-    PATH=/home/node/.local/bin:/home/node/.npm-global/bin:$PATH
-
-WORKDIR /home/node
-
-RUN mkdir -p /home/node/.openclaw /home/node/.local/bin /home/node/.npm-global
-
-RUN curl -fsSL https://openclaw.ai/install.sh | bash
-
-EXPOSE __GATEWAY_PORT__
-
-CMD ["openclaw", "gateway", "run", "--bind", "lan", "--port", "__GATEWAY_PORT__"]
-EOF
+assert_download_targets_missing
 
 write_file "$TARGET_README" <<'EOF'
 # README
@@ -214,13 +153,13 @@ write_file "$TARGET_README" <<'EOF'
 Document this claw instance here.
 EOF
 
-download_file "README.md" "$TARGET_README_CLAW"
-download_file "README.claw-onboard.md" "$TARGET_README_ONBOARD"
-download_file "README.claw-run.md" "$TARGET_README_RUN"
+download_manifest_files
+mark_downloaded_executables
 
 ensure_onboard_gateway_port_step "$TARGET_README_ONBOARD"
 
-PORT="$GATEWAY_PORT" perl -0pi -e 's/__GATEWAY_PORT__/$ENV{PORT}/g' "$TARGET_DOCKER_COMPOSE" "$TARGET_DOCKERFILE"
+rewrite_port_in_file "$TARGET_DOCKER_COMPOSE"
+rewrite_port_in_file "$TARGET_DOCKERFILE"
 rewrite_port_in_file "$TARGET_README_CLAW"
 rewrite_port_in_file "$TARGET_README_ONBOARD"
 rewrite_port_in_file "$TARGET_README_RUN"
@@ -228,10 +167,12 @@ rewrite_port_in_file "$TARGET_README_RUN"
 echo "Created:"
 echo "  docker-compose.yml"
 echo "  Dockerfile"
+echo "  .gitignore"
 echo "  README.md"
 echo "  README.claw.md"
 echo "  README.claw-onboard.md"
 echo "  README.claw-run.md"
+echo "  journey-to-seed.sh"
 echo
 echo "Next:"
 echo "  To continue with onboarding, read README.claw-onboard.md"

@@ -29,7 +29,7 @@ exit
 Back on the host terminal
 ```bash
 # delete useless git repo created by openclaw during onboarding
-rm -rf ./openclaw-data/.openclaw/workspace/.git
+rm -rf ./.openclaw/workspace/.git
 ```
 
 ## Start Gateway

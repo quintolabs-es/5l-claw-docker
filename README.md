@@ -26,11 +26,11 @@ After install, continue with onboarding in [README.claw-onboard.md](README.claw-
 ## Runtime
 
 - Persisted state:
-  `./openclaw-data/.openclaw`
+  `./.openclaw`
 - Main config:
-  `./openclaw-data/.openclaw/openclaw.json`
+  `./.openclaw/openclaw.json`
 - Human-edited memory/workspace:
-  `./openclaw-data/.openclaw/workspace/`
+  `./.openclaw/workspace/`
 - Services:
   * `openclaw-onboard` is used for pre-start setup commands. 
   * `openclaw-gateway` runs continuously. 
@@ -49,7 +49,7 @@ After install, continue with onboarding in [README.claw-onboard.md](README.claw-
 
 The gateway serves the WebSocket API and the browser Control UI on the same port. The Control UI is the small website bundled with OpenClaw. Open it at `http://localhost:18789/` to operate the local gateway.
 
-Control UI origin policy is configured in `./openclaw-data/.openclaw/openclaw.json`. This setup allowlists only `http://localhost:18789`.
+Control UI origin policy is configured in `./.openclaw/openclaw.json`. This setup allowlists only `http://localhost:18789`.
 
 ## Runbooks
 

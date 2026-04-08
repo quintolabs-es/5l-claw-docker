@@ -33,7 +33,7 @@ docker compose logs -f openclaw-gateway
 
 ## State On Host
 ```bash
-ls -la ./openclaw-data/.openclaw
+ls -la ./.openclaw
 ```
 
 ## Stop
