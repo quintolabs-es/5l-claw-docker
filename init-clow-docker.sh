@@ -4,8 +4,8 @@ set -euo pipefail
 ROOT_DIR="${PWD}"
 RAW_BASE_URL="https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main"
 GATEWAY_PORT="18789"
+OVERWRITE="0"
 DOWNLOAD_FILE_SPECS=(
-  ".gitignore:.gitignore"
   "docker-compose.yml:docker-compose.yml"
   "Dockerfile:Dockerfile"
   "README.md:README.claw.md"
@@ -19,12 +19,15 @@ EXECUTABLE_DOWNLOADED_FILES=(
 
 fail_existing() {
   local path="$1"
-  echo "Error: target already exists: ${path}" >&2
+  echo "Error: target already exists: ${path}. Use --overwrite to replace managed files." >&2
   exit 1
 }
 
 assert_missing() {
   local path="$1"
+  if [[ "$OVERWRITE" == "1" ]]; then
+    return
+  fi
   if [[ -e "$path" ]]; then
     fail_existing "$path"
   fi
@@ -38,7 +41,7 @@ write_file() {
 
 usage() {
   cat <<'EOF'
-Usage: init-clow-docker.sh [--port <port>]
+Usage: init-clow-docker.sh [--port <port>] [--overwrite]
 EOF
 }
 
@@ -121,6 +124,10 @@ while [[ $# -gt 0 ]]; do
       ;;
     --port=*)
       GATEWAY_PORT="${1#*=}"
+      shift
+      ;;
+    --overwrite)
+      OVERWRITE="1"
       shift
       ;;
     -h|--help)
