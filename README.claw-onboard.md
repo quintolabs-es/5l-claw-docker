@@ -26,8 +26,13 @@ openclaw config set gateway.controlUi.allowedOrigins '["http://localhost:18789",
 rm -rf /home/node/.openclaw/workspace/.git
 
 # initialize the repo-local durable state
-cd /home/node/.openclaw
-git init
+cd /home/node/.openclaw && \
+    touch .gitignore && \
+    git init && \
+    git add . && \
+    git config user.name "La Garra" && \
+    git config user.email "lagarra@quintolabs.es" && \
+    git commit -m "initial commit after onboard"
 
 # optional: add a remote origin for the durable state repo
 # git authentication for that remote must already be configured in your environment.
