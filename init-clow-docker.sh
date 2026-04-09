@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Usage:
+#   curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/init-clow-docker.sh?skip-cache=$(date +%s)" | bash
+#   curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/init-clow-docker.sh?skip-cache=$(date +%s)" | bash -s -- --port 19001
+#   curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/init-clow-docker.sh?skip-cache=$(date +%s)" | bash -s -- --overwrite
+
 ROOT_DIR="${PWD}"
 RAW_BASE_URL="https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main"
 GATEWAY_PORT="18789"
@@ -11,9 +16,12 @@ DOWNLOAD_FILE_SPECS=(
   "README.md:README.claw.md"
   "README.claw-onboard.md:README.claw-onboard.md"
   "README.claw-run.md:README.claw-run.md"
+  ".openclaw/.gitignore:.openclaw/.gitignore"
+  ".openclaw/complete-onboard.sh:.openclaw/complete-onboard.sh"
   "journey-to-seed.sh:journey-to-seed.sh"
 )
 EXECUTABLE_DOWNLOADED_FILES=(
+  ".openclaw/complete-onboard.sh"
   "journey-to-seed.sh"
 )
 
@@ -151,6 +159,8 @@ TARGET_README_CLAW="${ROOT_DIR}/README.claw.md"
 TARGET_README_ONBOARD="${ROOT_DIR}/README.claw-onboard.md"
 TARGET_README_RUN="${ROOT_DIR}/README.claw-run.md"
 
+mkdir -p "${ROOT_DIR}/.openclaw" "${ROOT_DIR}/.secrets/git/.ssh"
+
 assert_missing "$TARGET_README"
 assert_download_targets_missing
 
@@ -170,6 +180,7 @@ rewrite_port_in_file "$TARGET_DOCKERFILE"
 rewrite_port_in_file "$TARGET_README_CLAW"
 rewrite_port_in_file "$TARGET_README_ONBOARD"
 rewrite_port_in_file "$TARGET_README_RUN"
+rewrite_port_in_file "${ROOT_DIR}/.openclaw/complete-onboard.sh"
 
 echo "Created:"
 echo "  docker-compose.yml"
@@ -179,6 +190,9 @@ echo "  README.md"
 echo "  README.claw.md"
 echo "  README.claw-onboard.md"
 echo "  README.claw-run.md"
+echo "  .openclaw/.gitignore"
+echo "  .openclaw/complete-onboard.sh"
+echo "  .secrets/git/.ssh/"
 echo "  journey-to-seed.sh"
 echo
 echo "Next:"

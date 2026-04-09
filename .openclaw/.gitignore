@@ -1,0 +1,5 @@
+# ignore all databases, including book database
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+

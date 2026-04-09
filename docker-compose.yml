@@ -18,6 +18,7 @@ services:
     restart: "no"
     volumes:
       - ./.openclaw:/home/node/.openclaw
+      - ./.secrets/git/.ssh:/home/node/.ssh
 
   openclaw-gateway:
     build:
@@ -31,6 +32,7 @@ services:
     restart: unless-stopped
     volumes:
       - ./.openclaw:/home/node/.openclaw
+      - ./.secrets/git/.ssh:/home/node/.ssh
 
   openclaw-cli:
     build:
@@ -54,3 +56,4 @@ services:
     restart: "no"
     volumes:
       - ./.openclaw:/home/node/.openclaw
+      - ./.secrets/git/.ssh:/home/node/.ssh

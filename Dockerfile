@@ -11,6 +11,7 @@ RUN apt-get update \
     g++ \
     git \
     make \
+    openssh-client \
     python3 \
  && rm -rf /var/lib/apt/lists/*
 

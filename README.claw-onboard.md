@@ -1,5 +1,7 @@
 # OpenClaw Onboard
 
+
+
 ## Build
 
 ```bash
@@ -16,31 +18,28 @@ OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --
 # run Onboard and go through the setup
 openclaw onboard --mode local --no-install-daemon
 
-# configure Gateway For Docker
-openclaw config set gateway.mode local
-openclaw config set gateway.bind lan
-openclaw config set gateway.port 18789 --strict-json
-openclaw config set gateway.controlUi.allowedOrigins '["http://localhost:18789","http://127.0.0.1:18789"]' --strict-json
+# complete onboard for Docker and initialize the durable state repo with remote origin
+cd .openclaw
+bash complete-onboard.sh --github-repo-url https://github.com/<owner>/<repo>
 
-# remove the git repo OpenClaw creates inside workspace
-rm -rf /home/node/.openclaw/workspace/.git
+# also optional parameters 
+--git-name: default "La Garra" 
+--git-email default:"lagarra@quintolabs.es"
 
-# initialize the repo-local durable state
-cd /home/node/.openclaw && \
-    touch .gitignore && \
-    git init && \
-    git add . && \
-    git config user.name "La Garra" && \
-    git config user.email "lagarra@quintolabs.es" && \
-    git commit -m "initial commit after onboard"
+# OR just run with default params and local repo with no remote origin
+bash complete-onboard.sh
+```
 
-# optional: add a remote origin for the durable state repo
-# git authentication for that remote must already be configured in your environment.
-# straightforward instructions for Git auth setup are still pending and will be documented here later.
-git remote add origin git@github.com:<owner>/<repo>.git
+If `--github-repo-url` was used, the complete-onboard script creates SSH files in `./.secrets/git/.ssh/` on the host and mounts them as `~/.ssh` in the Docker containers that may need Git access.
 
-## exit the container terminal
-exit
+**Add the generated public key in GitHub** as a deploy key with write access for that private repo:
+```bash
+cat ./.secrets/git/.ssh/id_ed25519.pub
+```
+
+**Then back to the onboard container**, verify push works:
+```bash
+git push origin head
 ```
 
 
