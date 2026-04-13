@@ -38,7 +38,7 @@ cat ./.secrets/git/.ssh/id_ed25519.pub
 git push origin head
 ```
 
-## Optional setup
+## Additional optional setup
 
 ### Google Access
 Optional post-onboard setup.

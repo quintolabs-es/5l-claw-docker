@@ -33,9 +33,9 @@ References:
 cp <path-to-downloaded-client-json> ./.secrets/gogcli/.config/client_secret.json
 ```
 
-The onboarding container does not see your host `~/Downloads`, so place the file in the mounted repo-local secret path first.
+The CLI container does not see your host `~/Downloads`, so place the file in the mounted repo-local secret path first.
 
-## First-Time Authorization
+## Setup Gmail Access
 
 Copy `.env.example` to `.env` and set these values there first.
 
@@ -52,13 +52,19 @@ GOG_KEYRING_PASSWORD=<strong-password>
 GOG_ACCOUNT=<you@gmail.com>
 ```
 
-Then start the onboarding container:
+Start the gateway:
 
 ```bash
-OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --no-deps openclaw-onboard
+OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose up -d openclaw-gateway
 ```
 
-Inside the container:
+Open a shell in the CLI container:
+
+```bash
+OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm openclaw-cli
+```
+
+Inside the CLI container:
 
 ```bash
 gog auth keyring file
@@ -86,14 +92,10 @@ If this agent later needs other Google services as well:
 gog auth add <you@gmail.com> --services gmail,drive,docs,sheets --force-consent --manual
 ```
 
-## Start The Gateway With Gmail Access
-
-[docker-compose.yml](/Users/luismesa/Documents/src/quintolabs/5l-claw-docker/docker-compose.yml) reads `GOG_KEYRING_PASSWORD` and `GOG_ACCOUNT` from `.env` and passes them to `openclaw-onboard`, `openclaw-gateway`, and `openclaw-cli`. `openclaw-onboard` needs them for first-time Gmail authorization, and `openclaw-cli` needs them for verification and one-off `gog` commands.
-
-After those values are set in Compose, start the gateway:
+If the gateway was already running when `.env` was changed, restart it after setup:
 
 ```bash
-OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose up -d openclaw-gateway
+OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose restart openclaw-gateway
 ```
 
 ## Verify It Works
