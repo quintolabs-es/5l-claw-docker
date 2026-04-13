@@ -11,21 +11,36 @@ In this project:
 
 ## Create Google OAuth Desktop Credentials
 
-_Suggestion: request Claw to provide the steps to create google cloud app._
+Use Google Cloud: `https://console.cloud.google.com/`.
 
-Use Google Cloud `https://cloud.google.com`:
+1. Create the Google Cloud project for this agent.
+2. Enable the Gmail API.
+   - Open [Gmail API](https://console.cloud.google.com/apis/library/gmail.googleapis.com)
+   - Click `Enable`
+3. Configure Google Auth Platform.
+   - Open [Google Auth Platform](https://console.cloud.google.com/auth)
+   - If not configured yet, click `Get started`
+4. Complete `Branding`.
+   - Set `App name`
+   - Set `User support email`
+   - Set `Developer contact information`
+5. Complete `Audience`.
+   - For a personal Gmail account, use `External`.
+   - If the app stays in `Testing`, add the same Gmail account as a `Test user`
+6. Complete `Clients`.
+   - Open [Clients](https://console.cloud.google.com/auth/clients)
+   - Click `Create client`
+   - Select `Desktop app`
+   - Create the client
+   - Download the OAuth client JSON
 
-- Enable the Gmail API.
-- Configure the OAuth consent screen.
-- If the app is still in `Testing`, add your Gmail account as a test user.
-- Create an OAuth client of type `Desktop app`.
-  * Clients/Create new client/Desktop app
-- Download the client JSON.
 
 References:
-
 - [gog quickstart](https://gogcli.sh/)
 - [Gmail API quickstart](https://developers.google.com/workspace/gmail/api/quickstart/go)
+- [Get started with the Google Auth Platform](https://support.google.com/cloud/answer/15544987?hl=en)
+- [Manage OAuth Clients](https://support.google.com/cloud/answer/6158849?hl=en)
+- [Submitting your app for verification](https://support.google.com/cloud/answer/13461325?hl=en)
 
 ## Stage The Client JSON In This Repo
 
@@ -33,24 +48,15 @@ References:
 cp <path-to-downloaded-client-json> ./.secrets/gogcli/.config/client_secret.json
 ```
 
-The CLI container does not see your host `~/Downloads`, so place the file in the mounted repo-local secret path first.
-
 ## Setup Gmail Access
 
-Copy `.env.example` to `.env` and set these values there first.
-
-`GOG_KEYRING_PASSWORD` is a local encryption password for `gog`'s file keyring. Use the same value each time this agent instance is started, or `gog` will not be able to read the tokens it already stored and the account will need to be re-authorized.
-
-```bash
-cp .env.example .env
-```
-
-`.env.example` is part of the managed template and may change on updates. `.env` is your local instance file and is not managed by the template updater.
-
+Copy `.env.example` to `.env` and set these values.
 ```dotenv
 GOG_KEYRING_PASSWORD=<strong-password>
 GOG_ACCOUNT=<you@gmail.com>
 ```
+
+`GOG_KEYRING_PASSWORD` is a local encryption password for `gog`'s file keyring. Use the same value each time this agent instance is started, or `gog` will not be able to read the tokens it already stored and the account will need to be re-authorized.
 
 Start the gateway:
 
