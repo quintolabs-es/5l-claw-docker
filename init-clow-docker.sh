@@ -84,7 +84,7 @@ done
 validate_port "$GATEWAY_PORT"
 assert_directory_empty "$ROOT_DIR"
 
-mkdir -p "${ROOT_DIR}/.openclaw" "${ROOT_DIR}/.secrets/git/.ssh"
+mkdir -p "${ROOT_DIR}/.openclaw" "${ROOT_DIR}/.secrets/git/.ssh" "${ROOT_DIR}/.secrets/gogcli/.config"
 
 create_placeholder_readme "${ROOT_DIR}/README.md"
 sync_managed_downloads "$ROOT_DIR"
@@ -104,6 +104,7 @@ echo "  clow-docker-common.sh"
 echo "  .openclaw/.gitignore"
 echo "  .openclaw/complete-onboard.sh"
 echo "  .secrets/git/.ssh/"
+echo "  .secrets/gogcli/.config/"
 echo "  journey-to-seed.sh"
 echo
 echo "Next:"
