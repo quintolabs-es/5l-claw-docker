@@ -1,6 +1,9 @@
 x-openclaw-env: &openclaw-env
-  GOG_ACCOUNT: ${GOG_ACCOUNT:-}
-  GOG_KEYRING_PASSWORD: ${GOG_KEYRING_PASSWORD:-}
+  BROWSER: echo
+  # Used by gog to select which Google account this agent should access.
+  GOG_ACCOUNT: ""
+  # Used by gog to decrypt the local file keyring that stores Google OAuth tokens.
+  GOG_KEYRING_PASSWORD: ""
   HOME: /home/node
   TERM: xterm-256color
   OPENCLAW_HOME: /home/node
@@ -50,7 +53,6 @@ services:
       - no-new-privileges:true
     environment:
       <<: *openclaw-env
-      BROWSER: echo
     stdin_open: true
     tty: true
     init: true

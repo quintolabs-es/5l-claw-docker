@@ -35,13 +35,18 @@ The onboarding container does not see your host `~/Downloads`, so place the file
 
 ## First-Time Authorization
 
-Export the runtime variables in the same shell you use for `docker compose`:
+Set these values in `docker-compose.yml` first:
 
-`GOG_KEYRING_PASSWORD` is a local encryption password for `gog`'s file keyring. Use the same value each time this agent instance is started, or `gog` will not be able to read the tokens it already stored and the account will need to re-authorized.
+`GOG_KEYRING_PASSWORD` is a local encryption password for `gog`'s file keyring. Use the same value each time this agent instance is started, or `gog` will not be able to read the tokens it already stored and the account will need to be re-authorized.
 
 ```bash
-export GOG_KEYRING_PASSWORD='<strong-password>'
-export GOG_ACCOUNT='<you@gmail.com>'
+GOG_KEYRING_PASSWORD: "<strong-password>"
+GOG_ACCOUNT: "<you@gmail.com>"
+```
+
+Then start the onboarding container:
+
+```bash
 OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --no-deps openclaw-onboard
 ```
 
@@ -75,32 +80,28 @@ gog auth add <you@gmail.com> --services gmail,drive,docs,sheets --force-consent 
 
 ## Start The Gateway With Gmail Access
 
-`docker-compose.yml` passes `GOG_KEYRING_PASSWORD` and `GOG_ACCOUNT` from your host shell into `openclaw-onboard`, `openclaw-gateway`, and `openclaw-cli`.
+`docker-compose.yml` now carries `GOG_KEYRING_PASSWORD` and `GOG_ACCOUNT` directly for `openclaw-onboard`, `openclaw-gateway`, and `openclaw-cli`. `openclaw-onboard` needs them for first-time Gmail authorization, and `openclaw-cli` needs them for verification and one-off `gog` commands.
 
-Export them before you start the gateway:
+After those values are set in Compose, start the gateway:
 
 ```bash
-export GOG_KEYRING_PASSWORD='<strong-password>'
-export GOG_ACCOUNT='<you@gmail.com>'
 OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose up -d openclaw-gateway
 ```
 
 ## Verify It Works
 
 ```bash
-export GOG_KEYRING_PASSWORD='<strong-password>'
-export GOG_ACCOUNT='<you@gmail.com>'
 OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --entrypoint bash openclaw-cli -lc "gog auth list --check && gog gmail search 'is:unread newer_than:7d' --max 10 --json"
 ```
 
-The search command should return JSON from your mailbox. If the command prompts for a keyring password or fails to find the account, the container did not receive the expected environment variables.
+The search command should return JSON from your mailbox. If the command prompts for a keyring password or fails to find the account, check the `GOG_KEYRING_PASSWORD` and `GOG_ACCOUNT` values in `docker-compose.yml`.
 
 ## Troubleshooting
 
 - `gog: command not found`
   Rebuild the image with `docker compose build`.
 - `gog` keeps prompting for a keyring password
-  Export `GOG_KEYRING_PASSWORD` in the shell before `docker compose up` or `docker compose run`.
+  Check the `GOG_KEYRING_PASSWORD` value in `docker-compose.yml`.
 - The OpenClaw Gmail skill does not load
   Make sure `gog` is on `PATH` inside the container and check `./.openclaw/openclaw.json` after onboarding. If `skills.allowBundled` is set, it must include `gog`.
 - You need to inspect where `gog` is storing state
