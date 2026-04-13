@@ -18,16 +18,12 @@ OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --
 # run Onboard and go through the setup
 openclaw onboard --mode local --no-install-daemon
 
-# complete onboard for Docker and initialize the durable state repo with remote origin
-cd .openclaw
-bash complete-onboard.sh --github-repo-url https://github.com/<owner>/<repo>
-
-# also optional parameters 
---git-name: default "La Garra" 
---git-email default:"lagarra@quintolabs.es"
-
-# OR just run with default params and local repo with no remote origin
+# complete onboard for Docker and initialize the durable state repo
+cd /home/node/.openclaw
 bash complete-onboard.sh
+
+# or with optional parameters
+bash complete-onboard.sh --github-repo-url https://github.com/owner/repo --git-name "La Garra" --git-email "lagarra@quintolabs.es"
 ```
 
 If `--github-repo-url` was used, the complete-onboard script creates SSH files in `./.secrets/git/.ssh/` on the host and mounts them as `~/.ssh` in the Docker containers that may need Git access.
@@ -42,6 +38,21 @@ cat ./.secrets/git/.ssh/id_ed25519.pub
 git push origin head
 ```
 
+## Setup options
+### Hearbeat
+`https://docs.openclaw.ai/gateway/heartbeat`.
+Instructions on each heartbit are in `HEARTBEAT.md`
+
+```bash
+openclaw config set agents.defaults.heartbeat.every "30m"
+openclaw config set agents.defaults.heartbeat.target "telegram"
+openclaw config set agents.defaults.heartbeat.to "telegram"
+openclaw config set agents.defaults.heartbeat.activeHours.start "09:00"
+openclaw config set agents.defaults.heartbeat.activeHours.end "22:00"
+openclaw config set agents.defaults.heartbeat.activeHours.timezone "Europe/Madrid"
+```
+
+The value `agents.defaults.heartbeat.target` specifies where to send the heartbeat response/result message, in case there is one.
 
 
 ## Start Gateway

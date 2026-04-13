@@ -2,14 +2,17 @@
 set -euo pipefail
 
 # Usage:
-#   curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/init-clow-docker.sh?skip-cache=$(date +%s)" | bash
-#   curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/init-clow-docker.sh?skip-cache=$(date +%s)" | bash -s -- --port 19001
+#   bash update-clow-docker.sh
+#   bash update-clow-docker.sh --port 19001
+#   curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/update-clow-docker.sh?skip-cache=$(date +%s)" | bash
 
 ROOT_DIR="${PWD}"
 RAW_BASE_URL="https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main"
 COMMON_HELPER_NAME="clow-docker-common.sh"
 TMP_COMMON_HELPER=""
 GATEWAY_PORT=""
+README_ALREADY_EXISTS="0"
+OPENCLAW_GITIGNORE_ALREADY_EXISTS="0"
 SCRIPT_DIR=""
 
 if [[ -n "${BASH_SOURCE[0]:-}" && "${BASH_SOURCE[0]}" != "bash" ]]; then
@@ -45,14 +48,12 @@ load_common_helper() {
 
 usage() {
   cat <<'EOF'
-Usage: init-clow-docker.sh [--port <port>]
+Usage: update-clow-docker.sh [--port <port>]
 EOF
 }
 
 trap cleanup_common_helper EXIT
 load_common_helper
-
-GATEWAY_PORT="$DEFAULT_GATEWAY_PORT"
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -81,31 +82,51 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
+if [[ -z "$GATEWAY_PORT" ]]; then
+  if ! GATEWAY_PORT="$(detect_existing_port "$ROOT_DIR")"; then
+    echo "Error: could not detect the existing gateway port. Use --port <port>." >&2
+    exit 1
+  fi
+fi
+
 validate_port "$GATEWAY_PORT"
-assert_directory_empty "$ROOT_DIR"
 
-mkdir -p "${ROOT_DIR}/.openclaw" "${ROOT_DIR}/.secrets/git/.ssh"
+mkdir -p "${ROOT_DIR}/.openclaw"
 
-create_placeholder_readme "${ROOT_DIR}/README.md"
-sync_managed_downloads "$ROOT_DIR"
+if [[ -e "${ROOT_DIR}/README.md" ]]; then
+  README_ALREADY_EXISTS="1"
+fi
+
+if [[ -e "${ROOT_DIR}/.openclaw/.gitignore" ]]; then
+  OPENCLAW_GITIGNORE_ALREADY_EXISTS="1"
+fi
+
+if [[ ! -e "${ROOT_DIR}/README.md" ]]; then
+  create_placeholder_readme "${ROOT_DIR}/README.md"
+fi
+
+sync_managed_downloads "$ROOT_DIR" ".openclaw/.gitignore"
 mark_managed_executables "$ROOT_DIR"
 rewrite_port_in_targets "$ROOT_DIR" "$GATEWAY_PORT"
 
-echo "Created:"
-echo "  README.md"
-echo "  .gitignore"
+echo "Updated:"
 echo "  docker-compose.yml"
 echo "  Dockerfile"
+echo "  .gitignore"
 echo "  README.claw.md"
 echo "  README.claw-onboard.md"
 echo "  README.claw-run.md"
 echo "  update-clow-docker.sh"
 echo "  clow-docker-common.sh"
-echo "  .openclaw/.gitignore"
 echo "  .openclaw/complete-onboard.sh"
-echo "  .secrets/git/.ssh/"
 echo "  journey-to-seed.sh"
-echo
-echo "Next:"
-echo "  To continue with onboarding, read README.claw-onboard.md"
-echo "  and run the onboard steps from that file."
+if [[ "$README_ALREADY_EXISTS" == "1" || "$OPENCLAW_GITIGNORE_ALREADY_EXISTS" == "1" ]]; then
+  echo
+  echo "Kept:"
+fi
+if [[ "$README_ALREADY_EXISTS" == "1" ]]; then
+  echo "  README.md"
+fi
+if [[ "$OPENCLAW_GITIGNORE_ALREADY_EXISTS" == "1" ]]; then
+  echo "  .openclaw/.gitignore"
+fi
