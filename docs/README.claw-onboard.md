@@ -43,7 +43,7 @@ git push origin head
 ### Google Access
 Optional post-onboard setup.
 
-The agent can access Google services such as Gmail, Calendar, and Drive through the `gog` CLI skill. If needed, set `GOG_ACCOUNT` and `GOG_KEYRING_PASSWORD` in [docker-compose.yml](/Users/luismesa/Documents/src/quintolabs/5l-claw-docker/docker-compose.yml) and then complete [README.gmail.md](/Users/luismesa/Documents/src/quintolabs/5l-claw-docker/docs/README.gmail.md).
+The agent can access Google services such as Gmail, Calendar, and Drive through the `gog` CLI skill. If needed, copy `.env.example` to `.env`, set `GOG_ACCOUNT` and `GOG_KEYRING_PASSWORD`, and then complete [README.gmail.md](/Users/luismesa/Documents/src/quintolabs/5l-claw-docker/docs/README.gmail.md).
 
 
 ### Set Hearbeat and heartbit response channel

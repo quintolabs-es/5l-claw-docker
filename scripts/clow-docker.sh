@@ -21,6 +21,7 @@ SCRIPT_DIR=""
 SCRIPT_SOURCE_PATH=""
 
 MANAGED_DOWNLOAD_SPECS=(
+  ".env.example:.env.example"
   "project-root.gitignore:.gitignore"
   "docker-compose.yml:docker-compose.yml"
   "Dockerfile:Dockerfile"
@@ -272,6 +273,7 @@ run_init() {
 
   echo "Created:"
   echo "  README.md"
+  echo "  .env.example"
   echo "  .gitignore"
   echo "  docker-compose.yml"
   echo "  Dockerfile"
@@ -328,6 +330,7 @@ run_update() {
   remove_legacy_bootstrap_files "$ROOT_DIR"
 
   echo "Updated:"
+  echo "  .env.example"
   echo "  docker-compose.yml"
   echo "  Dockerfile"
   echo "  .gitignore"
