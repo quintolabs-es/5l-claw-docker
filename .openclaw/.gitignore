@@ -6,3 +6,4 @@ memory/
 
 # ignore tasks status sqlite databases
 tasks/
+

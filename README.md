@@ -14,26 +14,26 @@ Unlike the official Docker setup, which writes config and workspace on the host 
 ```bash
 mkdir -p claw-agent
 cd claw-agent
-curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/init-clow-docker.sh?skip-cache=$(date +%s)" | bash
+curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/scripts/init-clow-docker.sh?skip-cache=$(date +%s)" | bash
 # or specifing a port different than default
-curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/init-clow-docker.sh?skip-cache=$(date +%s)" | bash -s -- --port 19001
+curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/scripts/init-clow-docker.sh?skip-cache=$(date +%s)" | bash -s -- --port 19001
 ```
 
 The init script creates the Docker packaging files in the current folder, so run it from the directory where you want this OpenClaw instance to live.
-`init-clow-docker.sh` assumes the target folder is empty and fails if it already contains files.
+`scripts/init-clow-docker.sh` assumes the target folder is empty and fails if it already contains files.
 
 After init, continue with onboarding in [README.claw-onboard.md](README.claw-onboard.md).
 
 ## Update
 ```bash
-bash update-clow-docker.sh
+bash ./scripts/update-clow-docker.sh
 # or, if this project does not have the updater yet
-curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/update-clow-docker.sh?skip-cache=$(date +%s)" | bash
+curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/scripts/update-clow-docker.sh?skip-cache=$(date +%s)" | bash
 # or override the current port
-bash update-clow-docker.sh --port 19001
+bash ./scripts/update-clow-docker.sh --port 19001
 ```
 
-`update-clow-docker.sh` is for an existing project. It updates the managed Docker/bootstrap files, preserves the current port by default, keeps `README.md` if it already exists, keeps `./.openclaw/.gitignore` if it already exists, and leaves existing git/SSH setup in place. If the current port cannot be detected safely, pass `--port`.
+`scripts/update-clow-docker.sh` is for an existing project. It updates the managed Docker/bootstrap files, preserves the current port by default, keeps `README.md` if it already exists, keeps `./.openclaw/.gitignore` if it already exists, and leaves existing git/SSH setup in place. If the current port cannot be detected safely, pass `--port`.
 
 ## Runtime
 
@@ -67,3 +67,4 @@ Control UI origin policy is configured in `./.openclaw/openclaw.json`. This setu
 
 See [README.claw-onboard.md](README.claw-onboard.md) for first-time setup.
 See [README.claw-run.md](README.claw-run.md) for normal run commands.
+See [README.gmail.md](README.gmail.md) if this agent needs Gmail access through `gog`.

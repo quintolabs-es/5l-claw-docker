@@ -2,11 +2,14 @@
 set -euo pipefail
 
 # Usage:
-#   curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/init-clow-docker.sh?skip-cache=$(date +%s)" | bash
-#   curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/init-clow-docker.sh?skip-cache=$(date +%s)" | bash -s -- --port 19001
+#   bash ./scripts/init-clow-docker.sh
+#   bash ./scripts/init-clow-docker.sh --port 19001
+#   curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/scripts/init-clow-docker.sh?skip-cache=$(date +%s)" | bash
+#   curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/scripts/init-clow-docker.sh?skip-cache=$(date +%s)" | bash -s -- --port 19001
 
 ROOT_DIR="${PWD}"
 RAW_BASE_URL="https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main"
+COMMON_HELPER_PATH="scripts/clow-docker-common.sh"
 COMMON_HELPER_NAME="clow-docker-common.sh"
 TMP_COMMON_HELPER=""
 GATEWAY_PORT=""
@@ -27,8 +30,8 @@ load_common_helper() {
 
   if [[ -n "$SCRIPT_DIR" && -f "${SCRIPT_DIR}/${COMMON_HELPER_NAME}" ]]; then
     local_helper="${SCRIPT_DIR}/${COMMON_HELPER_NAME}"
-  elif [[ -f "${ROOT_DIR}/${COMMON_HELPER_NAME}" ]]; then
-    local_helper="${ROOT_DIR}/${COMMON_HELPER_NAME}"
+  elif [[ -f "${ROOT_DIR}/${COMMON_HELPER_PATH}" ]]; then
+    local_helper="${ROOT_DIR}/${COMMON_HELPER_PATH}"
   fi
 
   if [[ -n "$local_helper" ]]; then
@@ -38,7 +41,7 @@ load_common_helper() {
   fi
 
   TMP_COMMON_HELPER="$(mktemp)"
-  curl -fsSL "${RAW_BASE_URL}/${COMMON_HELPER_NAME}" -o "${TMP_COMMON_HELPER}"
+  curl -fsSL "${RAW_BASE_URL}/${COMMON_HELPER_PATH}" -o "${TMP_COMMON_HELPER}"
   # shellcheck source=/dev/null
   . "${TMP_COMMON_HELPER}"
 }
@@ -99,8 +102,9 @@ echo "  Dockerfile"
 echo "  README.claw.md"
 echo "  README.claw-onboard.md"
 echo "  README.claw-run.md"
-echo "  update-clow-docker.sh"
-echo "  clow-docker-common.sh"
+echo "  README.gmail.md"
+echo "  scripts/update-clow-docker.sh"
+echo "  scripts/clow-docker-common.sh"
 echo "  .openclaw/.gitignore"
 echo "  .openclaw/complete-onboard.sh"
 echo "  .secrets/git/.ssh/"

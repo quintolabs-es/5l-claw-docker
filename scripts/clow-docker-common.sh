@@ -9,17 +9,18 @@ MANAGED_DOWNLOAD_SPECS=(
   "README.md:README.claw.md"
   "README.claw-onboard.md:README.claw-onboard.md"
   "README.claw-run.md:README.claw-run.md"
+  "README.gmail.md:README.gmail.md"
   ".openclaw/.gitignore:.openclaw/.gitignore"
   ".openclaw/complete-onboard.sh:.openclaw/complete-onboard.sh"
   "journey-to-seed.sh:journey-to-seed.sh"
-  "update-clow-docker.sh:update-clow-docker.sh"
-  "clow-docker-common.sh:clow-docker-common.sh"
+  "scripts/update-clow-docker.sh:scripts/update-clow-docker.sh"
+  "scripts/clow-docker-common.sh:scripts/clow-docker-common.sh"
 )
 
 EXECUTABLE_MANAGED_FILES=(
   ".openclaw/complete-onboard.sh"
   "journey-to-seed.sh"
-  "update-clow-docker.sh"
+  "scripts/update-clow-docker.sh"
 )
 
 PORT_REWRITE_TARGETS=(
@@ -166,7 +167,7 @@ assert_directory_empty() {
 
   first_entry="$(find "$root_dir" -mindepth 1 -maxdepth 1 -print -quit)"
   if [[ -n "$first_entry" ]]; then
-    echo "Error: target directory is not empty: ${root_dir}. Use update-clow-docker.sh for existing projects." >&2
+    echo "Error: target directory is not empty: ${root_dir}. Use scripts/update-clow-docker.sh for existing projects." >&2
     exit 1
   fi
 }
