@@ -54,6 +54,9 @@ openclaw config set agents.defaults.heartbeat.activeHours.timezone "Europe/Madri
 
 The value `agents.defaults.heartbeat.target` specifies where to send the heartbeat response/result message, in case there is one.
 
+## Google Access
+The agent can access google services (gmail, calendar, drive..) through a skill based in `gog` cli. If needede, set `GOG_ACCOUNT` and `GOG_KEYRING_PASSWORD` in [docker-compose.yml](/Users/luismesa/Documents/src/quintolabs/5l-claw-docker/docker-compose.yml) and follow [README.gmail.md](/Users/luismesa/Documents/src/quintolabs/5l-claw-docker/docs/README.gmail.md) to setup it up.
+
 
 ## Start Gateway
 ```bash
@@ -65,6 +68,7 @@ OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --
 _It's expected that `systemd` check fails, because it's not used in docker._
 
 After onboarding is complete, use [README.claw-run.md](./README.claw-run.md) for normal day-to-day usage.
+If this agent needs Google account access, complete [README.gmail.md](/Users/luismesa/Documents/src/quintolabs/5l-claw-docker/docs/README.gmail.md) before or alongside normal runtime setup.
 
 ## Test run CLI
 To run cli commands, run the cli container and bash into it

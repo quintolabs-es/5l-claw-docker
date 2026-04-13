@@ -35,11 +35,11 @@ The onboarding container does not see your host `~/Downloads`, so place the file
 
 ## First-Time Authorization
 
-Set these values in `docker-compose.yml` first:
+Set these values in [docker-compose.yml](/Users/luismesa/Documents/src/quintolabs/5l-claw-docker/docker-compose.yml) first:
 
 `GOG_KEYRING_PASSWORD` is a local encryption password for `gog`'s file keyring. Use the same value each time this agent instance is started, or `gog` will not be able to read the tokens it already stored and the account will need to be re-authorized.
 
-```bash
+```yaml
 GOG_KEYRING_PASSWORD: "<strong-password>"
 GOG_ACCOUNT: "<you@gmail.com>"
 ```
@@ -80,7 +80,7 @@ gog auth add <you@gmail.com> --services gmail,drive,docs,sheets --force-consent 
 
 ## Start The Gateway With Gmail Access
 
-`docker-compose.yml` now carries `GOG_KEYRING_PASSWORD` and `GOG_ACCOUNT` directly for `openclaw-onboard`, `openclaw-gateway`, and `openclaw-cli`. `openclaw-onboard` needs them for first-time Gmail authorization, and `openclaw-cli` needs them for verification and one-off `gog` commands.
+[docker-compose.yml](/Users/luismesa/Documents/src/quintolabs/5l-claw-docker/docker-compose.yml) now carries `GOG_KEYRING_PASSWORD` and `GOG_ACCOUNT` directly for `openclaw-onboard`, `openclaw-gateway`, and `openclaw-cli`. `openclaw-onboard` needs them for first-time Gmail authorization, and `openclaw-cli` needs them for verification and one-off `gog` commands.
 
 After those values are set in Compose, start the gateway:
 
