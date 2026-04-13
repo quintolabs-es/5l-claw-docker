@@ -299,7 +299,11 @@ run_update() {
   local openclaw_gitignore_already_exists="0"
   local gateway_port="$requested_port"
 
-  refresh_self_for_update update "${UPDATE_ARGS[@]-}"
+  if [[ ${#UPDATE_ARGS[@]} -gt 0 ]]; then
+    refresh_self_for_update update "${UPDATE_ARGS[@]}"
+  else
+    refresh_self_for_update update
+  fi
 
   if [[ -z "$gateway_port" ]]; then
     if ! gateway_port="$(detect_existing_port "$ROOT_DIR")"; then
