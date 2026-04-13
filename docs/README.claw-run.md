@@ -2,15 +2,10 @@
 
 For first-time setup, use [README.claw-onboard.md](./README.claw-onboard.md).
 
-## Google Access
-If this agent uses Gmail or other Google account access through `gog`, also use [README.gmail.md](/Users/luismesa/Documents/src/quintolabs/5l-claw-docker/docs/README.gmail.md).
-
 ## Start Gateway
 ```bash
 OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose up -d openclaw-gateway
 ```
-
-`GOG_ACCOUNT` and `GOG_KEYRING_PASSWORD` are configured in [docker-compose.yml](/Users/luismesa/Documents/src/quintolabs/5l-claw-docker/docker-compose.yml) when this agent needs Google account access.
 
 ## Open Control UI
 Browse to `http://localhost:18789/`
