@@ -13,6 +13,7 @@ MANAGED_DOWNLOAD_SPECS=(
   ".openclaw/.gitignore:.openclaw/.gitignore"
   ".openclaw/complete-onboard.sh:.openclaw/complete-onboard.sh"
   "journey-to-seed.sh:journey-to-seed.sh"
+  "scripts/init-clow-docker.sh:scripts/init-clow-docker.sh"
   "scripts/update-clow-docker.sh:scripts/update-clow-docker.sh"
   "scripts/clow-docker-common.sh:scripts/clow-docker-common.sh"
 )
@@ -20,6 +21,7 @@ MANAGED_DOWNLOAD_SPECS=(
 EXECUTABLE_MANAGED_FILES=(
   ".openclaw/complete-onboard.sh"
   "journey-to-seed.sh"
+  "scripts/init-clow-docker.sh"
   "scripts/update-clow-docker.sh"
 )
 

@@ -48,7 +48,7 @@ load_common_helper() {
 
 usage() {
   cat <<'EOF'
-Usage: init-clow-docker.sh [--port <port>]
+Usage: scripts/init-clow-docker.sh [--port <port>]
 EOF
 }
 
@@ -103,6 +103,7 @@ echo "  README.claw.md"
 echo "  README.claw-onboard.md"
 echo "  README.claw-run.md"
 echo "  README.gmail.md"
+echo "  scripts/init-clow-docker.sh"
 echo "  scripts/update-clow-docker.sh"
 echo "  scripts/clow-docker-common.sh"
 echo "  .openclaw/.gitignore"
