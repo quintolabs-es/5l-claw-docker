@@ -1,18 +1,21 @@
 x-openclaw-env: &openclaw-env
   BROWSER: echo
-  GOG_ACCOUNT: "${GOG_ACCOUNT:-}" # Used by gog to select which Google account this agent should access. Set in .env, e.g. your.name@gmail.com.
-  GOG_KEYRING_PASSWORD: "${GOG_KEYRING_PASSWORD:-}" # Used by gog to decrypt the local file keyring that stores Google OAuth tokens. Set in .env.
   HOME: /home/node
   TERM: xterm-256color
   OPENCLAW_HOME: /home/node
   OPENCLAW_STATE_DIR: /home/node/.openclaw
   OPENCLAW_GATEWAY_TOKEN: ${OPENCLAW_GATEWAY_TOKEN:-missing-openclaw-gateway-token-env-var}
 
+x-openclaw-google-env-file: &openclaw-google-env-file
+  - path: ./.secrets/.env   # Copy ./.secrets/.env.example to ./.secrets/.env and set env variables needed.
+    required: false
+
 services:
   openclaw-onboard:
     build:
       context: .
       dockerfile: Dockerfile
+    env_file: *openclaw-google-env-file
     environment: *openclaw-env
     stdin_open: true
     tty: true
@@ -28,6 +31,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    env_file: *openclaw-google-env-file
     environment: *openclaw-env
     init: true
     command: ["openclaw", "gateway", "run", "--bind", "lan", "--port", "18789"]
@@ -43,6 +47,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    env_file: *openclaw-google-env-file
     network_mode: "service:openclaw-gateway"
     cap_drop:
       - NET_RAW

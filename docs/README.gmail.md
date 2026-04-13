@@ -50,7 +50,7 @@ cp <path-to-downloaded-client-json> ./.secrets/gogcli/.config/client_secret.json
 
 ## Setup Gmail Access
 
-Copy `.env.example` to `.env` and set these values.
+Copy `./.secrets/.env.example` to `./.secrets/.env` and set these values.
 ```dotenv
 GOG_KEYRING_PASSWORD=<strong-password>
 GOG_ACCOUNT=<you@gmail.com>
@@ -110,14 +110,14 @@ OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose restart ope
 OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --entrypoint bash openclaw-cli -lc "gog auth list --check && gog gmail search 'is:unread newer_than:7d' --max 10 --json"
 ```
 
-The search command should return JSON from your mailbox. If the command prompts for a keyring password or fails to find the account, check the `GOG_KEYRING_PASSWORD` and `GOG_ACCOUNT` values in `.env`.
+The search command should return JSON from your mailbox. If the command prompts for a keyring password or fails to find the account, check the `GOG_KEYRING_PASSWORD` and `GOG_ACCOUNT` values in `./.secrets/.env`.
 
 ## Troubleshooting
 
 - `gog: command not found`
   Rebuild the image with `docker compose build`.
 - `gog` keeps prompting for a keyring password
-  Check the `GOG_KEYRING_PASSWORD` value in `.env`.
+  Check the `GOG_KEYRING_PASSWORD` value in `./.secrets/.env`.
 - The OpenClaw Gmail skill does not load
   Make sure `gog` is on `PATH` inside the container and check `./.openclaw/openclaw.json` after onboarding. If `skills.allowBundled` is set, it must include `gog`.
 - You need to inspect where `gog` is storing state
