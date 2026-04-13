@@ -37,6 +37,8 @@ The onboarding container does not see your host `~/Downloads`, so place the file
 
 Export the runtime variables in the same shell you use for `docker compose`:
 
+`GOG_KEYRING_PASSWORD` is a local encryption password for `gog`'s file keyring. Use the same value each time this agent instance is started, or `gog` will not be able to read the tokens it already stored and the account will need to re-authorized.
+
 ```bash
 export GOG_KEYRING_PASSWORD='<strong-password>'
 export GOG_ACCOUNT='<you@gmail.com>'

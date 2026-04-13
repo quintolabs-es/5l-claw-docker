@@ -64,7 +64,7 @@ OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --
 ```
 _It's expected that `systemd` check fails, because it's not used in docker._
 
-After onboarding is complete, use [README.claw-run.md](README.claw-run.md) for normal day-to-day usage.
+After onboarding is complete, use [README.claw-run.md](./README.claw-run.md) for normal day-to-day usage.
 
 ## Test run CLI
 To run cli commands, run the cli container and bash into it

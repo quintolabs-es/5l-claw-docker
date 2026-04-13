@@ -24,28 +24,28 @@ MANAGED_DOWNLOAD_SPECS=(
   "project-root.gitignore:.gitignore"
   "docker-compose.yml:docker-compose.yml"
   "Dockerfile:Dockerfile"
-  "README.md:README.claw.md"
-  "README.claw-onboard.md:README.claw-onboard.md"
-  "README.claw-run.md:README.claw-run.md"
-  "README.gmail.md:README.gmail.md"
+  "docs/README.claw.md:docs/README.claw.md"
+  "docs/README.claw-onboard.md:docs/README.claw-onboard.md"
+  "docs/README.claw-run.md:docs/README.claw-run.md"
+  "docs/README.gmail.md:docs/README.gmail.md"
   ".openclaw/.gitignore:.openclaw/.gitignore"
   ".openclaw/complete-onboard.sh:.openclaw/complete-onboard.sh"
-  "journey-to-seed.sh:journey-to-seed.sh"
+  "scripts/journey-to-seed.sh:scripts/journey-to-seed.sh"
   "scripts/clow-docker.sh:scripts/clow-docker.sh"
 )
 
 EXECUTABLE_MANAGED_FILES=(
   ".openclaw/complete-onboard.sh"
-  "journey-to-seed.sh"
+  "scripts/journey-to-seed.sh"
   "scripts/clow-docker.sh"
 )
 
 PORT_REWRITE_TARGETS=(
   "docker-compose.yml"
   "Dockerfile"
-  "README.claw.md"
-  "README.claw-onboard.md"
-  "README.claw-run.md"
+  "docs/README.claw.md"
+  "docs/README.claw-onboard.md"
+  "docs/README.claw-run.md"
   ".openclaw/complete-onboard.sh"
 )
 
@@ -217,9 +217,14 @@ remove_legacy_bootstrap_files() {
   local legacy_relative
 
   for legacy_relative in \
+    "journey-to-seed.sh" \
     "clow-docker-common.sh" \
     "init-clow-docker.sh" \
     "update-clow-docker.sh" \
+    "README.claw.md" \
+    "README.claw-onboard.md" \
+    "README.claw-run.md" \
+    "README.gmail.md" \
     "scripts/clow-docker-common.sh" \
     "scripts/init-clow-docker.sh" \
     "scripts/update-clow-docker.sh"
@@ -270,19 +275,19 @@ run_init() {
   echo "  .gitignore"
   echo "  docker-compose.yml"
   echo "  Dockerfile"
-  echo "  README.claw.md"
-  echo "  README.claw-onboard.md"
-  echo "  README.claw-run.md"
-  echo "  README.gmail.md"
+  echo "  docs/README.claw.md"
+  echo "  docs/README.claw-onboard.md"
+  echo "  docs/README.claw-run.md"
+  echo "  docs/README.gmail.md"
   echo "  scripts/clow-docker.sh"
+  echo "  scripts/journey-to-seed.sh"
   echo "  .openclaw/.gitignore"
   echo "  .openclaw/complete-onboard.sh"
   echo "  .secrets/git/.ssh/"
   echo "  .secrets/gogcli/.config/"
-  echo "  journey-to-seed.sh"
   echo
   echo "Next:"
-  echo "  To continue with onboarding, read README.claw-onboard.md"
+  echo "  To continue with onboarding, read docs/README.claw-onboard.md"
   echo "  and run the onboard steps from that file."
 }
 
@@ -326,13 +331,13 @@ run_update() {
   echo "  docker-compose.yml"
   echo "  Dockerfile"
   echo "  .gitignore"
-  echo "  README.claw.md"
-  echo "  README.claw-onboard.md"
-  echo "  README.claw-run.md"
-  echo "  README.gmail.md"
+  echo "  docs/README.claw.md"
+  echo "  docs/README.claw-onboard.md"
+  echo "  docs/README.claw-run.md"
+  echo "  docs/README.gmail.md"
   echo "  scripts/clow-docker.sh"
+  echo "  scripts/journey-to-seed.sh"
   echo "  .openclaw/complete-onboard.sh"
-  echo "  journey-to-seed.sh"
   if [[ "$readme_already_exists" == "1" || "$openclaw_gitignore_already_exists" == "1" ]]; then
     echo
     echo "Kept:"

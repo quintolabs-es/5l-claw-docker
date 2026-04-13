@@ -23,7 +23,7 @@ The init script creates the Docker packaging files in the current folder, so run
 `scripts/clow-docker.sh init` assumes the target folder is empty and fails if it already contains files.
 From a cloned checkout of this repo, run `bash /path/to/5l-claw-docker/scripts/clow-docker.sh init` from the empty target folder.
 
-After init, continue with onboarding in [docs/README.claw-onboard.md](docs/README.claw-onboard.md).
+After init, continue with onboarding in [README.claw-onboard.md](./README.claw-onboard.md).
 
 ## Update
 ```bash
@@ -66,6 +66,6 @@ Control UI origin policy is configured in `./.openclaw/openclaw.json`. This setu
 
 ## Runbooks
 
-See [docs/README.claw-onboard.md](docs/README.claw-onboard.md) for first-time setup.
-See [docs/README.claw-run.md](docs/README.claw-run.md) for normal run commands.
-See [docs/README.gmail.md](docs/README.gmail.md) if this agent needs Gmail access through `gog`.
+See [README.claw-onboard.md](./README.claw-onboard.md) for first-time setup.
+See [README.claw-run.md](./README.claw-run.md) for normal run commands.
+See [README.gmail.md](./README.gmail.md) if this agent needs Gmail access through `gog`.

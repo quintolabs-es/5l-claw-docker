@@ -1,7 +1,7 @@
 #!/bin/sh
 set -eu
 
-# USAGE: ./journey-to-seed.sh
+# USAGE: ./scripts/journey-to-seed.sh
 
 # Reset runtime state so the agent comes back like a fresh just-onboarded instance.
 #
