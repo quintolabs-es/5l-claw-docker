@@ -7,5 +7,5 @@ secrets.json
 identity
 devices/paired.json
 canvas
-.secrets
+_secrets
 agents/*/agent

@@ -12,7 +12,7 @@ This script stages only `workspace/` in the nested `.openclaw` git repo, creates
 docker compose run --rm --no-deps --entrypoint bash openclaw-standalone-cli -lc 'cd /home/node/.openclaw && bash skills/backup-state-to-drive/scripts/backup-state-to-drive.sh'
 ```
 
-This script reads `skills/backup-state-to-drive/state.include`, creates a `tar.gz` with the durable non-workspace state, and uploads it with `gog` to `backups/<project-folder>/YYYYMMDD-HHmmss-backup.tar.gz`.
+This script reads `skills/backup-state-to-drive/state.include`, creates a `tar.gz` with the durable non-workspace state, and uploads it with `gog` to `backups/<project-folder>/YYYYMMDD-HHmmss-backup/state-backup.tar.gz`.
 
 Requirements:
 - `gog` is installed in the image

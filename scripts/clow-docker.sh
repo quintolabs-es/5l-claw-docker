@@ -21,7 +21,7 @@ SCRIPT_DIR=""
 SCRIPT_SOURCE_PATH=""
 
 MANAGED_DOWNLOAD_SPECS=(
-  ".openclaw/.secrets/.env.example:.openclaw/.secrets/.env.example"
+  ".openclaw/_secrets/.env.example:.openclaw/_secrets/.env.example"
   "docker-compose.yml:docker-compose.yml"
   "Dockerfile:Dockerfile"
   "docs/README.claw.md:docs/README.claw.md"
@@ -272,38 +272,6 @@ remove_legacy_bootstrap_files() {
   done
 }
 
-migrate_legacy_secrets_dir() {
-  local legacy_dir="${ROOT_DIR}/.secrets"
-  local target_dir="${ROOT_DIR}/.openclaw/.secrets"
-  local path name
-
-  if [[ ! -d "$legacy_dir" ]]; then
-    return
-  fi
-
-  if [[ ! -e "$target_dir" ]]; then
-    mv "$legacy_dir" "$target_dir"
-    return
-  fi
-
-  mkdir -p "$target_dir"
-
-  for path in "$legacy_dir"/.[!.]* "$legacy_dir"/..?* "$legacy_dir"/*; do
-    if [[ ! -e "$path" ]]; then
-      continue
-    fi
-
-    name="$(basename "$path")"
-    if [[ -e "${target_dir}/${name}" ]]; then
-      continue
-    fi
-
-    mv "$path" "${target_dir}/${name}"
-  done
-
-  rmdir "$legacy_dir" 2>/dev/null || true
-}
-
 refresh_self_for_update() {
   if [[ "${!SELF_REFRESH_ENV_VAR:-0}" == "1" ]]; then
     return
@@ -336,8 +304,8 @@ run_init() {
 
   mkdir -p \
     "${ROOT_DIR}/.openclaw" \
-    "${ROOT_DIR}/.openclaw/.secrets/git/.ssh" \
-    "${ROOT_DIR}/.openclaw/.secrets/gogcli/.config"
+    "${ROOT_DIR}/.openclaw/_secrets/git/.ssh" \
+    "${ROOT_DIR}/.openclaw/_secrets/gogcli/.config"
 
   create_placeholder_readme "${ROOT_DIR}/README.md"
   sync_managed_downloads "$ROOT_DIR"
@@ -348,7 +316,7 @@ run_init() {
 
   echo "Created:"
   echo "  README.md"
-  echo "  .openclaw/.secrets/.env.example"
+  echo "  .openclaw/_secrets/.env.example"
   echo "  docker-compose.yml"
   echo "  Dockerfile"
   echo "  docs/README.claw.md"
@@ -362,8 +330,8 @@ run_init() {
   echo "  scripts/journey-to-seed.sh"
   echo "  .openclaw/.gitignore"
   echo "  .openclaw/_scripts/complete-onboard.sh"
-  echo "  .openclaw/.secrets/git/.ssh/"
-  echo "  .openclaw/.secrets/gogcli/.config/"
+  echo "  .openclaw/_secrets/git/.ssh/"
+  echo "  .openclaw/_secrets/gogcli/.config/"
   echo
   echo "Next:"
   echo "  To continue with onboarding, read docs/README.onboard.md"
@@ -395,7 +363,6 @@ run_update() {
   validate_port "$gateway_port"
 
   mkdir -p "${ROOT_DIR}/.openclaw"
-  migrate_legacy_secrets_dir
 
   if [[ -e "${ROOT_DIR}/README.md" ]]; then
     readme_already_exists="1"
@@ -418,7 +385,7 @@ run_update() {
   echo "Updated:"
   echo "  docker-compose.yml"
   echo "  Dockerfile"
-  echo "  .openclaw/.secrets/.env.example"
+  echo "  .openclaw/_secrets/.env.example"
   echo "  .openclaw/_scripts/complete-onboard.sh"
   echo "  .openclaw/skills/backup-workspace-to-git/"
   echo "  .openclaw/skills/backup-state-to-drive/"

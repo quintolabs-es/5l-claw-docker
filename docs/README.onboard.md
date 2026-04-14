@@ -26,11 +26,11 @@ bash _scripts/complete-onboard.sh
 bash _scripts/complete-onboard.sh --github-repo-url https://github.com/owner/repo --git-name "La Garra" --git-email "lagarra@quintolabs.es"
 ```
 
-If `--github-repo-url` was used, the complete-onboard script creates SSH files in `./.openclaw/.secrets/git/.ssh/` on the host and mounts them as `~/.ssh` in the Docker containers that may need Git access.
+If `--github-repo-url` was used, the complete-onboard script creates SSH files in `./.openclaw/_secrets/git/.ssh/` on the host and mounts them as `~/.ssh` in the Docker containers that may need Git access.
 
 **Add the generated public key in GitHub** as a deploy key with write access for that private repo:
 ```bash
-cat ./.openclaw/.secrets/git/.ssh/id_ed25519.pub
+cat ./.openclaw/_secrets/git/.ssh/id_ed25519.pub
 ```
 
 **Then back to the standalone CLI container**, verify push works:
@@ -43,7 +43,7 @@ git push origin head
 ### Google Access
 Optional post-onboard setup.
 
-The agent can access Google services such as Gmail, Calendar, and Drive through the `gog` CLI skill. If needed, copy `./.openclaw/.secrets/.env.example` to `./.openclaw/.secrets/.env`, set `GOG_ACCOUNT` and `GOG_KEYRING_PASSWORD`, and then complete [README.google.md](./README.google.md).
+The agent can access Google services such as Gmail, Calendar, and Drive through the `gog` CLI skill. If needed, copy `./.openclaw/_secrets/.env.example` to `./.openclaw/_secrets/.env`, set `GOG_ACCOUNT` and `GOG_KEYRING_PASSWORD`, and then complete [README.google.md](./README.google.md).
 
 
 ### Set Hearbeat and heartbit response channel

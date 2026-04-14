@@ -7,7 +7,7 @@ x-openclaw-env: &openclaw-env
   OPENCLAW_GATEWAY_TOKEN: ${OPENCLAW_GATEWAY_TOKEN:-missing-openclaw-gateway-token-env-var}
 
 x-openclaw-google-env-file: &openclaw-google-env-file
-  - path: ./.openclaw/.secrets/.env   # Copy ./.openclaw/.secrets/.env.example to ./.openclaw/.secrets/.env and set env variables needed.
+  - path: ./.openclaw/_secrets/.env   # Copy ./.openclaw/_secrets/.env.example to ./.openclaw/_secrets/.env and set env variables needed.
     required: false
 
 services:
@@ -26,8 +26,8 @@ services:
     restart: "no"
     volumes:
       - ./.openclaw:/home/node/.openclaw
-      - ./.openclaw/.secrets/git/.ssh:/home/node/.ssh
-      - ./.openclaw/.secrets/gogcli/.config:/home/node/.config/gogcli
+      - ./.openclaw/_secrets/git/.ssh:/home/node/.ssh
+      - ./.openclaw/_secrets/gogcli/.config:/home/node/.config/gogcli
 
   openclaw-gateway:
     build:
@@ -42,8 +42,8 @@ services:
     restart: unless-stopped
     volumes:
       - ./.openclaw:/home/node/.openclaw
-      - ./.openclaw/.secrets/git/.ssh:/home/node/.ssh
-      - ./.openclaw/.secrets/gogcli/.config:/home/node/.config/gogcli
+      - ./.openclaw/_secrets/git/.ssh:/home/node/.ssh
+      - ./.openclaw/_secrets/gogcli/.config:/home/node/.config/gogcli
 
   # CLI that shares the gateway network namespace and is intended for commands
   # that talk to the running gateway over 127.0.0.1.
@@ -69,5 +69,5 @@ services:
     restart: "no"
     volumes:
       - ./.openclaw:/home/node/.openclaw
-      - ./.openclaw/.secrets/git/.ssh:/home/node/.ssh
-      - ./.openclaw/.secrets/gogcli/.config:/home/node/.config/gogcli
+      - ./.openclaw/_secrets/git/.ssh:/home/node/.ssh
+      - ./.openclaw/_secrets/gogcli/.config:/home/node/.config/gogcli
