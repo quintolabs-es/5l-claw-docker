@@ -1,7 +1,7 @@
 #!/bin/sh
 set -eu
 
-# USAGE: ./.openclaw/_scripts/journey-to-seed.sh
+# USAGE: ./scripts/journey-to-seed.sh
 
 # Reset runtime state so the agent comes back like a fresh just-onboarded instance.
 #
@@ -14,9 +14,9 @@ set -eu
 # - .openclaw/completions
 
 SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+PROJECT_ROOT=$(dirname "$SCRIPT_DIR")
 
-STATE_DIR="$SCRIPT_DIR/.openclaw"
-
+STATE_DIR="$PROJECT_ROOT/.openclaw"
 AGENTS_DIR="$STATE_DIR/agents"
 
 CLEAN_DIRS="
@@ -26,6 +26,15 @@ $STATE_DIR/memory
 $STATE_DIR/logs
 $STATE_DIR/completions
 "
+
+delete_dir_contents() {
+  dir="$1"
+  first_entry=$(find "$dir" -mindepth 1 -print -quit)
+
+  [ -z "$first_entry" ] && return 0
+
+  find "$dir" -mindepth 1 -print -exec rm -rf {} +
+}
 
 printf '%s\n' 'This will delete all contents of:'
 
@@ -68,14 +77,16 @@ printf '\n'
 if [ -d "$AGENTS_DIR" ]; then
   for session_dir in "$AGENTS_DIR"/*/sessions; do
     if [ -d "$session_dir" ]; then
-      find "$session_dir" -mindepth 1 -print -exec rm -rf {} +
+      delete_dir_contents "$session_dir"
     fi
   done
 fi
 
 printf '%s' "$CLEAN_DIRS" | while IFS= read -r dir; do
   [ -z "$dir" ] && continue
-  [ -d "$dir" ] && find "$dir" -mindepth 1 -print -exec rm -rf {} +
+  if [ -d "$dir" ]; then
+    delete_dir_contents "$dir"
+  fi
 done
 
 printf 'Journey-to-seed complete. Restart gateway and the agent should start fresh again. \n'

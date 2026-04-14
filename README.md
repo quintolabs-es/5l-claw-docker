@@ -14,9 +14,9 @@ Unlike the official Docker setup, which writes config and workspace on the host 
 ```bash
 mkdir -p claw-agent
 cd claw-agent
-curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/.openclaw/_scripts/clow-docker.sh?skip-cache=$(date +%s)" | bash -s -- init
+curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/scripts/clow-docker.sh?skip-cache=$(date +%s)" | bash -s -- init
 # or specifing a port different than default
-curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/.openclaw/_scripts/clow-docker.sh?skip-cache=$(date +%s)" | bash -s -- init --port 19001
+curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/scripts/clow-docker.sh?skip-cache=$(date +%s)" | bash -s -- init --port 19001
 ```
 
 The init script creates the Docker packaging files in the current folder, so run it from the directory where you want this OpenClaw instance to live.
@@ -27,9 +27,9 @@ After init, continue with onboarding in [docs/README.onboard.md](docs/README.onb
 
 ## Update
 ```bash
-curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/.openclaw/_scripts/clow-docker.sh?skip-cache=$(date +%s)" | bash -s -- update
+curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/scripts/clow-docker.sh?skip-cache=$(date +%s)" | bash -s -- update
 # or override the current port
-curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/.openclaw/_scripts/clow-docker.sh?skip-cache=$(date +%s)" | bash -s -- update --port 19001
+curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/scripts/clow-docker.sh?skip-cache=$(date +%s)" | bash -s -- update --port 19001
 ```
 
 `update` is for an existing project. Always use the latest script from the repo through `curl`, not a possibly outdated local copy. It updates the managed Docker/bootstrap files, preserves the current port by default, keeps `README.md` if it already exists, keeps `./.openclaw/.gitignore` if it already exists, and leaves existing git/SSH setup in place. If the current port cannot be detected safely, pass `--port`.
