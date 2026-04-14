@@ -380,18 +380,18 @@ run_update() {
   remove_legacy_bootstrap_files "$ROOT_DIR"
 
   echo "Updated:"
-  echo "  .openclaw/.secrets/.env.example"
   echo "  docker-compose.yml"
   echo "  Dockerfile"
   echo "  .gitignore"
+  echo "  .openclaw/.secrets/.env.example"
+  echo "  .openclaw/_scripts/complete-onboard.sh"
+  echo "  .openclaw/skills/backup-to-git/"
   echo "  docs/README.claw.md"
   echo "  docs/README.onboard.md"
   echo "  docs/README.run.md"
   echo "  docs/README.google.md"
-  echo "  .openclaw/skills/backup-to-git/"
   echo "  scripts/clow-docker.sh"
   echo "  scripts/journey-to-seed.sh"
-  echo "  .openclaw/_scripts/complete-onboard.sh"
   if [[ "$readme_already_exists" == "1" || "$openclaw_gitignore_already_exists" == "1" ]]; then
     echo
     echo "Kept:"
