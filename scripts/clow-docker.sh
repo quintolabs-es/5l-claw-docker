@@ -22,7 +22,6 @@ SCRIPT_SOURCE_PATH=""
 
 MANAGED_DOWNLOAD_SPECS=(
   ".openclaw/.secrets/.env.example:.openclaw/.secrets/.env.example"
-  "project-root.gitignore:.gitignore"
   "docker-compose.yml:docker-compose.yml"
   "Dockerfile:Dockerfile"
   "docs/README.claw.md:docs/README.claw.md"
@@ -318,7 +317,6 @@ run_init() {
   echo "Created:"
   echo "  README.md"
   echo "  .openclaw/.secrets/.env.example"
-  echo "  .gitignore"
   echo "  docker-compose.yml"
   echo "  Dockerfile"
   echo "  docs/README.claw.md"
@@ -382,7 +380,6 @@ run_update() {
   echo "Updated:"
   echo "  docker-compose.yml"
   echo "  Dockerfile"
-  echo "  .gitignore"
   echo "  .openclaw/.secrets/.env.example"
   echo "  .openclaw/_scripts/complete-onboard.sh"
   echo "  .openclaw/skills/backup-to-git/"
