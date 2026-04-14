@@ -9,13 +9,15 @@ In this project:
 - Inside the containers, that path is mounted at `/home/node/.config/gogcli/`.
 - `./.openclaw/.secrets/` contains secrets and is intentionally included in the `.openclaw` backup repo. Use a private remote.
 
-## Create Google OAuth Desktop Credentials
+## Create Google OAuth Desktop Credentials in google cloud
 
 Use Google Cloud: `https://console.cloud.google.com/`.
 
 1. Create the Google Cloud project for this agent.
-2. Enable the Gmail API.
+2. Enable the required APIs.
    - Open [Gmail API](https://console.cloud.google.com/apis/library/gmail.googleapis.com)
+   - Click `Enable`
+   - Open [Google Drive API](https://console.cloud.google.com/apis/library/drive.googleapis.com)
    - Click `Enable`
 3. Configure Google Auth Platform.
    - Open [Google Auth Platform](https://console.cloud.google.com/auth)
@@ -111,6 +113,12 @@ docker compose run --rm --no-deps --entrypoint bash openclaw-standalone-cli -lc 
 ```
 
 The search command should return JSON from your mailbox. If the command prompts for a keyring password or fails to find the account, check the `GOG_KEYRING_PASSWORD` and `GOG_ACCOUNT` values in `./.openclaw/.secrets/.env`.
+
+```bash
+docker compose run --rm --no-deps --entrypoint bash openclaw-standalone-cli -lc "gog auth list --check && gog drive ls --max 10 --json"
+```
+
+The Drive command should return JSON metadata for files visible in your Google Drive account.
 
 ## Troubleshooting
 
