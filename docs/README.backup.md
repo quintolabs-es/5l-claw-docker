@@ -12,7 +12,7 @@ This script stages only `workspace/` in the nested `.openclaw` git repo, creates
 docker compose run --rm --no-deps --entrypoint bash openclaw-standalone-cli -lc 'cd /home/node/.openclaw && bash skills/backup-state-to-drive/scripts/backup-state-to-drive.sh'
 ```
 
-This script reads `skills/backup-state-to-drive/state.include`, creates a `tar.gz` with the durable non-workspace state, and uploads it with `gog` to `backups/<project-folder>/YYYYMMDD-HHmmss-backup/state-backup.tar.gz`.
+This script reads `skills/backup-state-to-drive/state.include`, creates a `tar.gz` with the durable non-workspace state, and uploads it with `gog` to `backups/<project-folder>/YYYYMMDD-HHmmss-state-backup.tar.gz`.
 
 Requirements:
 - `gog` is installed in the image
@@ -53,9 +53,9 @@ Step 5. Find and download the state backup from Drive.
 This restores the durable non-workspace state captured in the Drive backup.
 
 ```bash
-gog drive search "name contains 'backup' and trashed=false" --json
-gog drive download <fileId> --out /home/node/.openclaw/restore/backup.tar.gz
-tar -xzf /home/node/.openclaw/restore/backup.tar.gz -C /home/node/.openclaw/restore
+gog drive search "name contains 'state-backup.tar.gz' and trashed=false" --json
+gog drive download <fileId> --out /home/node/.openclaw/restore/state-backup.tar.gz
+tar -xzf /home/node/.openclaw/restore/state-backup.tar.gz -C /home/node/.openclaw/restore
 ```
 
 Step 6. Copy the restored state into `/.openclaw` without overwriting `.git`.

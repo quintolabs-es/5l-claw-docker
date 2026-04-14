@@ -11,8 +11,7 @@ INCLUDE_FILE="${SCRIPT_DIR}/../state.include"
 PROJECT_NAME="__PROJECT_NAME__"
 BACKUPS_FOLDER_NAME="backups"
 ARCHIVE_TIMESTAMP=$(date +%Y%m%d-%H%M%S)
-BACKUP_FOLDER_NAME="${ARCHIVE_TIMESTAMP}-backup"
-ARCHIVE_NAME="state-backup.tar.gz"
+ARCHIVE_NAME="${ARCHIVE_TIMESTAMP}-state-backup.tar.gz"
 TMP_DIR=""
 
 cleanup() {
@@ -177,11 +176,10 @@ tar -czf "$ARCHIVE_PATH" "${ARCHIVE_PATHS[@]}"
 
 BACKUPS_FOLDER_ID="$(ensure_drive_folder_id "$BACKUPS_FOLDER_NAME")"
 PROJECT_FOLDER_ID="$(ensure_drive_folder_id "$PROJECT_NAME" "$BACKUPS_FOLDER_ID")"
-BACKUP_FOLDER_ID="$(ensure_drive_folder_id "$BACKUP_FOLDER_NAME" "$PROJECT_FOLDER_ID")"
-UPLOAD_JSON="$(gog drive upload "$ARCHIVE_PATH" --parent "$BACKUP_FOLDER_ID" --name "$ARCHIVE_NAME" --json --results-only)"
+UPLOAD_JSON="$(gog drive upload "$ARCHIVE_PATH" --parent "$PROJECT_FOLDER_ID" --name "$ARCHIVE_NAME" --json --results-only)"
 UPLOAD_ID="$(printf '%s' "$UPLOAD_JSON" | json_first_id_from_stdin)"
 
-echo "Uploaded: ${BACKUPS_FOLDER_NAME}/${PROJECT_NAME}/${BACKUP_FOLDER_NAME}/${ARCHIVE_NAME}"
+echo "Uploaded: ${BACKUPS_FOLDER_NAME}/${PROJECT_NAME}/${ARCHIVE_NAME}"
 if [[ -n "$UPLOAD_ID" ]]; then
   echo "Drive file ID: ${UPLOAD_ID}"
 fi
