@@ -20,10 +20,10 @@ openclaw onboard --mode local --no-install-daemon
 
 # complete onboard for Docker and initialize the durable state repo
 cd /home/node/.openclaw
-bash complete-onboard.sh
+bash _scripts/complete-onboard.sh
 
 # or with optional parameters
-bash complete-onboard.sh --github-repo-url https://github.com/owner/repo --git-name "La Garra" --git-email "lagarra@quintolabs.es"
+bash _scripts/complete-onboard.sh --github-repo-url https://github.com/owner/repo --git-name "La Garra" --git-email "lagarra@quintolabs.es"
 ```
 
 If `--github-repo-url` was used, the complete-onboard script creates SSH files in `./.openclaw/.secrets/git/.ssh/` on the host and mounts them as `~/.ssh` in the Docker containers that may need Git access.

@@ -2,18 +2,18 @@
 set -euo pipefail
 
 # Usage:
-#   bash ./scripts/clow-docker.sh init
-#   bash ./scripts/clow-docker.sh init --port 19001
-#   bash ./scripts/clow-docker.sh update
-#   bash ./scripts/clow-docker.sh update --port 19001
-#   curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/scripts/clow-docker.sh?skip-cache=$(date +%s)" | bash -s -- init
-#   curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/scripts/clow-docker.sh?skip-cache=$(date +%s)" | bash -s -- init --port 19001
-#   curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/scripts/clow-docker.sh?skip-cache=$(date +%s)" | bash -s -- update
-#   curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/scripts/clow-docker.sh?skip-cache=$(date +%s)" | bash -s -- update --port 19001
+#   bash ./.openclaw/_scripts/clow-docker.sh init
+#   bash ./.openclaw/_scripts/clow-docker.sh init --port 19001
+#   bash ./.openclaw/_scripts/clow-docker.sh update
+#   bash ./.openclaw/_scripts/clow-docker.sh update --port 19001
+#   curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/.openclaw/_scripts/clow-docker.sh?skip-cache=$(date +%s)" | bash -s -- init
+#   curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/.openclaw/_scripts/clow-docker.sh?skip-cache=$(date +%s)" | bash -s -- init --port 19001
+#   curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/.openclaw/_scripts/clow-docker.sh?skip-cache=$(date +%s)" | bash -s -- update
+#   curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/.openclaw/_scripts/clow-docker.sh?skip-cache=$(date +%s)" | bash -s -- update --port 19001
 
 ROOT_DIR="${PWD}"
 RAW_BASE_URL="${CLAW_DOCKER_RAW_BASE_URL:-https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main}"
-SELF_PATH_RELATIVE="scripts/clow-docker.sh"
+SELF_PATH_RELATIVE=".openclaw/_scripts/clow-docker.sh"
 SELF_REFRESH_ENV_VAR="CLAW_DOCKER_SKIP_SELF_REFRESH"
 DEFAULT_GATEWAY_PORT="18789"
 TMP_SELF_SCRIPT=""
@@ -30,18 +30,18 @@ MANAGED_DOWNLOAD_SPECS=(
   "docs/README.claw-run.md:docs/README.claw-run.md"
   "docs/README.gmail.md:docs/README.gmail.md"
   ".openclaw/.gitignore:.openclaw/.gitignore"
-  ".openclaw/complete-onboard.sh:.openclaw/complete-onboard.sh"
+  ".openclaw/_scripts/complete-onboard.sh:.openclaw/_scripts/complete-onboard.sh"
   ".openclaw/skills/backup-to-git/SKILL.md:.openclaw/skills/backup-to-git/SKILL.md"
   ".openclaw/skills/backup-to-git/scripts/backup-state-to-git.sh:.openclaw/skills/backup-to-git/scripts/backup-state-to-git.sh"
-  "scripts/journey-to-seed.sh:scripts/journey-to-seed.sh"
-  "scripts/clow-docker.sh:scripts/clow-docker.sh"
+  ".openclaw/_scripts/journey-to-seed.sh:.openclaw/_scripts/journey-to-seed.sh"
+  ".openclaw/_scripts/clow-docker.sh:.openclaw/_scripts/clow-docker.sh"
 )
 
 EXECUTABLE_MANAGED_FILES=(
-  ".openclaw/complete-onboard.sh"
+  ".openclaw/_scripts/complete-onboard.sh"
   ".openclaw/skills/backup-to-git/scripts/backup-state-to-git.sh"
-  "scripts/journey-to-seed.sh"
-  "scripts/clow-docker.sh"
+  ".openclaw/_scripts/journey-to-seed.sh"
+  ".openclaw/_scripts/clow-docker.sh"
 )
 
 PORT_REWRITE_TARGETS=(
@@ -50,7 +50,7 @@ PORT_REWRITE_TARGETS=(
   "docs/README.claw.md"
   "docs/README.claw-onboard.md"
   "docs/README.claw-run.md"
-  ".openclaw/complete-onboard.sh"
+  ".openclaw/_scripts/complete-onboard.sh"
 )
 
 if [[ -n "${BASH_SOURCE[0]:-}" && "${BASH_SOURCE[0]}" != "bash" ]]; then
@@ -67,8 +67,8 @@ cleanup_temp_files() {
 usage() {
   cat <<'EOF'
 Usage:
-  scripts/clow-docker.sh init [--port <port>]
-  scripts/clow-docker.sh update [--port <port>]
+  .openclaw/_scripts/clow-docker.sh init [--port <port>]
+  .openclaw/_scripts/clow-docker.sh update [--port <port>]
 EOF
 }
 
@@ -186,7 +186,7 @@ rewrite_port_in_targets() {
 detect_existing_port() {
   local root_dir="$1"
   local docker_compose_path="$root_dir/docker-compose.yml"
-  local onboard_script_path="$root_dir/.openclaw/complete-onboard.sh"
+  local onboard_script_path="$root_dir/.openclaw/_scripts/complete-onboard.sh"
   local port=""
 
   if [[ -f "$docker_compose_path" ]]; then
@@ -211,7 +211,7 @@ assert_directory_empty() {
 
   first_entry="$(find "$root_dir" -mindepth 1 -maxdepth 1 -print -quit)"
   if [[ -n "$first_entry" ]]; then
-    echo "Error: target directory is not empty: ${root_dir}. Use scripts/clow-docker.sh update for existing projects." >&2
+    echo "Error: target directory is not empty: ${root_dir}. Use .openclaw/_scripts/clow-docker.sh update for existing projects." >&2
     exit 1
   fi
 }
@@ -229,6 +229,9 @@ remove_legacy_bootstrap_files() {
     "README.claw-onboard.md" \
     "README.claw-run.md" \
     "README.gmail.md" \
+    ".openclaw/complete-onboard.sh" \
+    "scripts/journey-to-seed.sh" \
+    "scripts/clow-docker.sh" \
     "scripts/clow-docker-common.sh" \
     "scripts/init-clow-docker.sh" \
     "scripts/update-clow-docker.sh"
@@ -237,6 +240,8 @@ remove_legacy_bootstrap_files() {
       rm -f "${root_dir}/${legacy_relative}"
     fi
   done
+
+  rmdir "${root_dir}/scripts" 2>/dev/null || true
 }
 
 migrate_legacy_secrets_dir() {
@@ -283,7 +288,7 @@ refresh_self_for_update() {
   TMP_SELF_SCRIPT="$(mktemp)"
 
   if ! curl -fsSL "${RAW_BASE_URL}/${SELF_PATH_RELATIVE}" -o "${TMP_SELF_SCRIPT}"; then
-    echo "Error: failed to download the latest scripts/clow-docker.sh for update." >&2
+    echo "Error: failed to download the latest .openclaw/_scripts/clow-docker.sh for update." >&2
     exit 1
   fi
 
@@ -320,10 +325,10 @@ run_init() {
   echo "  docs/README.claw-run.md"
   echo "  docs/README.gmail.md"
   echo "  .openclaw/skills/backup-to-git/"
-  echo "  scripts/clow-docker.sh"
-  echo "  scripts/journey-to-seed.sh"
+  echo "  .openclaw/_scripts/clow-docker.sh"
+  echo "  .openclaw/_scripts/journey-to-seed.sh"
   echo "  .openclaw/.gitignore"
-  echo "  .openclaw/complete-onboard.sh"
+  echo "  .openclaw/_scripts/complete-onboard.sh"
   echo "  .openclaw/.secrets/git/.ssh/"
   echo "  .openclaw/.secrets/gogcli/.config/"
   echo
@@ -383,9 +388,9 @@ run_update() {
   echo "  docs/README.claw-run.md"
   echo "  docs/README.gmail.md"
   echo "  .openclaw/skills/backup-to-git/"
-  echo "  scripts/clow-docker.sh"
-  echo "  scripts/journey-to-seed.sh"
-  echo "  .openclaw/complete-onboard.sh"
+  echo "  .openclaw/_scripts/clow-docker.sh"
+  echo "  .openclaw/_scripts/journey-to-seed.sh"
+  echo "  .openclaw/_scripts/complete-onboard.sh"
   if [[ "$readme_already_exists" == "1" || "$openclaw_gitignore_already_exists" == "1" ]]; then
     echo
     echo "Kept:"

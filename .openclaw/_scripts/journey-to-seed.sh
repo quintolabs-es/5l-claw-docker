@@ -1,7 +1,7 @@
 #!/bin/sh
 set -eu
 
-# USAGE: ./scripts/journey-to-seed.sh
+# USAGE: ./.openclaw/_scripts/journey-to-seed.sh
 
 # Reset runtime state so the agent comes back like a fresh just-onboarded instance.
 #

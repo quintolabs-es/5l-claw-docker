@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # Usage:
-#   /home/node/.openclaw/complete-onboard.sh [--github-repo-url <https://github.com/owner/repo>] [--git-name <name>] [--git-email <email>]
+#   /home/node/.openclaw/_scripts/complete-onboard.sh [--github-repo-url <https://github.com/owner/repo>] [--git-name <name>] [--git-email <email>]
 
 GATEWAY_PORT="18789"
 GIT_NAME="La Garra"

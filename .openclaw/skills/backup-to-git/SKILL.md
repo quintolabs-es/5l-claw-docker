@@ -17,7 +17,7 @@ Do not use it for transient runtime artifacts such as media, memory, tasks, logs
 Run:
 
 ```bash
-bash scripts/backup-state-to-git.sh
+bash skills/backup-to-git/scripts/backup-state-to-git.sh
 ```
 
 If the script reports there is nothing to commit, stop there.
