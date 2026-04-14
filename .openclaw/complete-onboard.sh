@@ -64,7 +64,7 @@ EOF
   echo "GitHub deploy public key:"
   echo "  $ssh_pub_key_path"
   echo "Host path:"
-  echo "  ./.secrets/git/.ssh/id_ed25519.pub"
+  echo "  ./.openclaw/.secrets/git/.ssh/id_ed25519.pub"
 }
 
 while [[ $# -gt 0 ]]; do

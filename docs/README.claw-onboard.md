@@ -26,11 +26,11 @@ bash complete-onboard.sh
 bash complete-onboard.sh --github-repo-url https://github.com/owner/repo --git-name "La Garra" --git-email "lagarra@quintolabs.es"
 ```
 
-If `--github-repo-url` was used, the complete-onboard script creates SSH files in `./.secrets/git/.ssh/` on the host and mounts them as `~/.ssh` in the Docker containers that may need Git access.
+If `--github-repo-url` was used, the complete-onboard script creates SSH files in `./.openclaw/.secrets/git/.ssh/` on the host and mounts them as `~/.ssh` in the Docker containers that may need Git access.
 
 **Add the generated public key in GitHub** as a deploy key with write access for that private repo:
 ```bash
-cat ./.secrets/git/.ssh/id_ed25519.pub
+cat ./.openclaw/.secrets/git/.ssh/id_ed25519.pub
 ```
 
 **Then back to the onboard container**, verify push works:
@@ -43,7 +43,7 @@ git push origin head
 ### Google Access
 Optional post-onboard setup.
 
-The agent can access Google services such as Gmail, Calendar, and Drive through the `gog` CLI skill. If needed, copy `./.secrets/.env.example` to `./.secrets/.env`, set `GOG_ACCOUNT` and `GOG_KEYRING_PASSWORD`, and then complete [README.gmail.md](/Users/luismesa/Documents/src/quintolabs/5l-claw-docker/docs/README.gmail.md).
+The agent can access Google services such as Gmail, Calendar, and Drive through the `gog` CLI skill. If needed, copy `./.openclaw/.secrets/.env.example` to `./.openclaw/.secrets/.env`, set `GOG_ACCOUNT` and `GOG_KEYRING_PASSWORD`, and then complete [README.gmail.md](./README.gmail.md).
 
 
 ### Set Hearbeat and heartbit response channel
@@ -73,8 +73,8 @@ _It's expected that `systemd` check fails, because it's not used in docker._
 
 After onboarding is complete:
 
-- use [README.claw-run.md](/Users/luismesa/Documents/src/quintolabs/5l-claw-docker/docs/README.claw-run.md) for normal day-to-day usage
-- if this agent needs Google account access, complete [README.gmail.md](/Users/luismesa/Documents/src/quintolabs/5l-claw-docker/docs/README.gmail.md) before day-to-day usage
+- use [README.claw-run.md](./README.claw-run.md) for normal day-to-day usage
+- if this agent needs Google account access, complete [README.gmail.md](./README.gmail.md) before day-to-day usage
 
 ## Test run CLI
 To run cli commands, run the cli container and bash into it

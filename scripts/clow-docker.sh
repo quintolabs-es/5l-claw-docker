@@ -21,7 +21,7 @@ SCRIPT_DIR=""
 SCRIPT_SOURCE_PATH=""
 
 MANAGED_DOWNLOAD_SPECS=(
-  ".secrets/.env.example:.secrets/.env.example"
+  ".openclaw/.secrets/.env.example:.openclaw/.secrets/.env.example"
   "project-root.gitignore:.gitignore"
   "docker-compose.yml:docker-compose.yml"
   "Dockerfile:Dockerfile"
@@ -31,12 +31,15 @@ MANAGED_DOWNLOAD_SPECS=(
   "docs/README.gmail.md:docs/README.gmail.md"
   ".openclaw/.gitignore:.openclaw/.gitignore"
   ".openclaw/complete-onboard.sh:.openclaw/complete-onboard.sh"
+  ".openclaw/skills/backup-to-git/SKILL.md:.openclaw/skills/backup-to-git/SKILL.md"
+  ".openclaw/skills/backup-to-git/scripts/backup-state-to-git.sh:.openclaw/skills/backup-to-git/scripts/backup-state-to-git.sh"
   "scripts/journey-to-seed.sh:scripts/journey-to-seed.sh"
   "scripts/clow-docker.sh:scripts/clow-docker.sh"
 )
 
 EXECUTABLE_MANAGED_FILES=(
   ".openclaw/complete-onboard.sh"
+  ".openclaw/skills/backup-to-git/scripts/backup-state-to-git.sh"
   "scripts/journey-to-seed.sh"
   "scripts/clow-docker.sh"
 )
@@ -236,6 +239,38 @@ remove_legacy_bootstrap_files() {
   done
 }
 
+migrate_legacy_secrets_dir() {
+  local legacy_dir="${ROOT_DIR}/.secrets"
+  local target_dir="${ROOT_DIR}/.openclaw/.secrets"
+  local path name
+
+  if [[ ! -d "$legacy_dir" ]]; then
+    return
+  fi
+
+  if [[ ! -e "$target_dir" ]]; then
+    mv "$legacy_dir" "$target_dir"
+    return
+  fi
+
+  mkdir -p "$target_dir"
+
+  for path in "$legacy_dir"/.[!.]* "$legacy_dir"/..?* "$legacy_dir"/*; do
+    if [[ ! -e "$path" ]]; then
+      continue
+    fi
+
+    name="$(basename "$path")"
+    if [[ -e "${target_dir}/${name}" ]]; then
+      continue
+    fi
+
+    mv "$path" "${target_dir}/${name}"
+  done
+
+  rmdir "$legacy_dir" 2>/dev/null || true
+}
+
 refresh_self_for_update() {
   if [[ "${!SELF_REFRESH_ENV_VAR:-0}" == "1" ]]; then
     return
@@ -263,7 +298,10 @@ run_init() {
   validate_port "$gateway_port"
   assert_directory_empty "$ROOT_DIR"
 
-  mkdir -p "${ROOT_DIR}/.openclaw" "${ROOT_DIR}/.secrets/git/.ssh" "${ROOT_DIR}/.secrets/gogcli/.config"
+  mkdir -p \
+    "${ROOT_DIR}/.openclaw" \
+    "${ROOT_DIR}/.openclaw/.secrets/git/.ssh" \
+    "${ROOT_DIR}/.openclaw/.secrets/gogcli/.config"
 
   create_placeholder_readme "${ROOT_DIR}/README.md"
   sync_managed_downloads "$ROOT_DIR"
@@ -273,7 +311,7 @@ run_init() {
 
   echo "Created:"
   echo "  README.md"
-  echo "  .secrets/.env.example"
+  echo "  .openclaw/.secrets/.env.example"
   echo "  .gitignore"
   echo "  docker-compose.yml"
   echo "  Dockerfile"
@@ -281,12 +319,13 @@ run_init() {
   echo "  docs/README.claw-onboard.md"
   echo "  docs/README.claw-run.md"
   echo "  docs/README.gmail.md"
+  echo "  .openclaw/skills/backup-to-git/"
   echo "  scripts/clow-docker.sh"
   echo "  scripts/journey-to-seed.sh"
   echo "  .openclaw/.gitignore"
   echo "  .openclaw/complete-onboard.sh"
-  echo "  .secrets/git/.ssh/"
-  echo "  .secrets/gogcli/.config/"
+  echo "  .openclaw/.secrets/git/.ssh/"
+  echo "  .openclaw/.secrets/gogcli/.config/"
   echo
   echo "Next:"
   echo "  To continue with onboarding, read docs/README.claw-onboard.md"
@@ -315,6 +354,7 @@ run_update() {
   validate_port "$gateway_port"
 
   mkdir -p "${ROOT_DIR}/.openclaw"
+  migrate_legacy_secrets_dir
 
   if [[ -e "${ROOT_DIR}/README.md" ]]; then
     readme_already_exists="1"
@@ -334,7 +374,7 @@ run_update() {
   remove_legacy_bootstrap_files "$ROOT_DIR"
 
   echo "Updated:"
-  echo "  .secrets/.env.example"
+  echo "  .openclaw/.secrets/.env.example"
   echo "  docker-compose.yml"
   echo "  Dockerfile"
   echo "  .gitignore"
@@ -342,6 +382,7 @@ run_update() {
   echo "  docs/README.claw-onboard.md"
   echo "  docs/README.claw-run.md"
   echo "  docs/README.gmail.md"
+  echo "  .openclaw/skills/backup-to-git/"
   echo "  scripts/clow-docker.sh"
   echo "  scripts/journey-to-seed.sh"
   echo "  .openclaw/complete-onboard.sh"
