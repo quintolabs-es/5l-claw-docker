@@ -18,7 +18,7 @@ Get tokenized url or plane url and add the gateway token where requested.
 
 ## Run CLI
 ```bash
-OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm openclaw-cli
+OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm openclaw-gateway-cli
 ```
 
 ## Doctor
@@ -44,10 +44,10 @@ docker compose down
 ---
 
 ## One off commands
-For one-off commands without bashing into a terminal session, replace openclaw with `OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --entrypoint openclaw openclaw-cli`
+For one-off commands without bashing into a terminal session, replace openclaw with `OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --entrypoint openclaw openclaw-gateway-cli`
 ```bash
 # e.g.: openclaw devices list:
 openclaw devices list
 # OR
-OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --entrypoint openclaw openclaw-cli devices list
+OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --entrypoint openclaw openclaw-gateway-cli devices list
 ```

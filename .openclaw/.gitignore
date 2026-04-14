@@ -1,7 +1,0 @@
-# ignore messages attachments
-media/
-# ignore indexed memory sqlite databases
-memory/
-# ignore tasks status sqlite databases
-tasks/
-

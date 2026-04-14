@@ -11,7 +11,9 @@ x-openclaw-google-env-file: &openclaw-google-env-file
     required: false
 
 services:
-  openclaw-onboard:
+  # Standalone CLI for onboarding, local state maintenance, backup, restore,
+  # and gog commands that do not require the gateway network namespace.
+  openclaw-standalone-cli:
     build:
       context: .
       dockerfile: Dockerfile
@@ -43,7 +45,9 @@ services:
       - ./.openclaw/.secrets/git/.ssh:/home/node/.ssh
       - ./.openclaw/.secrets/gogcli/.config:/home/node/.config/gogcli
 
-  openclaw-cli:
+  # CLI that shares the gateway network namespace and is intended for commands
+  # that talk to the running gateway over 127.0.0.1.
+  openclaw-gateway-cli:
     build:
       context: .
       dockerfile: Dockerfile

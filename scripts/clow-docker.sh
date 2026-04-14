@@ -25,20 +25,25 @@ MANAGED_DOWNLOAD_SPECS=(
   "docker-compose.yml:docker-compose.yml"
   "Dockerfile:Dockerfile"
   "docs/README.claw.md:docs/README.claw.md"
+  "docs/README.backup.md:docs/README.backup.md"
   "docs/README.onboard.md:docs/README.onboard.md"
   "docs/README.run.md:docs/README.run.md"
   "docs/README.google.md:docs/README.google.md"
-  ".openclaw/.gitignore:.openclaw/.gitignore"
+  ".openclaw/workspace.gitignore:.openclaw/.gitignore"
   ".openclaw/_scripts/complete-onboard.sh:.openclaw/_scripts/complete-onboard.sh"
-  ".openclaw/skills/backup-to-git/SKILL.md:.openclaw/skills/backup-to-git/SKILL.md"
-  ".openclaw/skills/backup-to-git/scripts/backup-state-to-git.sh:.openclaw/skills/backup-to-git/scripts/backup-state-to-git.sh"
+  ".openclaw/skills/backup-workspace-to-git/SKILL.md:.openclaw/skills/backup-workspace-to-git/SKILL.md"
+  ".openclaw/skills/backup-workspace-to-git/scripts/backup-workspace-to-git.sh:.openclaw/skills/backup-workspace-to-git/scripts/backup-workspace-to-git.sh"
+  ".openclaw/skills/backup-state-to-drive/SKILL.md:.openclaw/skills/backup-state-to-drive/SKILL.md"
+  ".openclaw/skills/backup-state-to-drive/state.include:.openclaw/skills/backup-state-to-drive/state.include"
+  ".openclaw/skills/backup-state-to-drive/scripts/backup-state-to-drive.sh:.openclaw/skills/backup-state-to-drive/scripts/backup-state-to-drive.sh"
   "scripts/journey-to-seed.sh:scripts/journey-to-seed.sh"
   "scripts/clow-docker.sh:scripts/clow-docker.sh"
 )
 
 EXECUTABLE_MANAGED_FILES=(
   ".openclaw/_scripts/complete-onboard.sh"
-  ".openclaw/skills/backup-to-git/scripts/backup-state-to-git.sh"
+  ".openclaw/skills/backup-workspace-to-git/scripts/backup-workspace-to-git.sh"
+  ".openclaw/skills/backup-state-to-drive/scripts/backup-state-to-drive.sh"
   "scripts/journey-to-seed.sh"
   "scripts/clow-docker.sh"
 )
@@ -47,6 +52,7 @@ PORT_REWRITE_TARGETS=(
   "docker-compose.yml"
   "Dockerfile"
   "docs/README.claw.md"
+  "docs/README.backup.md"
   "docs/README.onboard.md"
   "docs/README.run.md"
   ".openclaw/_scripts/complete-onboard.sh"
@@ -182,6 +188,24 @@ rewrite_port_in_targets() {
   done
 }
 
+rewrite_project_name_in_file() {
+  local path="$1"
+  local project_name="$2"
+
+  if [[ -f "$path" ]]; then
+    PROJECT_NAME="$project_name" perl -0pi -e 's/__PROJECT_NAME__/$ENV{PROJECT_NAME}/g' "$path"
+  fi
+}
+
+rewrite_project_name_in_targets() {
+  local root_dir="$1"
+  local project_name="$2"
+
+  rewrite_project_name_in_file \
+    "${root_dir}/.openclaw/skills/backup-state-to-drive/scripts/backup-state-to-drive.sh" \
+    "$project_name"
+}
+
 detect_existing_port() {
   local root_dir="$1"
   local docker_compose_path="$root_dir/docker-compose.yml"
@@ -228,10 +252,14 @@ remove_legacy_bootstrap_files() {
     "README.claw-onboard.md" \
     "README.claw-run.md" \
     "README.gmail.md" \
+    "docs/README.backup.old.md" \
     "docs/README.claw-onboard.md" \
     "docs/README.claw-run.md" \
     "docs/README.gmail.md" \
     ".openclaw/complete-onboard.sh" \
+    ".openclaw/workspace.gitignore" \
+    ".openclaw/skills/backup-to-git/SKILL.md" \
+    ".openclaw/skills/backup-to-git/scripts/backup-state-to-git.sh" \
     "scripts/clow-docker-common.sh" \
     "scripts/init-clow-docker.sh" \
     "scripts/update-clow-docker.sh" \
@@ -299,6 +327,9 @@ refresh_self_for_update() {
 
 run_init() {
   local gateway_port="$1"
+  local project_name
+
+  project_name="$(basename "$ROOT_DIR")"
 
   validate_port "$gateway_port"
   assert_directory_empty "$ROOT_DIR"
@@ -312,6 +343,7 @@ run_init() {
   sync_managed_downloads "$ROOT_DIR"
   mark_managed_executables "$ROOT_DIR"
   rewrite_port_in_targets "$ROOT_DIR" "$gateway_port"
+  rewrite_project_name_in_targets "$ROOT_DIR" "$project_name"
   remove_legacy_bootstrap_files "$ROOT_DIR"
 
   echo "Created:"
@@ -320,10 +352,12 @@ run_init() {
   echo "  docker-compose.yml"
   echo "  Dockerfile"
   echo "  docs/README.claw.md"
+  echo "  docs/README.backup.md"
   echo "  docs/README.onboard.md"
   echo "  docs/README.run.md"
   echo "  docs/README.google.md"
-  echo "  .openclaw/skills/backup-to-git/"
+  echo "  .openclaw/skills/backup-workspace-to-git/"
+  echo "  .openclaw/skills/backup-state-to-drive/"
   echo "  scripts/clow-docker.sh"
   echo "  scripts/journey-to-seed.sh"
   echo "  .openclaw/.gitignore"
@@ -341,6 +375,9 @@ run_update() {
   local readme_already_exists="0"
   local openclaw_gitignore_already_exists="0"
   local gateway_port="$requested_port"
+  local project_name
+
+  project_name="$(basename "$ROOT_DIR")"
 
   if [[ ${#UPDATE_ARGS[@]} -gt 0 ]]; then
     refresh_self_for_update update "${UPDATE_ARGS[@]}"
@@ -375,6 +412,7 @@ run_update() {
   sync_managed_downloads "$ROOT_DIR" ".openclaw/.gitignore"
   mark_managed_executables "$ROOT_DIR"
   rewrite_port_in_targets "$ROOT_DIR" "$gateway_port"
+  rewrite_project_name_in_targets "$ROOT_DIR" "$project_name"
   remove_legacy_bootstrap_files "$ROOT_DIR"
 
   echo "Updated:"
@@ -382,8 +420,10 @@ run_update() {
   echo "  Dockerfile"
   echo "  .openclaw/.secrets/.env.example"
   echo "  .openclaw/_scripts/complete-onboard.sh"
-  echo "  .openclaw/skills/backup-to-git/"
+  echo "  .openclaw/skills/backup-workspace-to-git/"
+  echo "  .openclaw/skills/backup-state-to-drive/"
   echo "  docs/README.claw.md"
+  echo "  docs/README.backup.md"
   echo "  docs/README.onboard.md"
   echo "  docs/README.run.md"
   echo "  docs/README.google.md"

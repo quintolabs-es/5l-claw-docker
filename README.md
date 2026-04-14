@@ -43,9 +43,9 @@ curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/
 - Human-edited memory/workspace:
   `./.openclaw/workspace/`
 - Services:
-  * `openclaw-onboard` is used for pre-start setup commands. 
+  * `openclaw-standalone-cli` is used for onboarding, backup, restore, and other local state commands that do not require the gateway.
   * `openclaw-gateway` runs continuously. 
-  * `openclaw-cli` runs on demand after the gateway is up and shares the gateway network.
+  * `openclaw-gateway-cli` runs on demand after the gateway is up and shares the gateway network for commands that talk to the running gateway.
 
 ## Gateway
 

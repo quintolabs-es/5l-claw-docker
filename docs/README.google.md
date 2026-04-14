@@ -64,13 +64,13 @@ Start the gateway:
 OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose up -d openclaw-gateway
 ```
 
-Open a shell in the CLI container:
+Open a shell in the standalone CLI container:
 
 ```bash
-OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm openclaw-cli
+docker compose run --rm --no-deps openclaw-standalone-cli
 ```
 
-Inside the CLI container:
+Inside the standalone CLI container:
 
 ```bash
 gog auth keyring file
@@ -107,7 +107,7 @@ OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose restart ope
 ## Verify It Works
 
 ```bash
-OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --entrypoint bash openclaw-cli -lc "gog auth list --check && gog gmail search 'is:unread newer_than:7d' --max 10 --json"
+docker compose run --rm --no-deps --entrypoint bash openclaw-standalone-cli -lc "gog auth list --check && gog gmail search 'is:unread newer_than:7d' --max 10 --json"
 ```
 
 The search command should return JSON from your mailbox. If the command prompts for a keyring password or fails to find the account, check the `GOG_KEYRING_PASSWORD` and `GOG_ACCOUNT` values in `./.openclaw/.secrets/.env`.

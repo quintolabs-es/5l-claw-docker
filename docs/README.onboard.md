@@ -9,11 +9,11 @@ docker compose build
 ```
 
 ## Onboard
-Use `openclaw-onboard` for `onboard` and initial config, since `openclaw-cli` is attached to the running gateway network, so it cannot be used for pre-start setup. 
+Use `openclaw-standalone-cli` for `onboard` and initial config. It does not require the gateway to be running. Use `openclaw-gateway-cli` only for commands that talk to the running gateway.
 
 ```bash
-# open a shell in the onboard container to run onbard command
-OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --no-deps openclaw-onboard
+# open a shell in the standalone CLI container to run onboard
+docker compose run --rm --no-deps openclaw-standalone-cli
 
 # run Onboard and go through the setup
 openclaw onboard --mode local --no-install-daemon
@@ -33,7 +33,7 @@ If `--github-repo-url` was used, the complete-onboard script creates SSH files i
 cat ./.openclaw/.secrets/git/.ssh/id_ed25519.pub
 ```
 
-**Then back to the onboard container**, verify push works:
+**Then back to the standalone CLI container**, verify push works:
 ```bash
 git push origin head
 ```
@@ -67,7 +67,7 @@ The value `agents.defaults.heartbeat.target` specifies where to send the heartbe
 OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose up -d openclaw-gateway
 
 # check gateway status 
-OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --entrypoint openclaw openclaw-cli gateway status --url ws://127.0.0.1:18789 --token openclaw-gateway-default-token
+OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --entrypoint openclaw openclaw-gateway-cli gateway status --url ws://127.0.0.1:18789 --token openclaw-gateway-default-token
 ```
 _It's expected that `systemd` check fails, because it's not used in docker._
 
@@ -77,9 +77,9 @@ After onboarding is complete:
 - if this agent needs Google account access, complete [README.google.md](./README.google.md) before day-to-day usage
 
 ## Test run CLI
-To run cli commands, run the cli container and bash into it
+To run gateway CLI commands, run the gateway CLI container and bash into it.
 ```bash
-OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm openclaw-cli
+OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm openclaw-gateway-cli
 # test it 
 openclaw --help
 ```
@@ -102,10 +102,10 @@ openclaw devices approve <requestId>
 ---
 
 ## One off commands in cli
-For one-off commands without bashing into a terminal session, replace openclaw with `OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --entrypoint openclaw openclaw-cli`
+For one-off commands without bashing into a terminal session, replace openclaw with `OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --entrypoint openclaw openclaw-gateway-cli`
 ```bash
 # e.g.: openclaw devices list:
 openclaw devices list
 # OR
-OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --entrypoint openclaw openclaw-cli devices list
+OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --entrypoint openclaw openclaw-gateway-cli devices list
 ```

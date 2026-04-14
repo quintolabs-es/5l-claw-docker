@@ -1,0 +1,11 @@
+# Paths relative to .openclaw to include in the Drive state backup archive.
+openclaw.json
+credentials
+skills
+cron/jobs.json
+secrets.json
+identity
+devices/paired.json
+canvas
+.secrets
+agents/*/agent
