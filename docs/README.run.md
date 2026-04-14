@@ -1,6 +1,6 @@
 # OpenClaw Runbook
 
-For first-time setup, use [README.claw-onboard.md](./README.claw-onboard.md).
+For first-time setup, use [README.onboard.md](./README.onboard.md).
 
 ## Start Gateway
 ```bash

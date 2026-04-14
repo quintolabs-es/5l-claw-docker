@@ -43,7 +43,7 @@ git push origin head
 ### Google Access
 Optional post-onboard setup.
 
-The agent can access Google services such as Gmail, Calendar, and Drive through the `gog` CLI skill. If needed, copy `./.openclaw/.secrets/.env.example` to `./.openclaw/.secrets/.env`, set `GOG_ACCOUNT` and `GOG_KEYRING_PASSWORD`, and then complete [README.gmail.md](./README.gmail.md).
+The agent can access Google services such as Gmail, Calendar, and Drive through the `gog` CLI skill. If needed, copy `./.openclaw/.secrets/.env.example` to `./.openclaw/.secrets/.env`, set `GOG_ACCOUNT` and `GOG_KEYRING_PASSWORD`, and then complete [README.google.md](./README.google.md).
 
 
 ### Set Hearbeat and heartbit response channel
@@ -73,8 +73,8 @@ _It's expected that `systemd` check fails, because it's not used in docker._
 
 After onboarding is complete:
 
-- use [README.claw-run.md](./README.claw-run.md) for normal day-to-day usage
-- if this agent needs Google account access, complete [README.gmail.md](./README.gmail.md) before day-to-day usage
+- use [README.run.md](./README.run.md) for normal day-to-day usage
+- if this agent needs Google account access, complete [README.google.md](./README.google.md) before day-to-day usage
 
 ## Test run CLI
 To run cli commands, run the cli container and bash into it

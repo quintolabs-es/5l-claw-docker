@@ -26,9 +26,9 @@ MANAGED_DOWNLOAD_SPECS=(
   "docker-compose.yml:docker-compose.yml"
   "Dockerfile:Dockerfile"
   "docs/README.claw.md:docs/README.claw.md"
-  "docs/README.claw-onboard.md:docs/README.claw-onboard.md"
-  "docs/README.claw-run.md:docs/README.claw-run.md"
-  "docs/README.gmail.md:docs/README.gmail.md"
+  "docs/README.onboard.md:docs/README.onboard.md"
+  "docs/README.run.md:docs/README.run.md"
+  "docs/README.google.md:docs/README.google.md"
   ".openclaw/.gitignore:.openclaw/.gitignore"
   ".openclaw/_scripts/complete-onboard.sh:.openclaw/_scripts/complete-onboard.sh"
   ".openclaw/skills/backup-to-git/SKILL.md:.openclaw/skills/backup-to-git/SKILL.md"
@@ -48,8 +48,8 @@ PORT_REWRITE_TARGETS=(
   "docker-compose.yml"
   "Dockerfile"
   "docs/README.claw.md"
-  "docs/README.claw-onboard.md"
-  "docs/README.claw-run.md"
+  "docs/README.onboard.md"
+  "docs/README.run.md"
   ".openclaw/_scripts/complete-onboard.sh"
 )
 
@@ -229,6 +229,9 @@ remove_legacy_bootstrap_files() {
     "README.claw-onboard.md" \
     "README.claw-run.md" \
     "README.gmail.md" \
+    "docs/README.claw-onboard.md" \
+    "docs/README.claw-run.md" \
+    "docs/README.gmail.md" \
     ".openclaw/complete-onboard.sh" \
     "scripts/journey-to-seed.sh" \
     "scripts/clow-docker.sh" \
@@ -321,9 +324,9 @@ run_init() {
   echo "  docker-compose.yml"
   echo "  Dockerfile"
   echo "  docs/README.claw.md"
-  echo "  docs/README.claw-onboard.md"
-  echo "  docs/README.claw-run.md"
-  echo "  docs/README.gmail.md"
+  echo "  docs/README.onboard.md"
+  echo "  docs/README.run.md"
+  echo "  docs/README.google.md"
   echo "  .openclaw/skills/backup-to-git/"
   echo "  .openclaw/_scripts/clow-docker.sh"
   echo "  .openclaw/_scripts/journey-to-seed.sh"
@@ -333,7 +336,7 @@ run_init() {
   echo "  .openclaw/.secrets/gogcli/.config/"
   echo
   echo "Next:"
-  echo "  To continue with onboarding, read docs/README.claw-onboard.md"
+  echo "  To continue with onboarding, read docs/README.onboard.md"
   echo "  and run the onboard steps from that file."
 }
 
@@ -384,9 +387,9 @@ run_update() {
   echo "  Dockerfile"
   echo "  .gitignore"
   echo "  docs/README.claw.md"
-  echo "  docs/README.claw-onboard.md"
-  echo "  docs/README.claw-run.md"
-  echo "  docs/README.gmail.md"
+  echo "  docs/README.onboard.md"
+  echo "  docs/README.run.md"
+  echo "  docs/README.google.md"
   echo "  .openclaw/skills/backup-to-git/"
   echo "  .openclaw/_scripts/clow-docker.sh"
   echo "  .openclaw/_scripts/journey-to-seed.sh"

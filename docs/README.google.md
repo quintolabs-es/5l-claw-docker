@@ -1,4 +1,4 @@
-# Gmail Access
+# Google Access
 
 This runbook is for OpenClaw instances created from this Docker template.
 

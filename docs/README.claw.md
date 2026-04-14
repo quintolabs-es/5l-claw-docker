@@ -23,7 +23,7 @@ The init script creates the Docker packaging files in the current folder, so run
 Always use the latest script from the repo through `curl`, not a possibly outdated local copy.
 `init` assumes the target folder is empty and fails if it already contains files.
 
-After init, continue with onboarding in [README.claw-onboard.md](./README.claw-onboard.md).
+After init, continue with onboarding in [README.onboard.md](./README.onboard.md).
 
 ## Update
 ```bash
@@ -64,6 +64,6 @@ Control UI origin policy is configured in `./.openclaw/openclaw.json`. This setu
 
 ## Runbooks
 
-See [README.claw-onboard.md](./README.claw-onboard.md) for first-time setup.
-See [README.claw-run.md](./README.claw-run.md) for normal run commands.
-See [README.gmail.md](./README.gmail.md) if this agent needs Gmail access through `gog`.
+See [README.onboard.md](./README.onboard.md) for first-time setup.
+See [README.run.md](./README.run.md) for normal run commands.
+See [README.google.md](./README.google.md) if this agent needs Google account access through `gog`.
