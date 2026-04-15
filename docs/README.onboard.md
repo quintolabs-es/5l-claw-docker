@@ -2,6 +2,7 @@
 ## Build
 
 ```bash
+cd claw-agent
 docker compose build
 ```
 
@@ -18,7 +19,7 @@ openclaw onboard --mode local --no-install-daemon
 # complete onboard for Docker and initialize the repo for workspace folder
 # --gateway-token is required. It is written to both gateway and local CLI config, so gateway requires it and local CLI commands already use it.
 # the git remote is optional. If not provided, no remote push target is configured. name and email already have defaults.
-bash _scripts/complete-onboard.sh --gateway-token openclaw-gateway-default-token --github-remote-url https://github.com/owner/repo --git-name "La Garra" --git-email "lagarra@quintolabs.es"
+bash _scripts/complete-onboard.sh --gateway-token <openclaw-gateway-token> --github-remote-url <https://github.com/owner/repo> --git-name <"name-for-git-commits"> --git-email <email-for-git-commits>
 ```
 
 ### Setup git authentication
