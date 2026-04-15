@@ -16,8 +16,9 @@ docker compose run --rm --no-deps openclaw-standalone-cli
 openclaw onboard --mode local --no-install-daemon
 
 # complete onboard for Docker and initialize the repo for workspace folder
-# all arguments are optional. If no git remote is provided, no remote push target is configured. name and email already have defaults.
-bash _scripts/complete-onboard.sh --github-remote-url https://github.com/owner/repo --git-name "La Garra" --git-email "lagarra@quintolabs.es"
+# --gateway-token is required. It is written to both gateway and local CLI config, so gateway requires it and local CLI commands already use it.
+# the git remote is optional. If not provided, no remote push target is configured. name and email already have defaults.
+bash _scripts/complete-onboard.sh --gateway-token openclaw-gateway-default-token --github-remote-url https://github.com/owner/repo --git-name "La Garra" --git-email "lagarra@quintolabs.es"
 ```
 
 ### Setup git authentication
@@ -49,6 +50,11 @@ Optional post-onboard setup.
 
 The agent can access Google services such as Gmail, Calendar, and Drive through the `gog` CLI skill. If needed, copy `./.openclaw/_secrets/.env.example` to `./.openclaw/_secrets/.env`, set `GOG_ACCOUNT` and `GOG_KEYRING_PASSWORD`, and then complete [README.google.md](./README.google.md).
 
+### Telegram channel
+Optional post-onboard setup.
+
+If this agent should be reachable through Telegram, complete [README.telegram.md](./README.telegram.md) before using Telegram-based heartbeat or normal chat.
+
 
 ### Set Hearbeat and heartbeat response channel
 By default hearbit runs every 30m, executes `HEARTBEAT.md` prompt and response (if any) is sent to last channel.
@@ -74,23 +80,23 @@ openclaw configure --section web
 
 ## Start the Gateway
 **Onboarding is complete**, now the gateway can be started.
-Set `OPENCLAW_GATEWAY_TOKEN`. This is the token to be provided by clients when connecting to the gateway.
+The gateway and local CLI already use the token persisted by `complete-onboard.sh`.
 
 ```bash
-OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose up -d openclaw-gateway
+docker compose up -d openclaw-gateway
 ```
 
 Check gateway status from cli
 ```bash
-OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm openclaw-gateway-cli
-openclaw gateway status --url ws://127.0.0.1:18789 --token openclaw-gateway-default-token
+docker compose run --rm openclaw-gateway-cli
+openclaw gateway status
 ```
 _It's expected that `systemd` check fails, because it's not used in docker._
 
 ### Test gateway CLI
 To run gateway CLI commands, run the gateway CLI container and bash into it. This tests connectivity between `openclaw-gateway-cli` and the running gateway.
 ```bash
-OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm openclaw-gateway-cli
+docker compose run --rm openclaw-gateway-cli
 # test it 
 openclaw devices list
 ```
@@ -118,10 +124,10 @@ openclaw devices approve <requestId>
 ---
 
 ## One off commands in cli
-For one-off commands without bashing into a terminal session, replace openclaw with `OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --entrypoint openclaw openclaw-gateway-cli`
+For one-off commands without bashing into a terminal session, replace openclaw with `docker compose run --rm --entrypoint openclaw openclaw-gateway-cli`
 ```bash
 # e.g.: openclaw devices list:
 openclaw devices list
 # OR
-OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --entrypoint openclaw openclaw-gateway-cli devices list
+docker compose run --rm --entrypoint openclaw openclaw-gateway-cli devices list
 ```

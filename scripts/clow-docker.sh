@@ -29,6 +29,7 @@ MANAGED_DOWNLOAD_SPECS=(
   "docs/README.onboard.md:docs/README.onboard.md"
   "docs/README.run.md:docs/README.run.md"
   "docs/README.google.md:docs/README.google.md"
+  "docs/README.telegram.md:docs/README.telegram.md"
   ".openclaw/workspace.gitignore:.openclaw/.gitignore"
   ".openclaw/_scripts/complete-onboard.sh:.openclaw/_scripts/complete-onboard.sh"
   ".openclaw/skills/backup-workspace-to-git/SKILL.md:.openclaw/skills/backup-workspace-to-git/SKILL.md"
@@ -324,6 +325,7 @@ run_init() {
   echo "  docs/README.onboard.md"
   echo "  docs/README.run.md"
   echo "  docs/README.google.md"
+  echo "  docs/README.telegram.md"
   echo "  .openclaw/skills/backup-workspace-to-git/"
   echo "  .openclaw/skills/backup-state-to-drive/"
   echo "  scripts/clow-docker.sh"
@@ -394,6 +396,7 @@ run_update() {
   echo "  docs/README.onboard.md"
   echo "  docs/README.run.md"
   echo "  docs/README.google.md"
+  echo "  docs/README.telegram.md"
   echo "  scripts/clow-docker.sh"
   echo "  scripts/journey-to-seed.sh"
   if [[ "$readme_already_exists" == "1" || "$openclaw_gitignore_already_exists" == "1" ]]; then

@@ -2,16 +2,17 @@
 set -euo pipefail
 
 # Usage:
-#   /home/node/.openclaw/_scripts/complete-onboard.sh [--github-remote-url <https://github.com/owner/repo>] [--git-name <name>] [--git-email <email>]
+#   /home/node/.openclaw/_scripts/complete-onboard.sh --gateway-token <token> [--github-remote-url <https://github.com/owner/repo>] [--git-name <name>] [--git-email <email>]
 
 GATEWAY_PORT="18789"
+GATEWAY_TOKEN=""
 GIT_NAME="La Garra"
 GIT_EMAIL="lagarra@quintolabs.es"
 GITHUB_REPO_URL=""
 
 usage() {
   cat <<'EOF'
-Usage: complete-onboard.sh [--github-remote-url <https://github.com/owner/repo>] [--git-name <name>] [--git-email <email>]
+Usage: complete-onboard.sh --gateway-token <token> [--github-remote-url <https://github.com/owner/repo>] [--git-name <name>] [--git-email <email>]
 EOF
 }
 
@@ -95,6 +96,15 @@ EOF
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
+    --gateway-token)
+      if [[ $# -lt 2 ]]; then
+        echo "Error: --gateway-token requires a value" >&2
+        usage >&2
+        exit 1
+      fi
+      GATEWAY_TOKEN="$2"
+      shift 2
+      ;;
     --github-remote-url)
       if [[ $# -lt 2 ]]; then
         echo "Error: --github-remote-url requires a value" >&2
@@ -134,6 +144,12 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
+if [[ -z "$GATEWAY_TOKEN" ]]; then
+  echo "Error: --gateway-token is required" >&2
+  usage >&2
+  exit 1
+fi
+
 # remove the git repo OpenClaw creates inside workspace
 rm -rf /home/node/.openclaw/workspace/.git
 
@@ -141,6 +157,9 @@ rm -rf /home/node/.openclaw/workspace/.git
 openclaw config set gateway.mode local
 openclaw config set gateway.bind lan
 openclaw config set gateway.port "$GATEWAY_PORT" --strict-json
+openclaw config set gateway.auth.mode token
+openclaw config set gateway.auth.token "$GATEWAY_TOKEN"
+openclaw config set gateway.remote.token "$GATEWAY_TOKEN"
 openclaw config set gateway.controlUi.allowedOrigins "[\"http://localhost:${GATEWAY_PORT}\",\"http://127.0.0.1:${GATEWAY_PORT}\"]" --strict-json
 
 # initialize the repo-local durable state
@@ -172,3 +191,5 @@ if [[ -n "$GITHUB_REPO_URL" ]]; then
   echo "Add the public key in GitHub as a deploy key with write access, then run:"
   echo "  git push -u origin HEAD"
 fi
+
+echo "Gateway token configured on the gateway and local CLI config, so local CLI commands already use it."

@@ -101,7 +101,7 @@ Gmail scope options for `--gmail-scope`:
 If the gateway was already running when `.env` was changed, restart it after setup:
 
 ```bash
-OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose restart openclaw-gateway
+docker compose restart openclaw-gateway
 ```
 
 ## Verify It Works

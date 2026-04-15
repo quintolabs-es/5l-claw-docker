@@ -68,3 +68,4 @@ See [README.onboard.md](./README.onboard.md) for first-time setup.
 See [README.run.md](./README.run.md) for normal run commands.
 See [README.backup.md](./README.backup.md) for backup and restore commands.
 See [README.google.md](./README.google.md) if this agent needs Google account access through `gog`.
+See [README.telegram.md](./README.telegram.md) if this agent should be reachable through Telegram.
