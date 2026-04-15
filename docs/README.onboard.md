@@ -17,17 +17,27 @@ cd /home/node/.openclaw
 openclaw onboard --mode local --no-install-daemon
 
 # complete onboard for Docker and initialize the repo for workspace folder
-# all arguments are optional. If git remote no provided, the repo won't be able to push. name and email already have default.
+# all arguments are optional. If no git remote is provided, no remote push target is configured. name and email already have defaults.
 cd /home/node/.openclaw
 bash _scripts/complete-onboard.sh --github-remote-url https://github.com/owner/repo --git-name "La Garra" --git-email "lagarra@quintolabs.es"
 ```
 
 ### Setup git authentication
-If `--github-remote-url` is passed, the complete-onboard script creates SSH files in `./.openclaw/_secrets/git/.ssh/` on the host and mounts them as `~/.ssh` in the Docker containers that need Git access.
-If **Add the generated public key in GitHub** as a deploy key with write access for that private repo:
+If `--github-remote-url` is passed, the complete-onboard script creates SSH files in `./.openclaw/.secrets/git/.ssh/` on the host and mounts them as `~/.ssh` in the Docker containers that need Git access.
+
+Print the generated public key:
 ```bash
-cat ./.openclaw/_secrets/git/.ssh/id_ed25519.pub
+cat ./.openclaw/.secrets/git/.ssh/id_ed25519.pub
 ```
+
+Add it in GitHub as a deploy key with write access for the target repo:
+- Open the target GitHub repository.
+- Go to `Settings`.
+- Go to `Deploy keys`.
+- Click `Add deploy key`.
+- Paste the contents of `./.openclaw/.secrets/git/.ssh/id_ed25519.pub`.
+- Enable write access.
+- Save.
 
 **Then back to the standalone CLI container**, verify push works:
 ```bash
@@ -39,10 +49,10 @@ git push origin head
 ### Google Access
 Optional post-onboard setup.
 
-The agent can access Google services such as Gmail, Calendar, and Drive through the `gog` CLI skill. If needed, copy `./.openclaw/_secrets/.env.example` to `./.openclaw/_secrets/.env`, set `GOG_ACCOUNT` and `GOG_KEYRING_PASSWORD`, and then complete [README.google.md](./README.google.md).
+The agent can access Google services such as Gmail, Calendar, and Drive through the `gog` CLI skill. If needed, copy `./.openclaw/.secrets/.env.example` to `./.openclaw/.secrets/.env`, set `GOG_ACCOUNT` and `GOG_KEYRING_PASSWORD`, and then complete [README.google.md](./README.google.md).
 
 
-### Set Hearbeat and heartbit response channel
+### Set Hearbeat and heartbeat response channel
 By default hearbit runs every 30m, executes `HEARTBEAT.md` prompt and response (if any) is sent to last channel.
 Check `https://docs.openclaw.ai/gateway/heartbeat`.
 

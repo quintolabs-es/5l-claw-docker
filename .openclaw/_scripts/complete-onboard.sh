@@ -15,6 +15,30 @@ Usage: complete-onboard.sh [--github-remote-url <https://github.com/owner/repo>]
 EOF
 }
 
+print_github_deploy_key_instructions() {
+  local public_key_host_path="$1"
+
+  if [[ -t 1 && "${TERM:-}" != "dumb" ]]; then
+    printf '\033[32m'
+  fi
+
+  cat <<EOF
+GitHub deploy key setup:
+  1. Open the target GitHub repository.
+  2. Go to Settings.
+  3. Go to Deploy keys.
+  4. Click Add deploy key.
+  5. Paste the contents of:
+     ${public_key_host_path}
+  6. Enable write access.
+  7. Save.
+EOF
+
+  if [[ -t 1 && "${TERM:-}" != "dumb" ]]; then
+    printf '\033[0m'
+  fi
+}
+
 build_github_ssh_remote() {
   local repo_url="$1"
   local normalized path
@@ -64,7 +88,9 @@ EOF
   echo "GitHub deploy public key:"
   echo "  $ssh_pub_key_path"
   echo "Host path:"
-  echo "  ./.openclaw/_secrets/git/.ssh/id_ed25519.pub"
+  echo "  ./.openclaw/.secrets/git/.ssh/id_ed25519.pub"
+  echo
+  print_github_deploy_key_instructions "./.openclaw/.secrets/git/.ssh/id_ed25519.pub"
 }
 
 while [[ $# -gt 0 ]]; do
