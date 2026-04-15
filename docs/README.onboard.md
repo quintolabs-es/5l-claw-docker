@@ -1,7 +1,4 @@
 # OpenClaw Onboard
-
-
-
 ## Build
 
 ```bash
