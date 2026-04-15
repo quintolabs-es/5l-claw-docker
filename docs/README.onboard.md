@@ -13,19 +13,18 @@ Use `openclaw-standalone-cli` for `onboard` and initial config. It does not requ
 docker compose run --rm --no-deps openclaw-standalone-cli
 
 # run Onboard and go through the setup
+cd /home/node/.openclaw
 openclaw onboard --mode local --no-install-daemon
 
-# complete onboard for Docker and initialize the durable state repo
+# complete onboard for Docker and initialize the repo for workspace folder
+# all arguments are optional. If git remote no provided, the repo won't be able to push. name and email already have default.
 cd /home/node/.openclaw
-bash _scripts/complete-onboard.sh
-
-# or with optional parameters
-bash _scripts/complete-onboard.sh --github-repo-url https://github.com/owner/repo --git-name "La Garra" --git-email "lagarra@quintolabs.es"
+bash _scripts/complete-onboard.sh --git-remote-url https://github.com/owner/repo --git-name "La Garra" --git-email "lagarra@quintolabs.es"
 ```
 
-If `--github-repo-url` was used, the complete-onboard script creates SSH files in `./.openclaw/_secrets/git/.ssh/` on the host and mounts them as `~/.ssh` in the Docker containers that may need Git access.
-
-**Add the generated public key in GitHub** as a deploy key with write access for that private repo:
+### Setup git authentication
+If `--git-remote-url` is passed, the complete-onboard script creates SSH files in `./.openclaw/_secrets/git/.ssh/` on the host and mounts them as `~/.ssh` in the Docker containers that need Git access.
+If **Add the generated public key in GitHub** as a deploy key with write access for that private repo:
 ```bash
 cat ./.openclaw/_secrets/git/.ssh/id_ed25519.pub
 ```
