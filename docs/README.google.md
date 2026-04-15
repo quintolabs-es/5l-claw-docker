@@ -57,6 +57,7 @@ Copy `./.openclaw/_secrets/.env.example` to `./.openclaw/_secrets/.env` and set 
 GOG_KEYRING_PASSWORD=<strong-password>
 GOG_ACCOUNT=<you@gmail.com>
 ```
+_If any container is already running, it needs to be restarted for it to pick up the .env just set above._
 
 `GOG_KEYRING_PASSWORD` is a local encryption password for `gog`'s file keyring. Use the same value each time this agent instance is started, or `gog` will not be able to read the tokens it already stored and the account will need to be re-authorized.
 
@@ -71,7 +72,7 @@ Inside the standalone CLI container:
 ```bash
 gog auth keyring file
 gog auth credentials /home/node/.config/gogcli/client_secret.json
-gog auth add <you@gmail.com> --services gmail,drive --gmail-scope readonly --manual
+gog auth add <you@gmail.com> --services gmail,drive --gmail-scope full --manual
 ```
 
 If you later add services or change the Gmail scope, rerun `gog auth add ...` with `--force-consent`.
