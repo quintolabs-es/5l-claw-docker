@@ -13,21 +13,19 @@ Use `openclaw-standalone-cli` for `onboard` and initial config. It does not requ
 docker compose run --rm --no-deps openclaw-standalone-cli
 
 # run Onboard and go through the setup
-cd /home/node/.openclaw
 openclaw onboard --mode local --no-install-daemon
 
 # complete onboard for Docker and initialize the repo for workspace folder
 # all arguments are optional. If no git remote is provided, no remote push target is configured. name and email already have defaults.
-cd /home/node/.openclaw
 bash _scripts/complete-onboard.sh --github-remote-url https://github.com/owner/repo --git-name "La Garra" --git-email "lagarra@quintolabs.es"
 ```
 
 ### Setup git authentication
-If `--github-remote-url` is passed, the complete-onboard script creates SSH files in `./.openclaw/.secrets/git/.ssh/` on the host and mounts them as `~/.ssh` in the Docker containers that need Git access.
+If `--github-remote-url` is passed, the complete-onboard script creates SSH files in `./.openclaw/_secrets/git/.ssh/` on the host and mounts them as `~/.ssh` in the Docker containers that need Git access.
 
 Print the generated public key:
 ```bash
-cat ./.openclaw/.secrets/git/.ssh/id_ed25519.pub
+cat ./.openclaw/_secrets/git/.ssh/id_ed25519.pub
 ```
 
 Add it in GitHub as a deploy key with write access for the target repo:
@@ -35,7 +33,7 @@ Add it in GitHub as a deploy key with write access for the target repo:
 - Go to `Settings`.
 - Go to `Deploy keys`.
 - Click `Add deploy key`.
-- Paste the contents of `./.openclaw/.secrets/git/.ssh/id_ed25519.pub`.
+- Paste the contents of `./.openclaw/_secrets/git/.ssh/id_ed25519.pub`.
 - Enable write access.
 - Save.
 
@@ -49,7 +47,7 @@ git push origin head
 ### Google Access
 Optional post-onboard setup.
 
-The agent can access Google services such as Gmail, Calendar, and Drive through the `gog` CLI skill. If needed, copy `./.openclaw/.secrets/.env.example` to `./.openclaw/.secrets/.env`, set `GOG_ACCOUNT` and `GOG_KEYRING_PASSWORD`, and then complete [README.google.md](./README.google.md).
+The agent can access Google services such as Gmail, Calendar, and Drive through the `gog` CLI skill. If needed, copy `./.openclaw/_secrets/.env.example` to `./.openclaw/_secrets/.env`, set `GOG_ACCOUNT` and `GOG_KEYRING_PASSWORD`, and then complete [README.google.md](./README.google.md).
 
 
 ### Set Hearbeat and heartbeat response channel
@@ -74,7 +72,8 @@ openclaw configure --section web
 ```
 
 
-## Start Gateway
+## Start the Gateway
+Onboarding is complete, now the gateway can be started.
 ```bash
 OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose up -d openclaw-gateway
 
@@ -89,11 +88,11 @@ After onboarding is complete:
 - if this agent needs Google account access, complete [README.google.md](./README.google.md) before day-to-day usage
 
 ## Test run CLI
-To run gateway CLI commands, run the gateway CLI container and bash into it.
+To run gateway CLI commands, run the gateway CLI container and bash into it. This tests connectivity between `openclaw-gateway-cli` and the running gateway.
 ```bash
 OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm openclaw-gateway-cli
 # test it 
-openclaw --help
+openclaw devices list
 ```
 
 ## Open Control UI
