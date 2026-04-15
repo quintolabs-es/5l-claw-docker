@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # Usage:
-#   /home/node/.openclaw/_scripts/complete-onboard.sh [--git-remote-url <https://github.com/owner/repo>] [--git-name <name>] [--git-email <email>]
+#   /home/node/.openclaw/_scripts/complete-onboard.sh [--github-remote-url <https://github.com/owner/repo>] [--git-name <name>] [--git-email <email>]
 
 GATEWAY_PORT="18789"
 GIT_NAME="La Garra"
@@ -11,7 +11,7 @@ GITHUB_REPO_URL=""
 
 usage() {
   cat <<'EOF'
-Usage: complete-onboard.sh [--git-remote-url <https://github.com/owner/repo>] [--git-name <name>] [--git-email <email>]
+Usage: complete-onboard.sh [--github-remote-url <https://github.com/owner/repo>] [--git-name <name>] [--git-email <email>]
 EOF
 }
 
@@ -23,7 +23,7 @@ build_github_ssh_remote() {
   normalized="${normalized%/}"
 
   if [[ ! "$normalized" =~ ^https://github\.com/[^/]+/[^/]+$ ]]; then
-    echo "Error: --git-remote-url must be in the form https://github.com/<owner>/<repo>" >&2
+    echo "Error: --github-remote-url must be in the form https://github.com/<owner>/<repo>" >&2
     exit 1
   fi
 
@@ -69,9 +69,9 @@ EOF
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    --git-remote-url)
+    --github-remote-url)
       if [[ $# -lt 2 ]]; then
-        echo "Error: --git-remote-url requires a value" >&2
+        echo "Error: --github-remote-url requires a value" >&2
         usage >&2
         exit 1
       fi

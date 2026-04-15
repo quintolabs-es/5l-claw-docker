@@ -19,11 +19,11 @@ openclaw onboard --mode local --no-install-daemon
 # complete onboard for Docker and initialize the repo for workspace folder
 # all arguments are optional. If git remote no provided, the repo won't be able to push. name and email already have default.
 cd /home/node/.openclaw
-bash _scripts/complete-onboard.sh --git-remote-url https://github.com/owner/repo --git-name "La Garra" --git-email "lagarra@quintolabs.es"
+bash _scripts/complete-onboard.sh --github-remote-url https://github.com/owner/repo --git-name "La Garra" --git-email "lagarra@quintolabs.es"
 ```
 
 ### Setup git authentication
-If `--git-remote-url` is passed, the complete-onboard script creates SSH files in `./.openclaw/_secrets/git/.ssh/` on the host and mounts them as `~/.ssh` in the Docker containers that need Git access.
+If `--github-remote-url` is passed, the complete-onboard script creates SSH files in `./.openclaw/_secrets/git/.ssh/` on the host and mounts them as `~/.ssh` in the Docker containers that need Git access.
 If **Add the generated public key in GitHub** as a deploy key with write access for that private repo:
 ```bash
 cat ./.openclaw/_secrets/git/.ssh/id_ed25519.pub
@@ -56,6 +56,12 @@ openclaw config set agents.defaults.heartbeat.activeHours.timezone "Europe/Madri
 ```
 
 The value `agents.defaults.heartbeat.target` specifies where to send the heartbeat response/result message, in case there is one.
+
+### Others
+Web search
+```bash
+openclaw configure --section web
+```
 
 
 ## Start Gateway
