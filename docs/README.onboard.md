@@ -73,21 +73,21 @@ openclaw configure --section web
 
 
 ## Start the Gateway
-Onboarding is complete, now the gateway can be started.
+**Onboarding is complete**, now the gateway can be started.
+Set `OPENCLAW_GATEWAY_TOKEN`. This is the token to be provided by clients when connecting to the gateway.
+
 ```bash
 OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose up -d openclaw-gateway
+```
 
-# check gateway status 
-OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm --entrypoint openclaw openclaw-gateway-cli gateway status --url ws://127.0.0.1:18789 --token openclaw-gateway-default-token
+Check gateway status from cli
+```bash
+OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm openclaw-gateway-cli
+openclaw gateway status --url ws://127.0.0.1:18789 --token openclaw-gateway-default-token
 ```
 _It's expected that `systemd` check fails, because it's not used in docker._
 
-After onboarding is complete:
-
-- use [README.run.md](./README.run.md) for normal day-to-day usage
-- if this agent needs Google account access, complete [README.google.md](./README.google.md) before day-to-day usage
-
-## Test run CLI
+### Test gateway CLI
 To run gateway CLI commands, run the gateway CLI container and bash into it. This tests connectivity between `openclaw-gateway-cli` and the running gateway.
 ```bash
 OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm openclaw-gateway-cli
@@ -95,7 +95,7 @@ OPENCLAW_GATEWAY_TOKEN=openclaw-gateway-default-token docker compose run --rm op
 openclaw devices list
 ```
 
-## Open Control UI
+## Setup Control UI (paring)
 Browse to `http://localhost:18789/` 
 Or run in CLI
 ```bash
@@ -109,6 +109,11 @@ Get tokenized url or plane url and add the gateway token where requested.
 openclaw devices list
 openclaw devices approve <requestId>
 ```
+
+
+## To run the agent from now on:
+- use [README.run.md](./README.run.md) for normal day-to-day usage
+- if this agent needs Google account access, complete [README.google.md](./README.google.md) before day-to-day usage
 
 ---
 
