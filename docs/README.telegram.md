@@ -15,21 +15,14 @@ Optional for group usage:
 - If the bot must see non-mention messages in groups, run `/setprivacy` in `@BotFather` and disable privacy mode.
 - After changing privacy mode, remove and re-add the bot to the group.
 
-## Start The Gateway
+## Configure Telegram
 
-The gateway and local CLI already use the token persisted by `complete-onboard.sh`.
+Start The Gateway and open The Gateway CLI
 
 ```bash
 docker compose up -d openclaw-gateway
-```
-
-## Open The Gateway CLI
-
-```bash
 docker compose run --rm openclaw-gateway-cli
 ```
-
-## Configure Telegram
 
 Inside the gateway CLI container:
 
