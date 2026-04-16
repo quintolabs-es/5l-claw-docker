@@ -21,6 +21,13 @@ Get tokenized url or plane url and add the gateway token where requested.
 docker compose run --rm openclaw-gateway-cli
 ```
 
+## Useful Commands
+Commit and push the nested `.openclaw` repo from the host through the standalone CLI container:
+
+```bash
+bash ./scripts/commit-push-workspace-from-host.sh "<commit-message>"
+```
+
 ## Doctor
 ```bash
 openclaw doctor
@@ -29,11 +36,6 @@ openclaw doctor
 ## Logs
 ```bash
 docker compose logs -f openclaw-gateway
-```
-
-## State On Host
-```bash
-ls -la ./.openclaw
 ```
 
 ## Stop

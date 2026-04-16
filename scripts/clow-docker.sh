@@ -39,6 +39,7 @@ MANAGED_DOWNLOAD_SPECS=(
   ".openclaw/skills/backup-state-to-drive/SKILL.md:.openclaw/skills/backup-state-to-drive/SKILL.md"
   ".openclaw/skills/backup-state-to-drive/state.include:.openclaw/skills/backup-state-to-drive/state.include"
   ".openclaw/skills/backup-state-to-drive/scripts/backup-state-to-drive.sh:.openclaw/skills/backup-state-to-drive/scripts/backup-state-to-drive.sh"
+  "scripts/commit-push-workspace-from-host.sh:scripts/commit-push-workspace-from-host.sh"
   "scripts/journey-to-seed.sh:scripts/journey-to-seed.sh"
   "scripts/clow-docker.sh:scripts/clow-docker.sh"
 )
@@ -49,6 +50,7 @@ EXECUTABLE_MANAGED_FILES=(
   ".openclaw/_scripts/restore-state.sh"
   ".openclaw/skills/backup-workspace-to-git/scripts/backup-workspace-to-git.sh"
   ".openclaw/skills/backup-state-to-drive/scripts/backup-state-to-drive.sh"
+  "scripts/commit-push-workspace-from-host.sh"
   "scripts/journey-to-seed.sh"
   "scripts/clow-docker.sh"
 )
@@ -339,6 +341,7 @@ run_init() {
   echo "  docs/README.run.md"
   echo "  docs/README.telegram.md"
   echo "  scripts/clow-docker.sh"
+  echo "  scripts/commit-push-workspace-from-host.sh"
   echo "  scripts/journey-to-seed.sh"
   echo
   echo "Next:"
@@ -406,6 +409,7 @@ run_update() {
   echo "  docs/README.run.md"
   echo "  docs/README.telegram.md"
   echo "  scripts/clow-docker.sh"
+  echo "  scripts/commit-push-workspace-from-host.sh"
   echo "  scripts/journey-to-seed.sh"
   if [[ "$readme_already_exists" == "1" || "$openclaw_gitignore_already_exists" == "1" ]]; then
     echo

@@ -32,6 +32,15 @@ curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/
 
 `update` is for an existing project. Always use the latest script from the repo through `curl`, not a possibly outdated local copy. It updates the managed Docker/bootstrap files, preserves the current port by default, keeps `README.md` if it already exists, keeps `./.openclaw/.gitignore` if it already exists, and leaves existing git/SSH setup in place. If the current port cannot be detected safely, pass `--port`.
 
+
+## Runbooks
+
+See [docs/README.onboard.md](docs/README.onboard.md) for first-time setup.
+See [docs/README.run.md](docs/README.run.md) for normal run commands.
+See [docs/README.google.md](docs/README.google.md) if this agent needs Google account access through `gog`.
+See [docs/README.telegram.md](docs/README.telegram.md) if this agent should be reachable through Telegram.
+
+
 ## Runtime
 
 - Persisted state:
@@ -59,10 +68,3 @@ curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/
 The gateway serves the WebSocket API and the browser Control UI on the same port. The Control UI is the small website bundled with OpenClaw. Open it at `http://localhost:18789/` to operate the local gateway.
 
 Control UI origin policy is configured in `./.openclaw/openclaw.json`. This setup allowlists only `http://localhost:18789`.
-
-## Runbooks
-
-See [docs/README.onboard.md](docs/README.onboard.md) for first-time setup.
-See [docs/README.run.md](docs/README.run.md) for normal run commands.
-See [docs/README.google.md](docs/README.google.md) if this agent needs Google account access through `gog`.
-See [docs/README.telegram.md](docs/README.telegram.md) if this agent should be reachable through Telegram.
