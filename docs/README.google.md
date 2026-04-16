@@ -108,14 +108,14 @@ docker compose restart openclaw-gateway
 ## Verify It Works
 Open `openclaw-standalone-cli`.
 
-To verify gmail, run
+#### To verify gmail, run
 ```bash
 gog auth list --check && gog gmail search 'is:unread newer_than:7d' --max 10 --json
 ```
 
 The search command should return JSON from your mailbox. If the command prompts for a keyring password or fails to find the account, check the `GOG_KEYRING_PASSWORD` and `GOG_ACCOUNT` values in `./.openclaw/_secrets/.env`.
 
-To verify drive, run
+#### To verify drive, run
 ```bash
 gog auth list --check && gog drive ls --max 10 --json
 ```

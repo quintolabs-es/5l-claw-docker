@@ -13,12 +13,13 @@ Use `openclaw-standalone-cli` for `onboard` and initial config. It does not requ
 # open a shell in the standalone CLI container to run onboard
 docker compose run --rm --no-deps openclaw-standalone-cli
 
-# run Onboard and go through the setup
+# run Onboard and go through the setup.
 openclaw onboard --mode local --no-install-daemon
 
-# complete onboard for Docker and initialize the repo for workspace folder
-# --gateway-token is required. It is written to both gateway and local CLI config, so gateway requires it and local CLI commands already use it.
-# the git remote is optional. If not provided, no remote push target is configured. name and email already have defaults.
+# complete onboard for Docker and initialize git for the `workspace` folder
+## `--gateway-token` is required. It is set for both the gateway and the local CLI configs, so the gateway requires it and the local CLI commands already use it to auth against the gateway.
+## `--github-remote-url` is optional. If not provided, no remote push target is configured. name and email already have defaults.
+## git name and email are optional and have a default value set
 bash _scripts/complete-onboard.sh --gateway-token <openclaw-gateway-token> --github-remote-url <https://github.com/owner/repo> --git-name <"name-for-git-commits"> --git-email <email-for-git-commits>
 ```
 
@@ -42,6 +43,43 @@ Add it in GitHub as a deploy key with write access for the target repo:
 **Then back to the standalone CLI container**, verify push works:
 ```bash
 git push origin head
+```
+
+## Start the Gateway
+**Basic onboarding is complete**, run the gateway.
+
+```bash
+docker compose up -d openclaw-gateway
+```
+
+Check gateway status from the gateway cli:
+```bash
+docker compose run --rm openclaw-gateway-cli
+openclaw gateway status
+```
+_It's expected that `systemd` check fails, because it's not used in docker._
+
+#### Test gateway CLI
+To run gateway CLI commands, run the gateway CLI container and bash into it. This tests connectivity between `openclaw-gateway-cli` and the running gateway.
+```bash
+docker compose run --rm openclaw-gateway-cli
+# test it 
+openclaw devices list
+```
+
+## Setup Control UI (paring)
+Open gateway cli and run dashboard
+```bash
+docker compose run --rm openclaw-gateway-cli
+openclaw dashboard
+```
+Get tokenized url or plane url and add the gateway token where requested.
+
+#### On first time open Control UI: Device pairing required
+[Official doc](https://docs.openclaw.ai/web/control-ui#device-pairing-first-connection)
+```bash
+openclaw devices list
+openclaw devices approve <requestId>
 ```
 
 ## Additional optional setup
@@ -76,45 +114,6 @@ The value `agents.defaults.heartbeat.target` specifies where to send the heartbe
 Web search
 ```bash
 openclaw configure --section web
-```
-
-
-## Start the Gateway
-**Onboarding is complete**, now the gateway can be started.
-The gateway and local CLI already use the token persisted by `complete-onboard.sh`.
-
-```bash
-docker compose up -d openclaw-gateway
-```
-
-Check gateway status from cli
-```bash
-docker compose run --rm openclaw-gateway-cli
-openclaw gateway status
-```
-_It's expected that `systemd` check fails, because it's not used in docker._
-
-### Test gateway CLI
-To run gateway CLI commands, run the gateway CLI container and bash into it. This tests connectivity between `openclaw-gateway-cli` and the running gateway.
-```bash
-docker compose run --rm openclaw-gateway-cli
-# test it 
-openclaw devices list
-```
-
-## Setup Control UI (paring)
-Browse to `http://localhost:18789/` 
-Or run in CLI
-```bash
-openclaw dashboard
-```
-Get tokenized url or plane url and add the gateway token where requested.
-
-### First time open Control UI: Device pairing required
-[Official doc](https://docs.openclaw.ai/web/control-ui#device-pairing-first-connection)
-```bash
-openclaw devices list
-openclaw devices approve <requestId>
 ```
 
 
