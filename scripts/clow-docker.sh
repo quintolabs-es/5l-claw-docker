@@ -24,7 +24,7 @@ MANAGED_DOWNLOAD_SPECS=(
   ".openclaw/_secrets/.env.example:.openclaw/_secrets/.env.example"
   "docker-compose.yml:docker-compose.yml"
   "Dockerfile:Dockerfile"
-  "docs/README.claw.md:docs/README.claw.md"
+  "README.md:docs/README.md"
   "docs/README.backup.md:docs/README.backup.md"
   "docs/README.onboard.md:docs/README.onboard.md"
   "docs/README.run.md:docs/README.run.md"
@@ -55,10 +55,37 @@ EXECUTABLE_MANAGED_FILES=(
   "scripts/clow-docker.sh"
 )
 
+MANAGED_OUTPUT_PATHS=(
+  ".openclaw/_scripts/complete-onboard.sh"
+  ".openclaw/_scripts/initialize-workspace.sh"
+  ".openclaw/_scripts/restore-state.sh"
+  ".openclaw/_secrets/.env.example"
+  ".openclaw/skills/backup-state-to-drive/"
+  ".openclaw/skills/backup-workspace-to-git/"
+  "Dockerfile"
+  "docker-compose.yml"
+  "docs/README.backup.md"
+  "docs/README.google.md"
+  "docs/README.md"
+  "docs/README.onboard.md"
+  "docs/README.run.md"
+  "docs/README.telegram.md"
+  "scripts/clow-docker.sh"
+  "scripts/commit-push-workspace-from-host.sh"
+  "scripts/journey-to-seed.sh"
+)
+
+INIT_ONLY_OUTPUT_PATHS=(
+  ".openclaw/.gitignore"
+  ".openclaw/_secrets/git/.ssh/"
+  ".openclaw/_secrets/gogcli/.config/"
+  "README.md"
+)
+
 PORT_REWRITE_TARGETS=(
   "docker-compose.yml"
   "Dockerfile"
-  "docs/README.claw.md"
+  "docs/README.md"
   "docs/README.backup.md"
   "docs/README.onboard.md"
   "docs/README.run.md"
@@ -213,6 +240,26 @@ rewrite_project_name_in_targets() {
     "$project_name"
 }
 
+rewrite_docs_readme_links() {
+  local root_dir="$1"
+  local docs_readme_path="${root_dir}/docs/README.md"
+
+  if [[ -f "$docs_readme_path" ]]; then
+    perl -0pi -e 's{\(docs/(README[^)]+)\)}{(./$1)}g' "$docs_readme_path"
+  fi
+}
+
+print_output_paths() {
+  local heading="$1"
+  shift
+  local relative_path
+
+  echo "${heading}:"
+  for relative_path in "$@"; do
+    echo "  ${relative_path}"
+  done
+}
+
 detect_existing_port() {
   local root_dir="$1"
   local docker_compose_path="$root_dir/docker-compose.yml"
@@ -244,39 +291,6 @@ assert_directory_empty() {
     echo "Error: target directory is not empty: ${root_dir}. Use scripts/clow-docker.sh update for existing projects." >&2
     exit 1
   fi
-}
-
-remove_legacy_bootstrap_files() {
-  local root_dir="$1"
-  local legacy_relative
-
-  for legacy_relative in \
-    "journey-to-seed.sh" \
-    "clow-docker-common.sh" \
-    "init-clow-docker.sh" \
-    "update-clow-docker.sh" \
-    "README.claw.md" \
-    "README.claw-onboard.md" \
-    "README.claw-run.md" \
-    "README.gmail.md" \
-    "docs/README.backup.old.md" \
-    "docs/README.claw-onboard.md" \
-    "docs/README.claw-run.md" \
-    "docs/README.gmail.md" \
-    ".openclaw/complete-onboard.sh" \
-    ".openclaw/workspace.gitignore" \
-    ".openclaw/skills/backup-to-git/SKILL.md" \
-    ".openclaw/skills/backup-to-git/scripts/backup-state-to-git.sh" \
-    "scripts/clow-docker-common.sh" \
-    "scripts/init-clow-docker.sh" \
-    "scripts/update-clow-docker.sh" \
-    ".openclaw/_scripts/clow-docker.sh" \
-    ".openclaw/_scripts/journey-to-seed.sh"
-  do
-    if [[ -e "${root_dir}/${legacy_relative}" ]]; then
-      rm -f "${root_dir}/${legacy_relative}"
-    fi
-  done
 }
 
 refresh_self_for_update() {
@@ -319,30 +333,9 @@ run_init() {
   mark_managed_executables "$ROOT_DIR"
   rewrite_port_in_targets "$ROOT_DIR" "$gateway_port"
   rewrite_project_name_in_targets "$ROOT_DIR" "$project_name"
-  remove_legacy_bootstrap_files "$ROOT_DIR"
+  rewrite_docs_readme_links "$ROOT_DIR"
 
-  echo "Created:"
-  echo "  .openclaw/.gitignore"
-  echo "  .openclaw/_scripts/complete-onboard.sh"
-  echo "  .openclaw/_scripts/initialize-workspace.sh"
-  echo "  .openclaw/_scripts/restore-state.sh"
-  echo "  .openclaw/_secrets/.env.example"
-  echo "  .openclaw/_secrets/git/.ssh/"
-  echo "  .openclaw/_secrets/gogcli/.config/"
-  echo "  .openclaw/skills/backup-state-to-drive/"
-  echo "  .openclaw/skills/backup-workspace-to-git/"
-  echo "  Dockerfile"
-  echo "  README.md"
-  echo "  docker-compose.yml"
-  echo "  docs/README.backup.md"
-  echo "  docs/README.claw.md"
-  echo "  docs/README.google.md"
-  echo "  docs/README.onboard.md"
-  echo "  docs/README.run.md"
-  echo "  docs/README.telegram.md"
-  echo "  scripts/clow-docker.sh"
-  echo "  scripts/commit-push-workspace-from-host.sh"
-  echo "  scripts/journey-to-seed.sh"
+  print_output_paths "Created" "${INIT_ONLY_OUTPUT_PATHS[@]}" "${MANAGED_OUTPUT_PATHS[@]}"
   echo
   echo "Next:"
   echo "  To continue with onboarding, read docs/README.onboard.md"
@@ -391,26 +384,9 @@ run_update() {
   mark_managed_executables "$ROOT_DIR"
   rewrite_port_in_targets "$ROOT_DIR" "$gateway_port"
   rewrite_project_name_in_targets "$ROOT_DIR" "$project_name"
-  remove_legacy_bootstrap_files "$ROOT_DIR"
+  rewrite_docs_readme_links "$ROOT_DIR"
 
-  echo "Updated:"
-  echo "  .openclaw/_scripts/complete-onboard.sh"
-  echo "  .openclaw/_scripts/initialize-workspace.sh"
-  echo "  .openclaw/_scripts/restore-state.sh"
-  echo "  .openclaw/_secrets/.env.example"
-  echo "  .openclaw/skills/backup-state-to-drive/"
-  echo "  .openclaw/skills/backup-workspace-to-git/"
-  echo "  Dockerfile"
-  echo "  docker-compose.yml"
-  echo "  docs/README.backup.md"
-  echo "  docs/README.claw.md"
-  echo "  docs/README.google.md"
-  echo "  docs/README.onboard.md"
-  echo "  docs/README.run.md"
-  echo "  docs/README.telegram.md"
-  echo "  scripts/clow-docker.sh"
-  echo "  scripts/commit-push-workspace-from-host.sh"
-  echo "  scripts/journey-to-seed.sh"
+  print_output_paths "Updated" "${MANAGED_OUTPUT_PATHS[@]}"
   if [[ "$readme_already_exists" == "1" || "$openclaw_gitignore_already_exists" == "1" ]]; then
     echo
     echo "Kept:"
