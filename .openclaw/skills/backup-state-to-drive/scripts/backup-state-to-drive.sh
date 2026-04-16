@@ -7,6 +7,7 @@ set -euo pipefail
 
 SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 STATE_REPO_DIR=$(CDPATH= cd -- "${SCRIPT_DIR}/../../.." && pwd)
+STATE_PARENT_DIR=$(dirname "$STATE_REPO_DIR")
 INCLUDE_FILE="${SCRIPT_DIR}/../state.include"
 PROJECT_NAME="__PROJECT_NAME__"
 BACKUPS_FOLDER_NAME="backups"
@@ -124,6 +125,7 @@ add_glob_paths() {
 }
 
 declare -a ARCHIVE_PATHS=()
+declare -a WRAPPED_ARCHIVE_PATHS=()
 
 cd "$STATE_REPO_DIR"
 
@@ -169,10 +171,17 @@ if [[ ${#ARCHIVE_PATHS[@]} -eq 0 ]]; then
   exit 1
 fi
 
+for relative_path in "${ARCHIVE_PATHS[@]}"; do
+  WRAPPED_ARCHIVE_PATHS+=(".openclaw/${relative_path}")
+done
+
 TMP_DIR="$(mktemp -d)"
 ARCHIVE_PATH="${TMP_DIR}/${ARCHIVE_NAME}"
 
-tar -czf "$ARCHIVE_PATH" "${ARCHIVE_PATHS[@]}"
+(
+  cd "$STATE_PARENT_DIR"
+  tar -czf "$ARCHIVE_PATH" "${WRAPPED_ARCHIVE_PATHS[@]}"
+)
 
 BACKUPS_FOLDER_ID="$(ensure_drive_folder_id "$BACKUPS_FOLDER_NAME")"
 PROJECT_FOLDER_ID="$(ensure_drive_folder_id "$PROJECT_NAME" "$BACKUPS_FOLDER_ID")"

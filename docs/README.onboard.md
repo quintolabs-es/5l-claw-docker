@@ -23,7 +23,7 @@ openclaw onboard --mode local --no-install-daemon
 bash _scripts/complete-onboard.sh --gateway-token <openclaw-gateway-token> --github-remote-url <https://github.com/owner/repo> --git-name <"name-for-git-commits"> --git-email <email-for-git-commits>
 ```
 
-### Setup git authentication
+### Complete github authentication setup
 If `--github-remote-url` is passed, the complete-onboard script creates SSH files in `./.openclaw/_secrets/git/.ssh/` on the host and mounts them as `~/.ssh` in the Docker containers that need Git access.
 
 Print the generated public key:
@@ -43,6 +43,33 @@ Add it in GitHub as a deploy key with write access for the target repo:
 **Then back to the standalone CLI container**, verify push works:
 ```bash
 git push origin head
+```
+
+## Initialize Agent Workspace And State
+These two recovery steps are optional and disjoint. Use either one or both. The recommended commands below overwrite the local targets; they do not merge with the local contents.
+
+To do both recoveries, recover state first and initialize workspace second so the workspace wins last.
+
+### Optional: Recover State
+Use this to restore the non-workspace durable state from a prepared local `.openclaw` folder. This overwrites whatever currently exists in the local state paths and does not preserve the local copies.
+
+Download the backup archive from Drive and place it at `/tmp/openclaw/state-backup.tar.gz`.
+
+```bash
+mkdir -p /tmp/openclaw/state
+tar -xzf /tmp/openclaw/state-backup.tar.gz -C /tmp/openclaw/state
+cd <agent-folder>
+bash .openclaw/_scripts/restore-state.sh /tmp/openclaw/state/.openclaw
+```
+
+### Optional: Recover Workspace
+Use this if you want to restore the agent workspace from a separate git repo prepared locally as a `.openclaw` folder. This overwrites the local `workspace/` and local `.gitignore` inside `/.openclaw`.
+
+```bash
+rm -rf /tmp/openclaw/workspace-source
+git clone https://www.github.com/remote/repo/to/recover /tmp/openclaw/workspace-source/.openclaw
+cd <agent-folder>
+bash .openclaw/_scripts/initialize-workspace.sh /tmp/openclaw/workspace-source/.openclaw
 ```
 
 ## Start the Gateway

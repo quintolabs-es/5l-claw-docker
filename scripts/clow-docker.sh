@@ -32,6 +32,8 @@ MANAGED_DOWNLOAD_SPECS=(
   "docs/README.telegram.md:docs/README.telegram.md"
   ".openclaw/workspace.gitignore:.openclaw/.gitignore"
   ".openclaw/_scripts/complete-onboard.sh:.openclaw/_scripts/complete-onboard.sh"
+  ".openclaw/_scripts/initialize-workspace.sh:.openclaw/_scripts/initialize-workspace.sh"
+  ".openclaw/_scripts/restore-state.sh:.openclaw/_scripts/restore-state.sh"
   ".openclaw/skills/backup-workspace-to-git/SKILL.md:.openclaw/skills/backup-workspace-to-git/SKILL.md"
   ".openclaw/skills/backup-workspace-to-git/scripts/backup-workspace-to-git.sh:.openclaw/skills/backup-workspace-to-git/scripts/backup-workspace-to-git.sh"
   ".openclaw/skills/backup-state-to-drive/SKILL.md:.openclaw/skills/backup-state-to-drive/SKILL.md"
@@ -43,6 +45,8 @@ MANAGED_DOWNLOAD_SPECS=(
 
 EXECUTABLE_MANAGED_FILES=(
   ".openclaw/_scripts/complete-onboard.sh"
+  ".openclaw/_scripts/initialize-workspace.sh"
+  ".openclaw/_scripts/restore-state.sh"
   ".openclaw/skills/backup-workspace-to-git/scripts/backup-workspace-to-git.sh"
   ".openclaw/skills/backup-state-to-drive/scripts/backup-state-to-drive.sh"
   "scripts/journey-to-seed.sh"
@@ -318,6 +322,8 @@ run_init() {
   echo "Created:"
   echo "  .openclaw/.gitignore"
   echo "  .openclaw/_scripts/complete-onboard.sh"
+  echo "  .openclaw/_scripts/initialize-workspace.sh"
+  echo "  .openclaw/_scripts/restore-state.sh"
   echo "  .openclaw/_secrets/.env.example"
   echo "  .openclaw/_secrets/git/.ssh/"
   echo "  .openclaw/_secrets/gogcli/.config/"
@@ -386,6 +392,8 @@ run_update() {
 
   echo "Updated:"
   echo "  .openclaw/_scripts/complete-onboard.sh"
+  echo "  .openclaw/_scripts/initialize-workspace.sh"
+  echo "  .openclaw/_scripts/restore-state.sh"
   echo "  .openclaw/_secrets/.env.example"
   echo "  .openclaw/skills/backup-state-to-drive/"
   echo "  .openclaw/skills/backup-workspace-to-git/"
