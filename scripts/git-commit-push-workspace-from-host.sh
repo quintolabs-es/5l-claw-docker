@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # Use to commit and push workspace change from the host, without needing to open a terminal in docker
-# (the git repo to push workspace is authenticated from withing docker compose, git push fails from the host)
+# (the git repo to push workspace is authenticated from within docker compose, git push fails from the host)
 # Usage:
 #   bash ./scripts/git-commit-push-workspace-from-host.sh "<commit-message>"
 
