@@ -2,11 +2,11 @@
 set -euo pipefail
 
 # Usage:
-#   bash ./scripts/commit-push-workspace-from-host.sh "<commit-message>"
+#   bash ./scripts/git-commit-push-workspace-from-host.sh "<commit-message>"
 
 usage() {
   cat <<'EOF'
-Usage: commit-push-workspace-from-host.sh "<commit-message>"
+Usage: git-commit-push-workspace-from-host.sh "<commit-message>"
 EOF
 }
 

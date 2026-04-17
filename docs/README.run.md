@@ -22,10 +22,9 @@ docker compose run --rm openclaw-gateway-cli
 ```
 
 ## Useful Commands
-Commit and push the nested `.openclaw` repo from the host through the standalone CLI container:
-
+### Commit and push the nested `.openclaw` repo **from the host** through the standalone CLI container:
 ```bash
-bash ./scripts/commit-push-workspace-from-host.sh "<commit-message>"
+bash ./scripts/git-commit-push-workspace-from-host.sh "<commit-message>"
 ```
 
 ## Doctor

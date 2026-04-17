@@ -39,7 +39,7 @@ MANAGED_DOWNLOAD_SPECS=(
   ".openclaw/skills/backup-state-to-drive/SKILL.md:.openclaw/skills/backup-state-to-drive/SKILL.md"
   ".openclaw/skills/backup-state-to-drive/state.include:.openclaw/skills/backup-state-to-drive/state.include"
   ".openclaw/skills/backup-state-to-drive/scripts/backup-state-to-drive.sh:.openclaw/skills/backup-state-to-drive/scripts/backup-state-to-drive.sh"
-  "scripts/commit-push-workspace-from-host.sh:scripts/commit-push-workspace-from-host.sh"
+  "scripts/git-commit-push-workspace-from-host.sh:scripts/commit-push-workspace-from-host.sh"
   "scripts/journey-to-seed.sh:scripts/journey-to-seed.sh"
   "scripts/clow-docker.sh:scripts/clow-docker.sh"
 )
@@ -50,7 +50,7 @@ EXECUTABLE_MANAGED_FILES=(
   ".openclaw/_scripts/restore-state.sh"
   ".openclaw/skills/backup-workspace-to-git/scripts/backup-workspace-to-git.sh"
   ".openclaw/skills/backup-state-to-drive/scripts/backup-state-to-drive.sh"
-  "scripts/commit-push-workspace-from-host.sh"
+  "scripts/git-commit-push-workspace-from-host.sh"
   "scripts/journey-to-seed.sh"
   "scripts/clow-docker.sh"
 )
@@ -71,7 +71,7 @@ MANAGED_OUTPUT_PATHS=(
   "docs/README.run.md"
   "docs/README.telegram.md"
   "scripts/clow-docker.sh"
-  "scripts/commit-push-workspace-from-host.sh"
+  "scripts/git-commit-push-workspace-from-host.sh"
   "scripts/journey-to-seed.sh"
 )
 
