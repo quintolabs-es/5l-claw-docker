@@ -25,6 +25,7 @@ MANAGED_DOWNLOAD_SPECS=(
   "docker-compose.yml:docker-compose.yml"
   "Dockerfile:Dockerfile"
   "README.md:docs/README.md"
+  "docs/README.arch.md:docs/README.arch.md"
   "docs/README.backup.md:docs/README.backup.md"
   "docs/README.onboard.md:docs/README.onboard.md"
   "docs/README.run.md:docs/README.run.md"
@@ -64,6 +65,7 @@ MANAGED_OUTPUT_PATHS=(
   ".openclaw/skills/backup-workspace-to-git/"
   "Dockerfile"
   "docker-compose.yml"
+  "docs/README.arch.md"
   "docs/README.backup.md"
   "docs/README.google.md"
   "docs/README.md"
@@ -85,6 +87,7 @@ INIT_ONLY_OUTPUT_PATHS=(
 PORT_REWRITE_TARGETS=(
   "docker-compose.yml"
   "Dockerfile"
+  "docs/README.arch.md"
   "docs/README.md"
   "docs/README.backup.md"
   "docs/README.onboard.md"
