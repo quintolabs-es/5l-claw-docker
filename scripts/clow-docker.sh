@@ -27,6 +27,7 @@ MANAGED_DOWNLOAD_SPECS=(
   "README.md:docs/README.md"
   "docs/README.arch.md:docs/README.arch.md"
   "docs/README.backup.md:docs/README.backup.md"
+  "docs/README.pi.md:docs/README.pi.md"
   "docs/README.onboard.md:docs/README.onboard.md"
   "docs/README.run.md:docs/README.run.md"
   "docs/README.google.md:docs/README.google.md"
@@ -41,6 +42,7 @@ MANAGED_DOWNLOAD_SPECS=(
   ".openclaw/skills/backup-state-to-drive/state.include:.openclaw/skills/backup-state-to-drive/state.include"
   ".openclaw/skills/backup-state-to-drive/scripts/backup-state-to-drive.sh:.openclaw/skills/backup-state-to-drive/scripts/backup-state-to-drive.sh"
   "scripts/git-commit-push-workspace-from-host.sh:scripts/git-commit-push-workspace-from-host.sh"
+  "scripts/install-docker-raspberry.sh:scripts/install-docker-raspberry.sh"
   "scripts/journey-to-seed.sh:scripts/journey-to-seed.sh"
   "scripts/clow-docker.sh:scripts/clow-docker.sh"
 )
@@ -52,6 +54,7 @@ EXECUTABLE_MANAGED_FILES=(
   ".openclaw/skills/backup-workspace-to-git/scripts/backup-workspace-to-git.sh"
   ".openclaw/skills/backup-state-to-drive/scripts/backup-state-to-drive.sh"
   "scripts/git-commit-push-workspace-from-host.sh"
+  "scripts/install-docker-raspberry.sh"
   "scripts/journey-to-seed.sh"
   "scripts/clow-docker.sh"
 )
@@ -70,10 +73,12 @@ MANAGED_OUTPUT_PATHS=(
   "docs/README.google.md"
   "docs/README.md"
   "docs/README.onboard.md"
+  "docs/README.pi.md"
   "docs/README.run.md"
   "docs/README.telegram.md"
   "scripts/clow-docker.sh"
   "scripts/git-commit-push-workspace-from-host.sh"
+  "scripts/install-docker-raspberry.sh"
   "scripts/journey-to-seed.sh"
 )
 
@@ -91,8 +96,17 @@ PORT_REWRITE_TARGETS=(
   "docs/README.md"
   "docs/README.backup.md"
   "docs/README.onboard.md"
+  "docs/README.pi.md"
   "docs/README.run.md"
   ".openclaw/_scripts/complete-onboard.sh"
+)
+
+MANAGED_DIRECTORY_PATHS=(
+  "docs"
+  "scripts"
+  ".openclaw/_scripts"
+  ".openclaw/skills/backup-state-to-drive"
+  ".openclaw/skills/backup-workspace-to-git"
 )
 
 if [[ -n "${BASH_SOURCE[0]:-}" && "${BASH_SOURCE[0]}" != "bash" ]]; then
@@ -184,6 +198,15 @@ sync_managed_downloads() {
   done
 }
 
+replace_managed_directories() {
+  local root_dir="$1"
+  local relative_path
+
+  for relative_path in "${MANAGED_DIRECTORY_PATHS[@]}"; do
+    rm -rf "${root_dir:?}/${relative_path}"
+  done
+}
+
 mark_managed_executables() {
   local root_dir="$1"
   local relative_path
@@ -261,6 +284,51 @@ print_output_paths() {
   for relative_path in "$@"; do
     echo "  ${relative_path}"
   done
+}
+
+prompt_update_confirmation() {
+  local response=""
+  local relative_path
+
+  if [[ -t 0 && -t 1 ]]; then
+    echo "Warning: update will overwrite these managed folders:"
+    for relative_path in "${MANAGED_DIRECTORY_PATHS[@]}"; do
+      echo "  ${relative_path}/"
+    done
+    echo
+    echo "Files outside these folders are not touched."
+    echo "To keep files from being overwritten, store them outside these folders,"
+    echo "for example in a dedicated user folder or at the project root."
+    printf "Continue? [y/N] "
+    IFS= read -r response || true
+  else
+    if [[ ! -e /dev/tty ]]; then
+      echo "Error: update requires an interactive terminal confirmation." >&2
+      exit 1
+    fi
+
+    exec 3<> /dev/tty
+    {
+      echo "Warning: update will overwrite these managed folders:"
+      for relative_path in "${MANAGED_DIRECTORY_PATHS[@]}"; do
+        echo "  ${relative_path}/"
+      done
+      echo
+      echo "Files outside these folders are not touched."
+      echo "To keep files from being overwritten, store them outside these folders,"
+      echo "for example in a dedicated user folder or at the project root."
+      printf "Continue? [y/N] "
+    } >&3
+
+    IFS= read -r response <&3 || true
+    exec 3>&-
+    exec 3<&-
+  fi
+
+  if [[ "$response" != "y" ]]; then
+    echo "Update aborted." >&2
+    exit 1
+  fi
 }
 
 detect_existing_port() {
@@ -368,6 +436,7 @@ run_update() {
   fi
 
   validate_port "$gateway_port"
+  prompt_update_confirmation
 
   mkdir -p "${ROOT_DIR}/.openclaw"
 
@@ -383,6 +452,7 @@ run_update() {
     create_placeholder_readme "${ROOT_DIR}/README.md"
   fi
 
+  replace_managed_directories "$ROOT_DIR"
   sync_managed_downloads "$ROOT_DIR" ".openclaw/.gitignore"
   mark_managed_executables "$ROOT_DIR"
   rewrite_port_in_targets "$ROOT_DIR" "$gateway_port"
