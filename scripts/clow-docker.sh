@@ -223,9 +223,11 @@ create_placeholder_readme() {
 
   mkdir -p "$(dirname "$path")"
   cat > "$path" <<'EOF'
-# README
+## README
+**This file is not versioned/backed-up. This remains a local version only. Use it for local installation specific relevant info.**
 
-Document this claw instance here.
+### Document this claw instance here.
+
 EOF
 }
 
