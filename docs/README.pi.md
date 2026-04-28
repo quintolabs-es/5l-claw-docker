@@ -3,7 +3,7 @@
 This file captures the Raspberry Pi setup steps for a new agent. Add the next steps here as the setup continues.
 
 ## 1. Set up Raspberry Pi OS and connect over SSH
-
+The RPi domain is `<domainname>.local` where `domainname` is the domain set during image creation. The `user` is also set during image cretion.
 ```bash
 ssh <user>@<raspberry-domainname>.local
 ```
@@ -39,3 +39,6 @@ When the script finishes, log out and log back in. Then verify Docker without `s
 ```bash
 docker run --rm hello-world
 ```
+
+## 4. Ready to setup the agent.
+Go to `README.md` and go through `Init` process.
