@@ -5,7 +5,7 @@ This file captures the Raspberry Pi setup steps for a new agent. Add the next st
 ## 1. Set up Raspberry Pi OS and connect over SSH
 
 ```bash
-ssh <user>@<raspberry-domainname>
+ssh <user>@<raspberry-domainname>.local
 ```
 
 ## 2. Confirm the Pi is on 64-bit arm64
