@@ -288,6 +288,20 @@ print_output_paths() {
   done
 }
 
+print_next_steps() {
+  local green=""
+  local reset=""
+
+  if [[ -t 1 ]]; then
+    green=$'\033[32m'
+    reset=$'\033[0m'
+  fi
+
+  printf "%sNext:\n" "$green"
+  printf "  To continue with onboarding, read docs/README.onboard.md\n"
+  printf "  and run the onboard steps from that file.%s\n" "$reset"
+}
+
 prompt_update_confirmation() {
   local response=""
   local relative_path
@@ -410,9 +424,7 @@ run_init() {
 
   print_output_paths "Created" "${INIT_ONLY_OUTPUT_PATHS[@]}" "${MANAGED_OUTPUT_PATHS[@]}"
   echo
-  echo "Next:"
-  echo "  To continue with onboarding, read docs/README.onboard.md"
-  echo "  and run the onboard steps from that file."
+  print_next_steps
 }
 
 run_update() {
