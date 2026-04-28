@@ -12,7 +12,7 @@ Unlike the official Docker setup, which writes config and workspace on the host 
 
 ## Init
 ```bash
-mkdir -p claw-agent
+mkdir claw-agent
 cd claw-agent
 curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/scripts/clow-docker.sh?skip-cache=$(date +%s)" | bash -s -- init
 # or specifing a port different than default
