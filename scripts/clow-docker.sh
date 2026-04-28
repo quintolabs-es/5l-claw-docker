@@ -302,19 +302,23 @@ print_next_steps() {
   printf "  and run the onboard steps from that file.%s\n" "$reset"
 }
 
-prompt_update_confirmation() {
-  local response=""
+print_update_warning() {
   local relative_path
 
+  echo "Warning: update will fully overwrite these managed folders:"
+  for relative_path in "${MANAGED_DIRECTORY_PATHS[@]}"; do
+    echo "  ${relative_path}/"
+  done
+  echo
+  echo "To keep any custom file from being overwritten by the updates, store them outside these folders,"
+  echo "in a dedicated user folder or at the project root directly."
+}
+
+prompt_update_confirmation() {
+  local response=""
+
   if [[ -t 0 && -t 1 ]]; then
-    echo "Warning: update will overwrite these managed folders:"
-    for relative_path in "${MANAGED_DIRECTORY_PATHS[@]}"; do
-      echo "  ${relative_path}/"
-    done
-    echo
-    echo "Files outside these folders are not touched."
-    echo "To keep files from being overwritten, store them outside these folders,"
-    echo "for example in a dedicated user folder or at the project root."
+    print_update_warning
     printf "Continue? [y/N] "
     IFS= read -r response || true
   else
@@ -325,14 +329,7 @@ prompt_update_confirmation() {
 
     exec 3<> /dev/tty
     {
-      echo "Warning: update will overwrite these managed folders:"
-      for relative_path in "${MANAGED_DIRECTORY_PATHS[@]}"; do
-        echo "  ${relative_path}/"
-      done
-      echo
-      echo "Files outside these folders are not touched."
-      echo "To keep files from being overwritten, store them outside these folders,"
-      echo "for example in a dedicated user folder or at the project root."
+      print_update_warning
       printf "Continue? [y/N] "
     } >&3
 
