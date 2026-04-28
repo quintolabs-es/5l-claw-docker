@@ -26,7 +26,6 @@ services:
     restart: "no"
     volumes:
       - ./.openclaw:/home/node/.openclaw
-      - book_node_modules:/home/node/.openclaw/workspace/tools/book/node_modules # do not use node_modules from the host, bus container-specific volume
       - ./.openclaw/_secrets/git/.ssh:/home/node/.ssh
       - ./.openclaw/_secrets/gogcli/.config:/home/node/.config/gogcli
 
@@ -43,7 +42,6 @@ services:
     restart: unless-stopped
     volumes:
       - ./.openclaw:/home/node/.openclaw
-      - book_node_modules:/home/node/.openclaw/workspace/tools/book/node_modules # do not use node_modules from the host, bus container-specific volume
       - ./.openclaw/_secrets/git/.ssh:/home/node/.ssh
       - ./.openclaw/_secrets/gogcli/.config:/home/node/.config/gogcli
 
@@ -72,9 +70,5 @@ services:
     restart: "no"
     volumes:
       - ./.openclaw:/home/node/.openclaw
-      - book_node_modules:/home/node/.openclaw/workspace/tools/book/node_modules # do not use node_modules from the host, bus container-specific volume
       - ./.openclaw/_secrets/git/.ssh:/home/node/.ssh
       - ./.openclaw/_secrets/gogcli/.config:/home/node/.config/gogcli
-
-volumes:
-  book_node_modules: # volume for node_modules folder, shared among the three containers.
