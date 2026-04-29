@@ -310,8 +310,17 @@ print_update_warning() {
     echo "  ${relative_path}/"
   done
   echo
-  echo "To keep any custom file from being overwritten by the updates, store them outside these folders,"
-  echo "in a dedicated user folder or at the project root directly."
+  echo "It will also refresh these managed files outside those folders:"
+  echo "  Dockerfile"
+  echo "  docker-compose.yml"
+  echo "  .openclaw/_secrets/.env.example"
+  echo
+  echo "It preserves:"
+  echo "  README.md"
+  echo "  .openclaw/.gitignore"
+  echo
+  echo "To keep any custom file from being overwritten by the updates, store it outside those folders"
+  echo "and outside those managed files, in a dedicated user folder or at the project root directly."
 }
 
 prompt_update_confirmation() {
