@@ -47,7 +47,4 @@ Files outside those folders are not touched. If you have files that must not be 
 
 See [docs/README.onboard.md](docs/README.onboard.md) for first-time setup.
 See [docs/README.run.md](docs/README.run.md) for normal run commands.
-See [docs/README.google.md](docs/README.google.md) if this agent needs Google account access through `gog`.
-See [docs/README.telegram.md](docs/README.telegram.md) if this agent should be reachable through Telegram.
-
 See [docs/README.arch.md](docs/README.arch.md) for runtime and gateway architecture.

@@ -16,15 +16,19 @@ docker compose run --rm --no-deps openclaw-standalone-cli
 # run Onboard and go through the setup.
 openclaw onboard --mode local --no-install-daemon
 
-# complete onboard for Docker and initialize git for the `workspace` folder
+# complete onboard for Docker and initialize the local .openclaw git repo
 ## `--gateway-token` is required. It is set for both the gateway and the local CLI configs, so the gateway requires it and the local CLI commands already use it to auth against the gateway.
-## `--github-remote-url` is optional. If not provided, no remote push target is configured. name and email already have defaults.
+## optionally pass one GitHub remote mode:
+##   --github-remote-url-new-workspace      when the target repo is empty/new and will become this agent's future workspace repo
+##   --github-remote-url-existing-workspace when the target repo already contains the workspace to recover (current workspace gets OVEWRITTEN) and should remain the future push target
 ## git name and email are optional and have a default value set
-bash _scripts/complete-onboard.sh --gateway-token <openclaw-gateway-token> --github-remote-url <https://github.com/owner/repo> --git-name <"name-for-git-commits"> --git-email <email-for-git-commits>
+bash _scripts/complete-onboard.sh --gateway-token <openclaw-gateway-token> --github-remote-url-new-workspace <https://github.com/owner/repo> --git-name <"name-for-git-commits"> --git-email <email-for-git-commits>
+# OR
+bash _scripts/complete-onboard.sh --gateway-token <openclaw-gateway-token> --github-remote-url-existing-workspace <https://github.com/owner/repo> --git-name <"name-for-git-commits"> --git-email <email-for-git-commits>
 ```
 
 ### Complete github authentication setup
-If `--github-remote-url` is passed, the complete-onboard script creates SSH files in `./.openclaw/_secrets/git/.ssh/` on the host and mounts them as `~/.ssh` in the Docker containers that need Git access.
+If either GitHub remote flag is passed, the complete-onboard script creates SSH files in `./.openclaw/_secrets/git/.ssh/` on the host and mounts them as `~/.ssh` in the Docker containers that need Git access.
 
 Print the generated public key:
 ```bash
@@ -40,10 +44,12 @@ Add it in GitHub as a deploy key with write access for the target repo:
 - Enable write access.
 - Save.
 
-**Then back to the standalone CLI container**, verify push works:
+If you used `--github-remote-url-new-workspace`, **then back to the standalone CLI container**, verify push works:
 ```bash
-git push origin head
+git push -u origin HEAD
 ```
+
+If you used `--github-remote-url-existing-workspace`, the script uses that same repo to fetch and attach the current agent workspace during onboarding, and that repo remains the future push target for workspace backups.
 
 ## Initialize Agent Workspace And State
 These two recovery steps are optional and disjoint. Use either one or both. The recommended commands below overwrite the local targets; they do not merge with the local contents.
@@ -63,11 +69,16 @@ bash .openclaw/_scripts/restore-state.sh /tmp/openclaw/state/.openclaw
 ```
 
 ### Optional: Recover Workspace
-Use this if you want to restore the agent workspace from a separate git repo prepared locally as a `.openclaw` folder. This overwrites the local `workspace/` and local `.gitignore` inside `/.openclaw`.
+Use this if you want to restore the agent workspace from a local prepared `.openclaw` folder. This overwrites the local `workspace/` and local `.gitignore` inside `/.openclaw`.
+
+If the same GitHub repo should remain the future push target, do not use this path. Instead, use `--github-remote-url-existing-workspace` in `complete-onboard.sh`.
 
 ```bash
+# clone the workspace locally
 rm -rf /tmp/openclaw/workspace-source
 git clone https://www.github.com/remote/repo/to/recover /tmp/openclaw/workspace-source/.openclaw
+
+# initialize current agent with the cloned workspace
 cd <agent-folder>
 bash .openclaw/_scripts/initialize-workspace.sh /tmp/openclaw/workspace-source/.openclaw
 ```
