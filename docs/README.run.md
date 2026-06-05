@@ -18,6 +18,7 @@ Get tokenized url or plane url and add the gateway token where requested.
 
 ## Run CLI
 ```bash
+cd claw-agent
 docker compose run --rm openclaw-gateway-cli
 ```
 
@@ -29,16 +30,19 @@ bash ./scripts/git-commit-push-workspace-from-host.sh "<commit-message>"
 
 ## Doctor
 ```bash
+<run-openclaw-cli>
 openclaw doctor
 ```
 
 ## Logs
 ```bash
+cd claw-agent
 docker compose logs -f openclaw-gateway
 ```
 
 ## Stop
 ```bash
+cd claw-agent
 docker compose down
 ```
 

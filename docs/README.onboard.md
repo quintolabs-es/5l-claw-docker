@@ -13,11 +13,13 @@ Use `openclaw-standalone-cli` for `onboard` and initial config. It does not requ
 # open a shell in the standalone CLI container to run onboard
 docker compose run --rm --no-deps openclaw-standalone-cli
 
-# run Onboard and go through the setup.
+# run Onboard and go through the setup. Make sure you:
+## do not configure telagram channel. you'll be sent to specific instructions later
+## do not hatc in terminal at the end.
 openclaw onboard --mode local --no-install-daemon
 
 # complete onboard for Docker and initialize the local .openclaw git repo
-## `--gateway-token` is required. It is set for both the gateway and the local CLI configs, so the gateway requires it and the local CLI commands already use it to auth against the gateway.
+## `--gateway-token` is required. Generate a safe token and use it. It is set for both the gateway and the local CLI configs, so the gateway requires it and the local CLI commands already use it to auth against the gateway.
 ## optionally pass one GitHub remote mode:
 ##   --github-remote-url-new-workspace      when the target repo is empty/new and will become this agent's future workspace repo
 ##   --github-remote-url-existing-workspace when the target repo already contains the workspace to recover, the current workspace gets overwritten, and that repo should remain the future push target
@@ -76,18 +78,11 @@ bash .openclaw/_scripts/initialize-workspace.sh /tmp/openclaw/workspace-source/.
 ```
 
 ## Start the Gateway
-**Basic onboarding is complete**, run the gateway.
+**Basic onboarding is complete**, now run the gateway.
 
 ```bash
 docker compose up -d openclaw-gateway
 ```
-
-Check gateway status from the gateway cli:
-```bash
-docker compose run --rm openclaw-gateway-cli
-openclaw gateway status
-```
-_It's expected that `systemd` check fails, because it's not used in docker._
 
 #### Test gateway CLI
 To run gateway CLI commands, run the gateway CLI container and bash into it. This tests connectivity between `openclaw-gateway-cli` and the running gateway.
@@ -114,16 +109,15 @@ openclaw devices approve <requestId>
 
 ## Additional optional setup
 
-### Google Access
-Optional post-onboard setup.
-
-The agent can access Google services such as Gmail, Calendar, and Drive through the `gog` CLI skill. If needed, copy `./.openclaw/_secrets/.env.example` to `./.openclaw/_secrets/.env`, set `GOG_ACCOUNT` and `GOG_KEYRING_PASSWORD`, and then complete [README.google.md](./README.google.md).
-
 ### Telegram channel
 Optional post-onboard setup.
 
 If this agent should be reachable through Telegram, complete [README.telegram.md](./README.telegram.md) before using Telegram-based heartbeat or normal chat.
 
+### Google Access
+Optional post-onboard setup.
+
+The agent can access Google services such as Gmail, Calendar, and Drive through the `gog` CLI skill. If needed, copy `./.openclaw/_secrets/.env.example` to `./.openclaw/_secrets/.env`, set `GOG_ACCOUNT` and `GOG_KEYRING_PASSWORD`, and then complete [README.google.md](./README.google.md).
 
 ### Set Hearbeat and heartbeat response channel
 By default hearbit runs every 30m, executes `HEARTBEAT.md` prompt and response (if any) is sent to last channel.
@@ -133,8 +127,8 @@ Check `https://docs.openclaw.ai/gateway/heartbeat`.
 openclaw config set agents.defaults.heartbeat.every "30m"
 openclaw config set agents.defaults.heartbeat.target "telegram"
 openclaw config set agents.defaults.heartbeat.to "telegram"
-openclaw config set agents.defaults.heartbeat.activeHours.start "09:00"
-openclaw config set agents.defaults.heartbeat.activeHours.end "22:00"
+openclaw config set agents.defaults.heartbeat.activeHours.start "07:00"
+openclaw config set agents.defaults.heartbeat.activeHours.end "23:59"
 openclaw config set agents.defaults.heartbeat.activeHours.timezone "Europe/Madrid"
 ```
 
@@ -149,7 +143,6 @@ openclaw configure --section web
 
 ## To run the agent from now on:
 - use [README.run.md](./README.run.md) for normal day-to-day usage
-- if this agent needs Google account access, complete [README.google.md](./README.google.md) before day-to-day usage
 
 ---
 

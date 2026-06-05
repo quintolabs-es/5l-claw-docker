@@ -11,6 +11,13 @@ The image build disables installer onboarding with `OPENCLAW_NO_ONBOARD=1` so `d
 Unlike the official Docker setup, which writes config and workspace on the host under `~/.openclaw/` and `~/.openclaw/workspace`, this packaging keeps all OpenClaw state inside this project folder so the environment stays repo-local and can be versioned.
 
 ## Init
+The init script creates the Docker packaging files in the current folder, so run it from the directory where you want this OpenClaw instance to live.
+Always use the latest script from the repo through `curl`, not a possibly outdated local copy.
+`init` assumes the target folder is empty and fails if it already contains files.
+
+After init, continue with onboarding in [docs/README.onboard.md](docs/README.onboard.md).
+
+_To install the agent in a raspberry pi, first prepare the raspberry as explained in `docs/README.pi.md`, before running the init script._
 ```bash
 mkdir claw-agent
 cd claw-agent
@@ -19,11 +26,7 @@ curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/
 curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/scripts/clow-docker.sh?skip-cache=$(date +%s)" | bash -s -- init --port 19001
 ```
 
-The init script creates the Docker packaging files in the current folder, so run it from the directory where you want this OpenClaw instance to live.
-Always use the latest script from the repo through `curl`, not a possibly outdated local copy.
-`init` assumes the target folder is empty and fails if it already contains files.
 
-After init, continue with onboarding in [docs/README.onboard.md](docs/README.onboard.md).
 
 ## Update
 ```bash
