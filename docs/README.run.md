@@ -16,9 +16,16 @@ openclaw dashboard
 ```
 Get tokenized url or plane url and add the gateway token where requested.
 
-## Run CLI
+## Run either gateway or standalone CLI
 ```bash
 cd claw-agent
+
+# Standalone CLI for onboarding, local state maintenance, backup, restore,
+# and gog commands that do not require the gateway network namespace.
+docker compose run --rm --no-deps openclaw-standalone-cli
+
+# CLI that shares the gateway network namespace and is intended for commands
+# that talk to the running gateway over 127.0.0.1.
 docker compose run --rm openclaw-gateway-cli
 ```
 

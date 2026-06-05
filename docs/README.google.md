@@ -35,6 +35,7 @@ Use Google Cloud: `https://console.cloud.google.com/`.
    - Select `Desktop app`
    - Create the client
    - Download the OAuth client JSON
+_Note: client JSON can only be downloaded on creation, so if that is lost a new client must be created._
 
 
 References:
@@ -53,27 +54,25 @@ cp <path-to-downloaded-client-json> ./.openclaw/_secrets/gogcli/.config/client_s
 ## Setup Gmail Access
 
 Copy `./.openclaw/_secrets/.env.example` to `./.openclaw/_secrets/.env` and set these values.
+```bash
+cp ./.openclaw/_secrets/.env.example ./.openclaw/_secrets/.env
+```
 ```dotenv
 GOG_KEYRING_PASSWORD=<strong-password>
-GOG_ACCOUNT=<you@gmail.com>
+GOG_ACCOUNT=<claw-agent@gmail.com>
 ```
 _If any container is already running, it needs to be restarted for it to pick up the .env just set above._
 
 `GOG_KEYRING_PASSWORD` is a local encryption password for `gog`'s file keyring. Use the same value each time this agent instance is started, or `gog` will not be able to read the tokens it already stored and the account will need to be re-authorized.
 
-Open a shell in the standalone CLI container:
-
+Run openclaw CLI and run
 ```bash
-docker compose run --rm --no-deps openclaw-standalone-cli
-```
-
-Inside the standalone CLI container:
-
-```bash
+<run openclaw cli>
 gog auth keyring file
 gog auth credentials /home/node/.config/gogcli/client_secret.json
-gog auth add <you@gmail.com> --services gmail,drive --gmail-scope full --manual
+gog auth add <claw-agent@gmail.com> --services gmail,drive --gmail-scope full --manual
 ```
+Authorize by login with `claw-agent@gmail.com` account.
 
 If you later add services or change the Gmail scope, rerun `gog auth add ...` with `--force-consent`.
 ```bash
@@ -90,16 +89,7 @@ Gmail scope options for `--gmail-scope`:
 - `readonly`
 - `full`
 
-
 `--manual` is the correct OAuth flow for this Docker setup:
-
-- `gog` prints an auth URL.
-- Open that URL in a local browser.
-- Approve access.
-- Copy the full redirect URL from the browser address bar.
-- Paste that full redirect URL back into the container prompt.
-
-If the gateway was already running when `.env` was changed, restart it after setup:
 
 ```bash
 docker compose restart openclaw-gateway
