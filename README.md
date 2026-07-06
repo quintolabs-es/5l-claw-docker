@@ -21,9 +21,9 @@ _To install the agent in a raspberry pi, first prepare the raspberry as explaine
 ```bash
 mkdir claw-agent
 cd claw-agent
-curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/scripts/clow-docker.sh?skip-cache=$(date +%s)" | bash -s -- init
+curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/scripts/claw-docker-multiplatform.sh?skip-cache=$(date +%s)" | bash -s -- init
 # or specifing a port different than default
-curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/scripts/clow-docker.sh?skip-cache=$(date +%s)" | bash -s -- init --port 19001
+curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/scripts/claw-docker-multiplatform.sh?skip-cache=$(date +%s)" | bash -s -- init --port 19001
 ```
 
 `--port` sets the OpenClaw gateway port for that agent instance. The default port is `18789`. The ability to specify a port allows more than one agent to run on the same machine/server.
@@ -32,7 +32,7 @@ curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/
 
 ## Update
 ```bash
-curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/scripts/clow-docker.sh?skip-cache=$(date +%s)" | bash -s -- update
+curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/scripts/claw-docker-multiplatform.sh?skip-cache=$(date +%s)" | bash -s -- update
 ```
 
 `update` does not target agent state or workspace data. It only updates the Docker packaging and managed helper files used to run this agent in Docker.
