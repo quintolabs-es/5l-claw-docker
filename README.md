@@ -26,6 +26,8 @@ curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/
 curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/scripts/clow-docker.sh?skip-cache=$(date +%s)" | bash -s -- init --port 19001
 ```
 
+`--port` sets the OpenClaw gateway port for that agent instance. The default port is `18789`. The ability to specify a port allows more than one agent to run on the same machine/server.
+
 
 
 ## Update

@@ -84,6 +84,16 @@ bash .openclaw/_scripts/initialize-workspace.sh /tmp/openclaw/workspace-source/.
 docker compose up -d openclaw-gateway
 ```
 
+This Docker setup does not install an OpenClaw host daemon. `openclaw onboard --mode local --no-install-daemon` keeps OpenClaw itself out of system startup, and Docker is the process supervisor instead.
+
+`openclaw-gateway` uses Docker Compose `restart: unless-stopped`, so after you start it once with `docker compose up -d openclaw-gateway`, Docker starts it again automatically after a Raspberry Pi reboot as long as the container was not manually stopped or removed.
+
+If you do not want automatic startup after reboot, stop it explicitly:
+
+```bash
+docker compose stop openclaw-gateway
+```
+
 #### Test gateway CLI
 To run gateway CLI commands, run the gateway CLI container and bash into it. This tests connectivity between `openclaw-gateway-cli` and the running gateway.
 ```bash

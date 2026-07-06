@@ -7,6 +7,10 @@ For first-time setup, use [README.onboard.md](./README.onboard.md).
 docker compose up -d openclaw-gateway
 ```
 
+This repo does not install an OpenClaw host daemon. Docker is the process supervisor for the gateway container.
+
+`openclaw-gateway` uses Docker Compose `restart: unless-stopped`, so once you start it with `docker compose up -d openclaw-gateway`, Docker brings it back automatically after a host reboot unless you stop or remove that container first.
+
 ## Open Control UI
 Browse to `http://localhost:18789/`
 
@@ -52,6 +56,17 @@ docker compose logs -f openclaw-gateway
 cd claw-agent
 docker compose down
 ```
+
+`docker compose down` removes the gateway container, so there is nothing left for Docker to auto-start on the next reboot. Use `docker compose up -d openclaw-gateway` again when you want it back.
+
+If you only want to keep the gateway stopped without removing the container, use:
+
+```bash
+cd claw-agent
+docker compose stop openclaw-gateway
+```
+
+With `restart: unless-stopped`, a manually stopped gateway stays down across reboot until you start it again yourself.
 
 ---
 
