@@ -14,7 +14,7 @@ set -euo pipefail
 ROOT_DIR="${PWD}"
 RAW_BASE_URL="${CLAW_DOCKER_RAW_BASE_URL:-https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main}"
 SELF_PATH_RELATIVE="scripts/claw-docker.sh"
-SELF_REFRESH_ENV_VAR="CLAW_DOCKER_SKIP_SELF_REFRESH"
+SELF_REFRESH_ENV_VAR="CLAW_DOCKER_MULTIPLATFORM_SKIP_SELF_REFRESH"
 DEFAULT_GATEWAY_PORT="18789"
 TMP_SELF_SCRIPT=""
 SCRIPT_DIR=""
@@ -128,6 +128,22 @@ Usage:
 EOF
 }
 
+require_host_commands() {
+  local missing=()
+  local command_name
+
+  for command_name in "$@"; do
+    if ! command -v "$command_name" >/dev/null 2>&1; then
+      missing+=("$command_name")
+    fi
+  done
+
+  if (( ${#missing[@]} > 0 )); then
+    echo "Error: missing required host commands: ${missing[*]}" >&2
+    exit 1
+  fi
+}
+
 validate_port() {
   local port="$1"
 
@@ -231,13 +247,34 @@ create_placeholder_readme() {
 EOF
 }
 
+rewrite_file_with_sed() {
+  local path="$1"
+  local sed_expression="$2"
+  local temp_path
+
+  if [[ ! -f "$path" ]]; then
+    return
+  fi
+
+  temp_path="$(mktemp "${path}.tmp.XXXXXX")"
+
+  if ! sed "$sed_expression" "$path" > "$temp_path"; then
+    rm -f "$temp_path"
+    return 1
+  fi
+
+  mv "$temp_path" "$path"
+}
+
+escape_sed_replacement() {
+  printf '%s' "$1" | sed 's/[|&]/\\&/g'
+}
+
 rewrite_port_in_file() {
   local path="$1"
   local port="$2"
 
-  if [[ -f "$path" ]]; then
-    PORT="$port" perl -0pi -e 's/18789/$ENV{PORT}/g' "$path"
-  fi
+  rewrite_file_with_sed "$path" "s|18789|${port}|g"
 }
 
 rewrite_port_in_targets() {
@@ -253,10 +290,10 @@ rewrite_port_in_targets() {
 rewrite_project_name_in_file() {
   local path="$1"
   local project_name="$2"
+  local escaped_project_name
 
-  if [[ -f "$path" ]]; then
-    PROJECT_NAME="$project_name" perl -0pi -e 's/__PROJECT_NAME__/$ENV{PROJECT_NAME}/g' "$path"
-  fi
+  escaped_project_name="$(escape_sed_replacement "$project_name")"
+  rewrite_file_with_sed "$path" "s|__PROJECT_NAME__|${escaped_project_name}|g"
 }
 
 rewrite_project_name_in_targets() {
@@ -272,9 +309,7 @@ rewrite_docs_readme_links() {
   local root_dir="$1"
   local docs_readme_path="${root_dir}/docs/README.md"
 
-  if [[ -f "$docs_readme_path" ]]; then
-    perl -0pi -e 's{\(docs/(README[^)]+)\)}{(./$1)}g' "$docs_readme_path"
-  fi
+  rewrite_file_with_sed "$docs_readme_path" 's|(docs/\(README[^)]*\))|(./\1)|g'
 }
 
 print_output_paths() {
@@ -377,10 +412,30 @@ detect_existing_port() {
 
 assert_directory_empty() {
   local root_dir="$1"
-  local first_entry
+  local entries=()
+  local had_dotglob=0
+  local had_nullglob=0
 
-  first_entry="$(find "$root_dir" -mindepth 1 -maxdepth 1 -print -quit)"
-  if [[ -n "$first_entry" ]]; then
+  if shopt -q dotglob; then
+    had_dotglob=1
+  fi
+
+  if shopt -q nullglob; then
+    had_nullglob=1
+  fi
+
+  shopt -s dotglob nullglob
+  entries=("${root_dir}"/*)
+
+  if (( had_dotglob == 0 )); then
+    shopt -u dotglob
+  fi
+
+  if (( had_nullglob == 0 )); then
+    shopt -u nullglob
+  fi
+
+  if (( ${#entries[@]} > 0 )); then
     echo "Error: target directory is not empty: ${root_dir}. Use scripts/claw-docker.sh update for existing projects." >&2
     exit 1
   fi
@@ -423,10 +478,10 @@ run_init() {
 
   create_placeholder_readme "${ROOT_DIR}/README.md"
   sync_managed_downloads "$ROOT_DIR"
-  mark_managed_executables "$ROOT_DIR"
   rewrite_port_in_targets "$ROOT_DIR" "$gateway_port"
   rewrite_project_name_in_targets "$ROOT_DIR" "$project_name"
   rewrite_docs_readme_links "$ROOT_DIR"
+  mark_managed_executables "$ROOT_DIR"
 
   print_output_paths "Created" "${INIT_ONLY_OUTPUT_PATHS[@]}" "${MANAGED_OUTPUT_PATHS[@]}"
   echo
@@ -474,10 +529,10 @@ run_update() {
 
   replace_managed_directories "$ROOT_DIR"
   sync_managed_downloads "$ROOT_DIR" ".openclaw/.gitignore"
-  mark_managed_executables "$ROOT_DIR"
   rewrite_port_in_targets "$ROOT_DIR" "$gateway_port"
   rewrite_project_name_in_targets "$ROOT_DIR" "$project_name"
   rewrite_docs_readme_links "$ROOT_DIR"
+  mark_managed_executables "$ROOT_DIR"
 
   print_output_paths "Updated" "${MANAGED_OUTPUT_PATHS[@]}"
   if [[ "$readme_already_exists" == "1" || "$openclaw_gitignore_already_exists" == "1" ]]; then
@@ -549,6 +604,8 @@ while [[ $# -gt 0 ]]; do
       ;;
   esac
 done
+
+require_host_commands bash curl sed mktemp head basename dirname chmod mv rm mkdir cat env
 
 case "$COMMAND" in
   init)
