@@ -12,7 +12,6 @@ docker compose build
 cd claw-agent
 mkdir -p .openclaw/_secrets
 touch .openclaw/_secrets/.env
-docker-compose -f docker-compose-qnap.yml config
 docker-compose -f docker-compose-qnap.yml build
 ```
 

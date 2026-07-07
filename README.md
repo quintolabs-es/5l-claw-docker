@@ -28,7 +28,7 @@ curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/
 
 `--port` sets the OpenClaw gateway port for that agent instance. The default port is `18789`. The ability to specify a port allows more than one agent to run on the same machine/server.
 
-_Note: Use `claw-docker-qnap.sh` for QNAP compatible script._
+**_Note: For QNAP Use `claw-docker-qnap.sh` script._**
 
 ## Update
 ```bash
