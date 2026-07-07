@@ -29,8 +29,10 @@ Use `openclaw-standalone-cli` for `onboard` and initial config. It does not requ
 docker compose run --rm --no-deps openclaw-standalone-cli
 
 # run Onboard and go through the setup. Make sure you:
-## do not configure telagram channel. you'll be sent to specific instructions later
-## do not hatc in terminal at the end.
+## go for quick start
+## do not configure the channel. you'll be sent to specific instructions later for Telegram
+## anything your are not sure, skip
+## do NOT hatch in terminal at the end.
 openclaw onboard --mode local --no-install-daemon
 
 # complete onboard for Docker and initialize the local .openclaw git repo
