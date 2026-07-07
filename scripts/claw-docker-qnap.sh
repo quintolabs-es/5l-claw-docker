@@ -2,18 +2,18 @@
 set -euo pipefail
 
 # Usage:
-#   bash ./scripts/claw-docker.sh init
-#   bash ./scripts/claw-docker.sh init --port 19001
-#   bash ./scripts/claw-docker.sh update
-#   bash ./scripts/claw-docker.sh update --port 19001
-#   curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/scripts/claw-docker.sh?skip-cache=$(date +%s)" | bash -s -- init
-#   curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/scripts/claw-docker.sh?skip-cache=$(date +%s)" | bash -s -- init --port 19001
-#   curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/scripts/claw-docker.sh?skip-cache=$(date +%s)" | bash -s -- update
-#   curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/scripts/claw-docker.sh?skip-cache=$(date +%s)" | bash -s -- update --port 19001
+#   bash ./scripts/claw-docker-qnap.sh init
+#   bash ./scripts/claw-docker-qnap.sh init --port 19001
+#   bash ./scripts/claw-docker-qnap.sh update
+#   bash ./scripts/claw-docker-qnap.sh update --port 19001
+#   curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/scripts/claw-docker-qnap.sh?skip-cache=$(date +%s)" | bash -s -- init
+#   curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/scripts/claw-docker-qnap.sh?skip-cache=$(date +%s)" | bash -s -- init --port 19001
+#   curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/scripts/claw-docker-qnap.sh?skip-cache=$(date +%s)" | bash -s -- update
+#   curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/scripts/claw-docker-qnap.sh?skip-cache=$(date +%s)" | bash -s -- update --port 19001
 
 ROOT_DIR="${PWD}"
 RAW_BASE_URL="${CLAW_DOCKER_RAW_BASE_URL:-https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main}"
-SELF_PATH_RELATIVE="scripts/claw-docker.sh"
+SELF_PATH_RELATIVE="scripts/claw-docker-qnap.sh"
 SELF_REFRESH_ENV_VAR="CLAW_DOCKER_MULTIPLATFORM_SKIP_SELF_REFRESH"
 DEFAULT_GATEWAY_PORT="18789"
 TMP_SELF_SCRIPT=""
@@ -23,6 +23,7 @@ SCRIPT_SOURCE_PATH=""
 MANAGED_DOWNLOAD_SPECS=(
   ".openclaw/_secrets/.env.example:.openclaw/_secrets/.env.example"
   "docker-compose.yml:docker-compose.yml"
+  "docker-compose-qnap.yml:docker-compose-qnap.yml"
   "Dockerfile:Dockerfile"
   "README.md:docs/README.md"
   "docs/README.arch.md:docs/README.arch.md"
@@ -45,6 +46,7 @@ MANAGED_DOWNLOAD_SPECS=(
   "scripts/install-docker-raspberry.sh:scripts/install-docker-raspberry.sh"
   "scripts/journey-to-seed.sh:scripts/journey-to-seed.sh"
   "scripts/claw-docker.sh:scripts/claw-docker.sh"
+  "scripts/claw-docker-qnap.sh:scripts/claw-docker-qnap.sh"
 )
 
 EXECUTABLE_MANAGED_FILES=(
@@ -57,6 +59,7 @@ EXECUTABLE_MANAGED_FILES=(
   "scripts/install-docker-raspberry.sh"
   "scripts/journey-to-seed.sh"
   "scripts/claw-docker.sh"
+  "scripts/claw-docker-qnap.sh"
 )
 
 MANAGED_OUTPUT_PATHS=(
@@ -68,6 +71,7 @@ MANAGED_OUTPUT_PATHS=(
   ".openclaw/skills/backup-workspace-to-git/"
   "Dockerfile"
   "docker-compose.yml"
+  "docker-compose-qnap.yml"
   "docs/README.arch.md"
   "docs/README.backup.md"
   "docs/README.google.md"
@@ -77,6 +81,7 @@ MANAGED_OUTPUT_PATHS=(
   "docs/README.run.md"
   "docs/README.telegram.md"
   "scripts/claw-docker.sh"
+  "scripts/claw-docker-qnap.sh"
   "scripts/git-commit-push-workspace-from-host.sh"
   "scripts/install-docker-raspberry.sh"
   "scripts/journey-to-seed.sh"
@@ -91,6 +96,7 @@ INIT_ONLY_OUTPUT_PATHS=(
 
 PORT_REWRITE_TARGETS=(
   "docker-compose.yml"
+  "docker-compose-qnap.yml"
   "Dockerfile"
   "docs/README.arch.md"
   "docs/README.md"
@@ -123,8 +129,8 @@ cleanup_temp_files() {
 usage() {
   cat <<'EOF'
 Usage:
-  scripts/claw-docker.sh init [--port <port>]
-  scripts/claw-docker.sh update [--port <port>]
+  scripts/claw-docker-qnap.sh init [--port <port>]
+  scripts/claw-docker-qnap.sh update [--port <port>]
 EOF
 }
 
@@ -348,6 +354,7 @@ print_update_warning() {
   echo "It will also refresh these managed files outside those folders:"
   echo "  Dockerfile"
   echo "  docker-compose.yml"
+  echo "  docker-compose-qnap.yml"
   echo "  .openclaw/_secrets/.env.example"
   echo
   echo "It preserves:"
@@ -436,7 +443,7 @@ assert_directory_empty() {
   fi
 
   if (( ${#entries[@]} > 0 )); then
-    echo "Error: target directory is not empty: ${root_dir}. Use scripts/claw-docker.sh update for existing projects." >&2
+    echo "Error: target directory is not empty: ${root_dir}. Use scripts/claw-docker-qnap.sh update for existing projects." >&2
     exit 1
   fi
 }
@@ -453,7 +460,7 @@ refresh_self_for_update() {
   TMP_SELF_SCRIPT="$(mktemp)"
 
   if ! curl -fsSL "${RAW_BASE_URL}/${SELF_PATH_RELATIVE}" -o "${TMP_SELF_SCRIPT}"; then
-    echo "Error: failed to download the latest scripts/claw-docker.sh for update." >&2
+    echo "Error: failed to download the latest scripts/claw-docker-qnap.sh for update." >&2
     exit 1
   fi
 

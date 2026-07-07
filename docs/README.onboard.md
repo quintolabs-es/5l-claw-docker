@@ -6,6 +6,22 @@ cd claw-agent
 docker compose build
 ```
 
+#### For QNAP, build the following way:
+
+```bash
+cd claw-agent
+mkdir -p .openclaw/_secrets
+touch .openclaw/_secrets/.env
+docker-compose -f docker-compose-qnap.yml config
+docker-compose -f docker-compose-qnap.yml build
+```
+
+For the rest of this guide on QNAP, replace `docker compose` with:
+
+```bash
+docker-compose -f docker-compose-qnap.yml
+```
+
 ## Onboard
 Use `openclaw-standalone-cli` for `onboard` and initial config. It does not require the gateway to be running. Use `openclaw-gateway-cli` only for commands that talk to the running gateway.
 

@@ -1,0 +1,73 @@
+x-openclaw-env: &openclaw-env
+  BROWSER: echo
+  HOME: /home/node
+  TERM: xterm-256color
+  OPENCLAW_HOME: /home/node
+  OPENCLAW_STATE_DIR: /home/node/.openclaw
+
+x-openclaw-google-env-file: &openclaw-google-env-file
+  - ./.openclaw/_secrets/.env
+
+services:
+  # Standalone CLI for onboarding, local state maintenance, backup, restore,
+  # and gog commands that do not require the gateway network namespace.
+  openclaw-standalone-cli:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file: *openclaw-google-env-file
+    environment: *openclaw-env
+    stdin_open: true
+    tty: true
+    init: true
+    working_dir: /home/node/.openclaw
+    entrypoint: ["bash"]
+    restart: "no"
+    volumes:
+      - ./.openclaw:/home/node/.openclaw
+      - ./.openclaw/_secrets/git/.ssh:/home/node/.ssh
+      - ./.openclaw/_secrets/gogcli/.config:/home/node/.config/gogcli
+
+  openclaw-gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file: *openclaw-google-env-file
+    environment: *openclaw-env
+    init: true
+    command: ["openclaw", "gateway", "run", "--bind", "lan", "--port", "18789"]
+    ports:
+      - "18789:18789"
+    restart: unless-stopped
+    volumes:
+      - ./.openclaw:/home/node/.openclaw
+      - ./.openclaw/_secrets/git/.ssh:/home/node/.ssh
+      - ./.openclaw/_secrets/gogcli/.config:/home/node/.config/gogcli
+
+  # CLI that shares the gateway network namespace and is intended for commands
+  # that talk to the running gateway over 127.0.0.1.
+  openclaw-gateway-cli:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file: *openclaw-google-env-file
+    network_mode: "service:openclaw-gateway"
+    cap_drop:
+      - NET_RAW
+      - NET_ADMIN
+    security_opt:
+      - no-new-privileges:true
+    environment:
+      <<: *openclaw-env
+    stdin_open: true
+    tty: true
+    init: true
+    working_dir: /home/node/.openclaw
+    depends_on:
+      - openclaw-gateway
+    entrypoint: ["bash"]
+    restart: "no"
+    volumes:
+      - ./.openclaw:/home/node/.openclaw
+      - ./.openclaw/_secrets/git/.ssh:/home/node/.ssh
+      - ./.openclaw/_secrets/gogcli/.config:/home/node/.config/gogcli
