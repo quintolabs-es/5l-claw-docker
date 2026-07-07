@@ -21,14 +21,14 @@ _To install the agent in a raspberry pi, first prepare the raspberry as explaine
 ```bash
 mkdir claw-agent
 cd claw-agent
-curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/scripts/claw-docker.sh?skip-cache=$(date +%s)" | bash -s -- init
+curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/scripts/claw-docker.sh" | bash -s -- init
 # or specifing a port different than default
-curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/scripts/claw-docker.sh?skip-cache=$(date +%s)" | bash -s -- init --port 19001
+curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/scripts/claw-docker.sh" | bash -s -- init --port 19001
 ```
 
 `--port` sets the OpenClaw gateway port for that agent instance. The default port is `18789`. The ability to specify a port allows more than one agent to run on the same machine/server.
 
-
+_Note: Use `claw-docker-qnap.sh` for QNAP compatible script._
 
 ## Update
 ```bash
