@@ -15,24 +15,24 @@ touch .openclaw/_secrets/.env
 docker-compose -f docker-compose-qnap.yml build
 ```
 
-For the rest of this guide on QNAP, replace `docker compose` with:
+And for the rest of this guide, on QNAP, replace `docker compose` with:
 
 ```bash
 docker-compose -f docker-compose-qnap.yml
 ```
 
 ## Onboard
-Use `openclaw-standalone-cli` for `onboard` and initial config. It does not require the gateway to be running. Use `openclaw-gateway-cli` only for commands that talk to the running gateway.
-
+### Go through onboard, in Standalone CLI
 ```bash
+
 # open a shell in the standalone CLI container to run onboard
 docker compose run --rm --no-deps openclaw-standalone-cli
 
 # run Onboard and go through the setup. Make sure you:
-## go for quick start
-## do not configure the channel. you'll be sent to specific instructions later for Telegram
-## anything your are not sure, skip
-## do NOT hatch in terminal at the end.
+### => go for quick start
+### => do not configure the channel. you'll be sent to specific instructions later for Telegram
+### => anything your are not sure, skip
+### => do NOT hatch in terminal at the end.
 openclaw onboard --mode local --no-install-daemon
 
 # complete onboard for Docker and initialize the local .openclaw git repo
@@ -118,6 +118,7 @@ docker compose run --rm openclaw-gateway-cli
 # test it 
 openclaw devices list
 ```
+
 
 ## Setup Control UI (paring)
 Open gateway cli and run dashboard

@@ -20,7 +20,7 @@ openclaw dashboard
 ```
 Get tokenized url or plane url and add the gateway token where requested.
 
-## Run either gateway or standalone CLI
+## Run gateway CLI or standalone CLI
 ```bash
 cd claw-agent
 
