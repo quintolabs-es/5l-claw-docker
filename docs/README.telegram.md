@@ -67,3 +67,22 @@ Default group behavior is stricter than DMs.
 - If the bot should react without mentions in a group, disable BotFather privacy mode first.
 
 If you want Telegram heartbeat replies, complete Telegram setup first and then set the heartbeat target in [README.onboard.md](./README.onboard.md).
+
+## Reduce Streaming Verbosity
+From `openclaw-standalone-cli`, reduce the streaming tool chatter with:
+
+```bash
+openclaw config set streaming '{"mode":"progress","progress":{"toolProgress":false,"commentary":false}}' --strict-json
+```
+
+To disable streaming completely:
+
+```bash
+openclaw config set streaming '{"mode":"off"}' --strict-json
+```
+
+To confirm the current streaming config:
+
+```bash
+openclaw config get streaming
+```
