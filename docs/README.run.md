@@ -19,15 +19,11 @@ Browse to `http://localhost:18789/`
 Or run in CLI
 ```bash
 openclaw dashboard
-### in qnap
-openclaw dashboard
 ```
 Get tokenized url or plane url and add the gateway token where requested.
 
 ## Run gateway CLI or standalone CLI
 ```bash
-cd claw-agent
-### in qnap
 cd claw-agent
 
 # Standalone CLI for onboarding, local state maintenance, backup, restore,
@@ -47,15 +43,12 @@ docker-compose -f docker-compose-qnap.yml run --rm openclaw-gateway-cli
 ### Commit and push the nested `.openclaw` repo **from the host** through the standalone CLI container:
 ```bash
 bash ./scripts/git-commit-push-workspace-from-host.sh "<commit-message>"
-### in qnap
-bash ./scripts/git-commit-push-workspace-from-host.sh "<commit-message>"
 ```
 
 ## Doctor
 ```bash
 cd claw-agent
-### in qnap
-cd claw-agent
+
 docker compose run --rm --entrypoint openclaw openclaw-gateway-cli doctor
 ### in qnap
 docker-compose -f docker-compose-qnap.yml run --rm --entrypoint openclaw openclaw-gateway-cli doctor
@@ -64,8 +57,7 @@ docker-compose -f docker-compose-qnap.yml run --rm --entrypoint openclaw opencla
 ## Logs
 ```bash
 cd claw-agent
-### in qnap
-cd claw-agent
+
 docker compose logs -f openclaw-gateway
 ### in qnap
 docker-compose -f docker-compose-qnap.yml logs -f openclaw-gateway
@@ -74,8 +66,7 @@ docker-compose -f docker-compose-qnap.yml logs -f openclaw-gateway
 ## Stop
 ```bash
 cd claw-agent
-### in qnap
-cd claw-agent
+
 docker compose down
 ### in qnap
 docker-compose -f docker-compose-qnap.yml down
@@ -87,8 +78,7 @@ If you only want to keep the gateway stopped without removing the container, use
 
 ```bash
 cd claw-agent
-### in qnap
-cd claw-agent
+
 docker compose stop openclaw-gateway
 ### in qnap
 docker-compose -f docker-compose-qnap.yml stop openclaw-gateway
@@ -103,8 +93,7 @@ For one-off commands without bashing into a terminal session, replace openclaw w
 ```bash
 # e.g.: openclaw devices list:
 openclaw devices list
-### in qnap
-openclaw devices list
+
 # OR
 docker compose run --rm --entrypoint openclaw openclaw-gateway-cli devices list
 ### in qnap

@@ -20,10 +20,6 @@ After init, continue with onboarding in [docs/README.onboard.md](docs/README.onb
 _To install the agent in a raspberry pi, first prepare the raspberry as explained in `docs/README.pi.md`, before running the init script._
 ```bash
 mkdir claw-agent
-### in qnap
-mkdir claw-agent
-cd claw-agent
-### in qnap
 cd claw-agent
 curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/scripts/claw-docker.sh" | bash -s -- init
 ### in qnap

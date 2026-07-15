@@ -3,8 +3,7 @@
 
 ```bash
 cd claw-agent
-### in qnap
-cd claw-agent
+
 docker compose build
 ### in qnap
 mkdir -p .openclaw/_secrets
@@ -15,7 +14,6 @@ docker-compose -f docker-compose-qnap.yml build
 ## Onboard
 ### Go through onboard, in Standalone CLI
 ```bash
-
 # open a shell in the standalone CLI container to run onboard
 docker compose run --rm --no-deps openclaw-standalone-cli
 ### in qnap
@@ -27,8 +25,7 @@ docker-compose -f docker-compose-qnap.yml run --rm --no-deps openclaw-standalone
 ### => anything your are not sure, skip
 ### => do NOT hatch in terminal at the end.
 openclaw onboard --mode local --no-install-daemon
-### in qnap
-openclaw onboard --mode local --no-install-daemon
+
 
 # complete onboard for Docker and initialize the local .openclaw git repo
 ## `--gateway-token` is required. Generate a safe token and use it. It is set for both the gateway and the local CLI configs, so the gateway requires it and the local CLI commands already use it to auth against the gateway.
@@ -37,11 +34,7 @@ openclaw onboard --mode local --no-install-daemon
 ##   --github-remote-url-existing-workspace when the target repo already contains the workspace to recover, the current workspace gets overwritten, and that repo should remain the future push target
 ## git name and email are optional and have a default value set
 bash _scripts/complete-onboard.sh --gateway-token <openclaw-gateway-token> --github-remote-url-new-workspace <https://github.com/owner/repo> --git-name <"name-for-git-commits"> --git-email <email-for-git-commits>
-### in qnap
-bash _scripts/complete-onboard.sh --gateway-token <openclaw-gateway-token> --github-remote-url-new-workspace <https://github.com/owner/repo> --git-name <"name-for-git-commits"> --git-email <email-for-git-commits>
 # OR
-bash _scripts/complete-onboard.sh --gateway-token <openclaw-gateway-token> --github-remote-url-existing-workspace <https://github.com/owner/repo> --git-name <"name-for-git-commits"> --git-email <email-for-git-commits>
-### in qnap
 bash _scripts/complete-onboard.sh --gateway-token <openclaw-gateway-token> --github-remote-url-existing-workspace <https://github.com/owner/repo> --git-name <"name-for-git-commits"> --git-email <email-for-git-commits>
 ```
 
@@ -73,16 +66,8 @@ Download the backup archive from Drive and place it at `/tmp/openclaw/state-back
 
 ```bash
 mkdir -p /tmp/openclaw/state
-### in qnap
-mkdir -p /tmp/openclaw/state
-tar -xzf /tmp/openclaw/state-backup.tar.gz -C /tmp/openclaw/state
-### in qnap
 tar -xzf /tmp/openclaw/state-backup.tar.gz -C /tmp/openclaw/state
 cd <agent-folder>
-### in qnap
-cd <agent-folder>
-bash .openclaw/_scripts/restore-state.sh /tmp/openclaw/state/.openclaw
-### in qnap
 bash .openclaw/_scripts/restore-state.sh /tmp/openclaw/state/.openclaw
 ```
 
@@ -94,18 +79,11 @@ If the same GitHub repo should remain the future push target, do not use this pa
 ```bash
 # clone the workspace locally
 rm -rf /tmp/openclaw/workspace-source
-### in qnap
-rm -rf /tmp/openclaw/workspace-source
-git clone https://www.github.com/remote/repo/to/recover /tmp/openclaw/workspace-source/.openclaw
-### in qnap
 git clone https://www.github.com/remote/repo/to/recover /tmp/openclaw/workspace-source/.openclaw
 
 # initialize current agent with the cloned workspace
 cd <agent-folder>
-### in qnap
-cd <agent-folder>
-bash .openclaw/_scripts/initialize-workspace.sh /tmp/openclaw/workspace-source/.openclaw
-### in qnap
+
 bash .openclaw/_scripts/initialize-workspace.sh /tmp/openclaw/workspace-source/.openclaw
 ```
 
@@ -138,8 +116,6 @@ docker compose run --rm openclaw-gateway-cli
 docker-compose -f docker-compose-qnap.yml run --rm openclaw-gateway-cli
 # test it 
 openclaw devices list
-### in qnap
-openclaw devices list
 ```
 
 
@@ -150,8 +126,6 @@ docker compose run --rm openclaw-gateway-cli
 ### in qnap
 docker-compose -f docker-compose-qnap.yml run --rm openclaw-gateway-cli
 openclaw dashboard
-### in qnap
-openclaw dashboard
 ```
 Get tokenized url or plane url and add the gateway token where requested.
 
@@ -159,10 +133,6 @@ Get tokenized url or plane url and add the gateway token where requested.
 [Official doc](https://docs.openclaw.ai/web/control-ui#device-pairing-first-connection)
 ```bash
 openclaw devices list
-### in qnap
-openclaw devices list
-openclaw devices approve <requestId>
-### in qnap
 openclaw devices approve <requestId>
 ```
 
@@ -184,22 +154,10 @@ Check `https://docs.openclaw.ai/gateway/heartbeat`.
 
 ```bash
 openclaw config set agents.defaults.heartbeat.every "30m"
-### in qnap
-openclaw config set agents.defaults.heartbeat.every "30m"
-openclaw config set agents.defaults.heartbeat.target "telegram"
-### in qnap
 openclaw config set agents.defaults.heartbeat.target "telegram"
 openclaw config set agents.defaults.heartbeat.to "telegram"
-### in qnap
-openclaw config set agents.defaults.heartbeat.to "telegram"
-openclaw config set agents.defaults.heartbeat.activeHours.start "07:00"
-### in qnap
 openclaw config set agents.defaults.heartbeat.activeHours.start "07:00"
 openclaw config set agents.defaults.heartbeat.activeHours.end "23:59"
-### in qnap
-openclaw config set agents.defaults.heartbeat.activeHours.end "23:59"
-openclaw config set agents.defaults.heartbeat.activeHours.timezone "Europe/Madrid"
-### in qnap
 openclaw config set agents.defaults.heartbeat.activeHours.timezone "Europe/Madrid"
 ```
 
@@ -208,8 +166,6 @@ The value `agents.defaults.heartbeat.target` specifies where to send the heartbe
 ### Others
 Web search
 ```bash
-openclaw configure --section web
-### in qnap
 openclaw configure --section web
 ```
 
@@ -223,8 +179,6 @@ openclaw configure --section web
 For one-off commands without bashing into a terminal session, replace openclaw with `docker compose run --rm --entrypoint openclaw openclaw-gateway-cli`
 ```bash
 # e.g.: openclaw devices list:
-openclaw devices list
-### in qnap
 openclaw devices list
 # OR
 docker compose run --rm --entrypoint openclaw openclaw-gateway-cli devices list
