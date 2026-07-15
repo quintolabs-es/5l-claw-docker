@@ -33,7 +33,7 @@ openclaw channels status --probe
 
 `channels status --probe` is the live check. It confirms the gateway can reach the configured Telegram account.
 
-## Reduce Streaming Verbosity
+## Remove Lobstering Messages
 From `openclaw-standalone-cli`, reduce the streaming tool chatter with:
 
 ```bash
