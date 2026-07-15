@@ -7,7 +7,7 @@ For first-time setup, use [README.onboard.md](./README.onboard.md).
 docker compose up -d openclaw-gateway
 ```
 
-QNAP:
+### In QNAP
 ```bash
 docker-compose -f docker-compose-qnap.yml up -d openclaw-gateway
 ```
@@ -38,7 +38,7 @@ docker compose run --rm --no-deps openclaw-standalone-cli
 docker compose run --rm openclaw-gateway-cli
 ```
 
-QNAP:
+### In QNAP
 ```bash
 cd claw-agent
 
@@ -69,7 +69,7 @@ cd claw-agent
 docker compose logs -f openclaw-gateway
 ```
 
-QNAP:
+### In QNAP
 ```bash
 cd claw-agent
 docker-compose -f docker-compose-qnap.yml logs -f openclaw-gateway
@@ -81,7 +81,7 @@ cd claw-agent
 docker compose down
 ```
 
-QNAP:
+### In QNAP
 ```bash
 cd claw-agent
 docker-compose -f docker-compose-qnap.yml down
@@ -96,7 +96,7 @@ cd claw-agent
 docker compose stop openclaw-gateway
 ```
 
-QNAP:
+### In QNAP
 ```bash
 cd claw-agent
 docker-compose -f docker-compose-qnap.yml stop openclaw-gateway
@@ -115,7 +115,7 @@ openclaw devices list
 docker compose run --rm --entrypoint openclaw openclaw-gateway-cli devices list
 ```
 
-QNAP:
+### In QNAP
 ```bash
 # e.g.: openclaw devices list:
 openclaw devices list

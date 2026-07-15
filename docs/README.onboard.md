@@ -6,19 +6,12 @@ cd claw-agent
 docker compose build
 ```
 
-#### For QNAP, build the following way:
-
+### In QNAP
 ```bash
 cd claw-agent
 mkdir -p .openclaw/_secrets
 touch .openclaw/_secrets/.env
 docker-compose -f docker-compose-qnap.yml build
-```
-
-And for the rest of this guide, on QNAP, replace `docker compose` with:
-
-```bash
-docker-compose -f docker-compose-qnap.yml
 ```
 
 ## Onboard
@@ -27,6 +20,30 @@ docker-compose -f docker-compose-qnap.yml
 
 # open a shell in the standalone CLI container to run onboard
 docker compose run --rm --no-deps openclaw-standalone-cli
+
+# run Onboard and go through the setup. Make sure you:
+### => go for quick start
+### => do not configure the channel. you'll be sent to specific instructions later for Telegram
+### => anything your are not sure, skip
+### => do NOT hatch in terminal at the end.
+openclaw onboard --mode local --no-install-daemon
+
+# complete onboard for Docker and initialize the local .openclaw git repo
+## `--gateway-token` is required. Generate a safe token and use it. It is set for both the gateway and the local CLI configs, so the gateway requires it and the local CLI commands already use it to auth against the gateway.
+## optionally pass one GitHub remote mode:
+##   --github-remote-url-new-workspace      when the target repo is empty/new and will become this agent's future workspace repo
+##   --github-remote-url-existing-workspace when the target repo already contains the workspace to recover, the current workspace gets overwritten, and that repo should remain the future push target
+## git name and email are optional and have a default value set
+bash _scripts/complete-onboard.sh --gateway-token <openclaw-gateway-token> --github-remote-url-new-workspace <https://github.com/owner/repo> --git-name <"name-for-git-commits"> --git-email <email-for-git-commits>
+# OR
+bash _scripts/complete-onboard.sh --gateway-token <openclaw-gateway-token> --github-remote-url-existing-workspace <https://github.com/owner/repo> --git-name <"name-for-git-commits"> --git-email <email-for-git-commits>
+```
+
+### In QNAP
+```bash
+
+# open a shell in the standalone CLI container to run onboard
+docker-compose -f docker-compose-qnap.yml run --rm --no-deps openclaw-standalone-cli
 
 # run Onboard and go through the setup. Make sure you:
 ### => go for quick start
@@ -101,6 +118,11 @@ bash .openclaw/_scripts/initialize-workspace.sh /tmp/openclaw/workspace-source/.
 docker compose up -d openclaw-gateway
 ```
 
+### In QNAP
+```bash
+docker-compose -f docker-compose-qnap.yml up -d openclaw-gateway
+```
+
 This Docker setup does not install an OpenClaw host daemon. `openclaw onboard --mode local --no-install-daemon` keeps OpenClaw itself out of system startup, and Docker is the process supervisor instead.
 
 `openclaw-gateway` uses Docker Compose `restart: unless-stopped`, so after you start it once with `docker compose up -d openclaw-gateway`, Docker starts it again automatically after a Raspberry Pi reboot as long as the container was not manually stopped or removed.
@@ -111,10 +133,22 @@ If you do not want automatic startup after reboot, stop it explicitly:
 docker compose stop openclaw-gateway
 ```
 
+### In QNAP
+```bash
+docker-compose -f docker-compose-qnap.yml stop openclaw-gateway
+```
+
 #### Test gateway CLI
 To run gateway CLI commands, run the gateway CLI container and bash into it. This tests connectivity between `openclaw-gateway-cli` and the running gateway.
 ```bash
 docker compose run --rm openclaw-gateway-cli
+# test it 
+openclaw devices list
+```
+
+### In QNAP
+```bash
+docker-compose -f docker-compose-qnap.yml run --rm openclaw-gateway-cli
 # test it 
 openclaw devices list
 ```
@@ -124,6 +158,12 @@ openclaw devices list
 Open gateway cli and run dashboard
 ```bash
 docker compose run --rm openclaw-gateway-cli
+openclaw dashboard
+```
+
+### In QNAP
+```bash
+docker-compose -f docker-compose-qnap.yml run --rm openclaw-gateway-cli
 openclaw dashboard
 ```
 Get tokenized url or plane url and add the gateway token where requested.
@@ -181,4 +221,12 @@ For one-off commands without bashing into a terminal session, replace openclaw w
 openclaw devices list
 # OR
 docker compose run --rm --entrypoint openclaw openclaw-gateway-cli devices list
+```
+
+### In QNAP
+```bash
+# e.g.: openclaw devices list:
+openclaw devices list
+# OR
+docker-compose -f docker-compose-qnap.yml run --rm --entrypoint openclaw openclaw-gateway-cli devices list
 ```

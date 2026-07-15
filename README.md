@@ -26,13 +26,25 @@ curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/
 curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/scripts/claw-docker.sh" | bash -s -- init --port 19001
 ```
 
-`--port` sets the OpenClaw gateway port for that agent instance. The default port is `18789`. The ability to specify a port allows more than one agent to run on the same machine/server.
+### In QNAP
+```bash
+mkdir claw-agent
+cd claw-agent
+curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/scripts/claw-docker-qnap.sh" | bash -s -- init
+# or specifing a port different than default
+curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/scripts/claw-docker-qnap.sh" | bash -s -- init --port 19001
+```
 
-**_Note: For QNAP Use `claw-docker-qnap.sh` script._**
+`--port` sets the OpenClaw gateway port for that agent instance. The default port is `18789`. The ability to specify a port allows more than one agent to run on the same machine/server.
 
 ## Update
 ```bash
 curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/scripts/claw-docker.sh?skip-cache=$(date +%s)" | bash -s -- update
+```
+
+### In QNAP
+```bash
+curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/scripts/claw-docker-qnap.sh?skip-cache=$(date +%s)" | bash -s -- update
 ```
 
 `update` does not target agent state or workspace data. It only updates the Docker packaging and managed helper files used to run this agent in Docker.
