@@ -1,6 +1,7 @@
 FROM node:24-bookworm-slim
 
 ARG GOGCLI_VERSION=v0.12.0
+ARG OPENCLAW_VERSION=2026.5.28
 ARG TARGETARCH
 
 USER root
@@ -48,7 +49,7 @@ WORKDIR /home/node
 
 RUN mkdir -p /home/node/.openclaw /home/node/.local/bin /home/node/.npm-global
 
-RUN curl -fsSL https://openclaw.ai/install.sh | bash
+RUN curl -fsSL https://openclaw.ai/install.sh | bash -s -- --version "${OPENCLAW_VERSION}"
 
 EXPOSE 18789
 

@@ -42,13 +42,15 @@ openclaw channels status --probe
 From `openclaw-standalone-cli`, remove the streaming tool chatter with:
 
 ```bash
-openclaw config set streaming '{"mode":"off"}' --strict-json
+openclaw config set agents.defaults.verboseDefault off
+openclaw config set agents.defaults.reasoningDefault off
 ```
 
 To confirm the current streaming config:
 
 ```bash
-openclaw config get streaming
+openclaw config get agents.defaults.verboseDefault
+openclaw config get agents.defaults.reasoningDefault
 ```
 
 ## Approve The First DM
