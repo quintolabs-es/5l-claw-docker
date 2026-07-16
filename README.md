@@ -32,6 +32,11 @@ curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/
 
 `--port` sets the OpenClaw gateway port for that agent instance. The default port is `18789`. The ability to specify a port allows more than one agent to run on the same machine/server.
 
+_Si el `curl` falla con `curl failed to verify the legitimacy...`:_
+```bash
+sudo openssl rehash /etc/ssl/certs
+```
+
 ## Update
 ```bash
 curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/scripts/claw-docker.sh?skip-cache=$(date +%s)" | bash -s -- update
