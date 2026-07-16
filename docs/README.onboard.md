@@ -38,21 +38,12 @@ bash _scripts/complete-onboard.sh --gateway-token <openclaw-gateway-token> --git
 bash _scripts/complete-onboard.sh --gateway-token <openclaw-gateway-token> --github-remote-url-existing-workspace <https://github.com/owner/repo> --git-name <"name-for-git-commits"> --git-email <email-for-git-commits>
 ```
 
-### Complete github authentication setup
+#### When github authentication setup completed
 If either GitHub remote flag is passed, the complete-onboard script creates or reuses a dedicated OpenClaw SSH key under `./.openclaw/_secrets/git/.ssh/`, prints the exact public key host path, and mounts that key as `~/.ssh` in the Docker containers that need Git access.
 
-Add it in GitHub as a deploy key with write access for the target repo:
-- Open the target GitHub repository.
-- Go to `Settings`.
-- Go to `Deploy keys`.
-- Click `Add deploy key`.
-- Paste the contents of the public key path printed by the script.
-- Enable write access.
-- Save.
+If `--github-remote-url-new-workspace` was used, the script tests GitHub auth first and then pushes the initial workspace commit automatically.
 
-If you used `--github-remote-url-new-workspace`, the script tests GitHub auth first and then pushes the initial workspace commit automatically.
-
-If you used `--github-remote-url-existing-workspace`, the script tests GitHub auth first, fetches and attaches that repo during onboarding, and that same repo remains the future push target for workspace backups.
+If `--github-remote-url-existing-workspace` was used, the script tests GitHub auth first, fetches and attaches that repo during onboarding, and that same repo remains the future push target for workspace backups.
 
 ## Initialize Agent Workspace And State
 These two recovery steps are optional and disjoint. Use either one or both. The recommended commands below overwrite the local targets; they do not merge with the local contents.

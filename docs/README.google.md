@@ -65,9 +65,8 @@ _If any container is already running, it needs to be restarted for it to pick up
 
 `GOG_KEYRING_PASSWORD` is a local encryption password for `gog`'s file keyring. Use the same value each time this agent instance is started, or `gog` will not be able to read the tokens it already stored and the account will need to be re-authorized.
 
-Run openclaw CLI and run
+From openclaw CLI, run:
 ```bash
-<run openclaw cli>
 gog auth keyring file
 gog auth credentials /home/node/.config/gogcli/client_secret.json
 gog auth add <claw-agent@gmail.com> --services gmail,drive --gmail-scope full --manual
@@ -93,6 +92,8 @@ Gmail scope options for `--gmail-scope`:
 
 ```bash
 docker compose restart openclaw-gateway
+### in qnap
+docker-compose -f docker-compose-qnap.yml restart openclaw-gateway
 ```
 
 ## Verify It Works
@@ -115,7 +116,14 @@ The Drive command should return JSON metadata for files visible in your Google D
 ## Troubleshooting
 
 - `gog: command not found`
-  Rebuild the image with `docker compose build`.
+  Rebuild the image:
+  ```bash
+  docker compose build
+  ### in qnap
+  mkdir -p .openclaw/_secrets
+  touch .openclaw/_secrets/.env
+  docker-compose -f docker-compose-qnap.yml build
+  ```
 - `gog` keeps prompting for a keyring password
   Check the `GOG_KEYRING_PASSWORD` value in `./.openclaw/_secrets/.env`.
 - The OpenClaw Gmail skill does not load
