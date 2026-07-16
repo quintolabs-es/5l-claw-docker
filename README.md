@@ -53,6 +53,7 @@ curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/
 - `docs/`
 - `scripts/`
 - `./.openclaw/_scripts/`
+- `./.openclaw/skills/authenticate-github-repo/`
 - `./.openclaw/skills/backup-state-to-drive/`
 - `./.openclaw/skills/backup-workspace-to-git/`
 
