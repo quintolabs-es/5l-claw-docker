@@ -13,6 +13,7 @@ set -euo pipefail
 
 ROOT_DIR="${PWD}"
 RAW_BASE_URL="${CLAW_DOCKER_RAW_BASE_URL:-https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main}"
+OPENCLAW_DIST_TAGS_URL="https://registry.npmjs.org/-/package/openclaw/dist-tags"
 SELF_PATH_RELATIVE="scripts/claw-docker-qnap.sh"
 SELF_REFRESH_ENV_VAR="CLAW_DOCKER_MULTIPLATFORM_SKIP_SELF_REFRESH"
 DEFAULT_GATEWAY_PORT="18789"
@@ -197,6 +198,44 @@ download_file_atomic() {
   mv "$temp_path" "$target_path"
 }
 
+extract_openclaw_version_from_dockerfile_content() {
+  sed -n 's/^ARG[[:space:]]\+OPENCLAW_VERSION=\([^[:space:]]\+\).*$/\1/p' | head -n 1
+}
+
+resolve_target_openclaw_version() {
+  local local_dockerfile=""
+  local remote_dockerfile=""
+  local version=""
+
+  if [[ -n "$SCRIPT_DIR" ]]; then
+    local_dockerfile="$(CDPATH= cd -- "${SCRIPT_DIR}/.." && pwd)/Dockerfile"
+    if [[ -f "$local_dockerfile" ]]; then
+      version="$(extract_openclaw_version_from_dockerfile_content < "$local_dockerfile")"
+    fi
+  fi
+
+  if [[ -z "$version" ]]; then
+    remote_dockerfile="$(curl -fsSL "${RAW_BASE_URL}/Dockerfile" 2>/dev/null || true)"
+    if [[ -n "$remote_dockerfile" ]]; then
+      version="$(printf '%s\n' "$remote_dockerfile" | extract_openclaw_version_from_dockerfile_content)"
+    fi
+  fi
+
+  printf '%s\n' "$version"
+}
+
+resolve_latest_openclaw_version() {
+  local dist_tags_json=""
+  local version=""
+
+  dist_tags_json="$(curl -fsSL "${OPENCLAW_DIST_TAGS_URL}" 2>/dev/null || true)"
+  if [[ -n "$dist_tags_json" ]]; then
+    version="$(printf '%s' "$dist_tags_json" | sed -n 's/.*"latest"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p')"
+  fi
+
+  printf '%s\n' "$version"
+}
+
 sync_managed_downloads() {
   local root_dir="$1"
   shift
@@ -343,6 +382,51 @@ print_next_steps() {
   printf "  and run the onboard steps from that file.%s\n" "$reset"
 }
 
+print_init_version_check() {
+  local latest_version="$1"
+  local target_version="$2"
+
+  echo "OpenClaw version check:"
+  echo "  latest available: ${latest_version:-unavailable}"
+  echo "  target version to be installed now: ${target_version:-unknown}"
+  echo
+
+  if [[ -n "$latest_version" ]]; then
+    echo "To install the latest version instead, abort now and update:"
+    echo "  Dockerfile -> ARG OPENCLAW_VERSION=${latest_version}"
+  else
+    echo "To change the target version, update:"
+    echo "  Dockerfile -> ARG OPENCLAW_VERSION=<version>"
+  fi
+
+  echo
+  echo "Press Enter to continue with target version ${target_version:-unknown}, or Ctrl+C to abort."
+  echo "Note: if you move this template to a newer OpenClaw version,"
+  echo "some documented OpenClaw CLI/config commands may also need to be updated."
+}
+
+prompt_init_version_confirmation() {
+  local latest_version="$1"
+  local target_version="$2"
+  local response=""
+
+  if [[ -t 0 && -t 1 ]]; then
+    print_init_version_check "$latest_version" "$target_version"
+    IFS= read -r response || true
+  else
+    if [[ ! -e /dev/tty ]]; then
+      echo "Error: init requires an interactive terminal confirmation." >&2
+      exit 1
+    fi
+
+    exec 3<> /dev/tty
+    print_init_version_check "$latest_version" "$target_version" >&3
+    IFS= read -r response <&3 || true
+    exec 3>&-
+    exec 3<&-
+  fi
+}
+
 print_update_warning() {
   local relative_path
 
@@ -472,11 +556,17 @@ refresh_self_for_update() {
 run_init() {
   local gateway_port="$1"
   local project_name
+  local latest_openclaw_version=""
+  local target_openclaw_version=""
 
   project_name="$(basename "$ROOT_DIR")"
 
   validate_port "$gateway_port"
   assert_directory_empty "$ROOT_DIR"
+
+  latest_openclaw_version="$(resolve_latest_openclaw_version)"
+  target_openclaw_version="$(resolve_target_openclaw_version)"
+  prompt_init_version_confirmation "$latest_openclaw_version" "$target_openclaw_version"
 
   mkdir -p \
     "${ROOT_DIR}/.openclaw" \
