@@ -23,6 +23,7 @@ Start The Gateway and open The Gateway CLI
 docker compose up -d openclaw-gateway
 ### in qnap
 docker-compose -f docker-compose-qnap.yml up -d openclaw-gateway
+
 docker compose run --rm openclaw-gateway-cli
 ### in qnap
 docker-compose -f docker-compose-qnap.yml run --rm openclaw-gateway-cli
