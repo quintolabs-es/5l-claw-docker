@@ -56,6 +56,7 @@ curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/
 - `./.openclaw/skills/authenticate-github-repo/`
 - `./.openclaw/skills/backup-state-to-drive/`
 - `./.openclaw/skills/backup-workspace-to-git/`
+- `./.openclaw/skills/transcribe-voice/`
 
 It also refreshes these managed files outside those folders:
 
