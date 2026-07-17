@@ -19,6 +19,9 @@ RUN apt-get update \
     python3 \
  && rm -rf /var/lib/apt/lists/*
 
+RUN mkdir -p /ms-playwright \
+ && chown -R node:node /ms-playwright
+
 RUN set -eux; \
     arch="${TARGETARCH:-$(dpkg --print-architecture)}"; \
     case "$arch" in \
@@ -43,6 +46,7 @@ ENV HOME=/home/node \
     OPENCLAW_STATE_DIR=/home/node/.openclaw \
     OPENCLAW_NO_ONBOARD=1 \
     OPENCLAW_NO_PROMPT=1 \
+    PLAYWRIGHT_BROWSERS_PATH=/ms-playwright \
     PATH=/home/node/.local/bin:/home/node/.npm-global/bin:$PATH
 
 WORKDIR /home/node
@@ -50,6 +54,14 @@ WORKDIR /home/node
 RUN mkdir -p /home/node/.openclaw /home/node/.local/bin /home/node/.npm-global
 
 RUN curl -fsSL https://openclaw.ai/install.sh | bash -s -- --version "${OPENCLAW_VERSION}"
+
+RUN set -eux; \
+    NPM_ROOT="$(npm root -g)"; \
+    PW_CLI="$NPM_ROOT/openclaw/node_modules/playwright-core/cli.js"; \
+    if [ ! -f "$PW_CLI" ]; then \
+      PW_CLI="$NPM_ROOT/playwright-core/cli.js"; \
+    fi; \
+    node "$PW_CLI" install chromium
 
 EXPOSE 18789
 

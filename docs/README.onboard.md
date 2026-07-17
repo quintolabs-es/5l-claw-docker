@@ -139,6 +139,11 @@ Optional post-onboard setup.
 
 The agent can access Google services such as Gmail, Calendar, and Drive through the `gog` CLI skill. If needed, copy `./.openclaw/_secrets/.env.example` to `./.openclaw/_secrets/.env`, set `GOG_ACCOUNT` and `GOG_KEYRING_PASSWORD`, and then complete [README.google.md](./README.google.md).
 
+### Browser Tool
+Optional post-onboard setup.
+
+If this agent should use OpenClaw's built-in `browser` tool, complete [README.browser.md](./README.browser.md).
+
 ### Set Hearbeat and heartbeat response channel
 By default hearbit runs every 30m, executes `HEARTBEAT.md` prompt and response (if any) is sent to last channel.
 Check `https://docs.openclaw.ai/gateway/heartbeat`.
