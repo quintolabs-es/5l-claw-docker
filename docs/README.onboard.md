@@ -31,7 +31,7 @@ openclaw onboard --mode local --no-install-daemon
 ## `--gateway-token` is required. Generate a safe token and use it. It is set for both the gateway and the local CLI configs, so the gateway requires it and the local CLI commands already use it to auth against the gateway.
 ## optionally pass one GitHub remote mode:
 ##   --github-remote-url-new-workspace      when the target repo is empty/new and will become this agent's future workspace repo
-##   --github-remote-url-existing-workspace when the target repo already contains the workspace to recover, the current workspace gets overwritten, and that repo should remain the future push target
+##   --github-remote-url-existing-workspace when the target repo already contains the repo-tracked agent contents to recover, the current repo-tracked workspace contents get overwritten, and that repo should remain the future push target
 ## git name and email are optional and have a default value set
 bash _scripts/complete-onboard.sh --gateway-token <openclaw-gateway-token> --github-remote-url-new-workspace <https://github.com/owner/repo> --git-name <"name-for-git-commits"> --git-email <email-for-git-commits>
 # OR
@@ -63,7 +63,7 @@ bash .openclaw/_scripts/restore-state.sh /tmp/openclaw/state/.openclaw
 ```
 
 ### Optional: Recover Workspace
-Use this if you want to restore the agent workspace from a local prepared `.openclaw` folder. This overwrites the local `workspace/` and local `.gitignore` inside `/.openclaw`.
+Use this if you want to restore the repo-tracked agent workspace contents from a local prepared `.openclaw` folder. This overwrites the local `workspace/`, local `skills/`, and local `.gitignore` inside `/.openclaw`.
 
 If the same GitHub repo should remain the future push target, do not use this path. Instead, use `--github-remote-url-existing-workspace` in `complete-onboard.sh`.
 

@@ -7,7 +7,7 @@ docker compose run --rm --no-deps --entrypoint bash openclaw-standalone-cli -lc 
 docker-compose -f docker-compose-qnap.yml run --rm --no-deps --entrypoint bash openclaw-standalone-cli -lc 'bash skills/backup-workspace-to-git/scripts/backup-workspace-to-git.sh'
 ```
 
-This script stages only `workspace/` in the nested `.openclaw` git repo, creates a commit if there are changes, and pushes when `origin` exists.
+This script stages the full repo-tracked contents of the nested `.openclaw` git repo, creates a commit if there are changes, and pushes when `origin` exists. The tracked contents are defined by `.openclaw/.gitignore`, which by default includes `workspace/` and `skills/`.
 
 ## Backup Agent State To Drive
 ```bash

@@ -211,6 +211,16 @@ detect_remote_head_branch() {
   printf '%s\n' "$branch"
 }
 
+remove_existing_workspace_checkout_conflicts() {
+  local branch="$1"
+
+  rm -rf workspace .gitignore
+
+  if git ls-tree --name-only "origin/${branch}" | grep -Fxq "skills"; then
+    rm -rf skills
+  fi
+}
+
 setup_new_workspace_repo() {
   git init
   configure_git_identity
@@ -223,8 +233,8 @@ setup_new_workspace_repo() {
 attach_existing_workspace_repo() {
   local git_ssh_remote="$1"
   local branch=""
-
-  rm -rf .git workspace .gitignore
+ 
+  rm -rf .git
 
   git init
   configure_git_identity
@@ -236,6 +246,7 @@ attach_existing_workspace_repo() {
   fi
 
   branch="$(detect_remote_head_branch)"
+  remove_existing_workspace_checkout_conflicts "$branch"
   git checkout -b "$branch" --track "origin/$branch"
 
   if [[ ! -d workspace || ! -e .gitignore ]]; then

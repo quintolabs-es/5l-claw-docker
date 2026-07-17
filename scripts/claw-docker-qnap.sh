@@ -67,6 +67,7 @@ EXECUTABLE_MANAGED_FILES=(
 )
 
 MANAGED_OUTPUT_PATHS=(
+  ".openclaw/.gitignore"
   ".openclaw/_scripts/complete-onboard.sh"
   ".openclaw/_scripts/initialize-workspace.sh"
   ".openclaw/_scripts/restore-state.sh"
@@ -93,7 +94,6 @@ MANAGED_OUTPUT_PATHS=(
 )
 
 INIT_ONLY_OUTPUT_PATHS=(
-  ".openclaw/.gitignore"
   ".openclaw/_secrets/git/.ssh/"
   ".openclaw/_secrets/gogcli/.config/"
   "README.md"
@@ -444,11 +444,11 @@ print_update_warning() {
   echo "  Dockerfile"
   echo "  docker-compose.yml"
   echo "  docker-compose-qnap.yml"
+  echo "  .openclaw/.gitignore"
   echo "  .openclaw/_secrets/.env.example"
   echo
   echo "It preserves:"
   echo "  README.md"
-  echo "  .openclaw/.gitignore"
   echo
   echo "To keep any custom file from being overwritten by the updates, store it outside those folders"
   echo "and outside those managed files, in a dedicated user folder or at the project root directly."
@@ -593,7 +593,6 @@ run_init() {
 run_update() {
   local requested_port="$1"
   local readme_already_exists="0"
-  local openclaw_gitignore_already_exists="0"
   local gateway_port="$requested_port"
   local project_name
 
@@ -621,31 +620,24 @@ run_update() {
     readme_already_exists="1"
   fi
 
-  if [[ -e "${ROOT_DIR}/.openclaw/.gitignore" ]]; then
-    openclaw_gitignore_already_exists="1"
-  fi
-
   if [[ ! -e "${ROOT_DIR}/README.md" ]]; then
     create_placeholder_readme "${ROOT_DIR}/README.md"
   fi
 
   replace_managed_directories "$ROOT_DIR"
-  sync_managed_downloads "$ROOT_DIR" ".openclaw/.gitignore"
+  sync_managed_downloads "$ROOT_DIR"
   rewrite_port_in_targets "$ROOT_DIR" "$gateway_port"
   rewrite_project_name_in_targets "$ROOT_DIR" "$project_name"
   rewrite_docs_readme_links "$ROOT_DIR"
   mark_managed_executables "$ROOT_DIR"
 
   print_output_paths "Updated" "${MANAGED_OUTPUT_PATHS[@]}"
-  if [[ "$readme_already_exists" == "1" || "$openclaw_gitignore_already_exists" == "1" ]]; then
+  if [[ "$readme_already_exists" == "1" ]]; then
     echo
     echo "Kept:"
   fi
   if [[ "$readme_already_exists" == "1" ]]; then
     echo "  README.md"
-  fi
-  if [[ "$openclaw_gitignore_already_exists" == "1" ]]; then
-    echo "  .openclaw/.gitignore"
   fi
 }
 

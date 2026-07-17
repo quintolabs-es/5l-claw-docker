@@ -11,19 +11,7 @@ if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
   exit 1
 fi
 
-stage_if_exists_or_tracked() {
-  local path
-
-  for path in "$@"; do
-    if [ -e "$path" ] || git ls-files --error-unmatch -- "$path" >/dev/null 2>&1; then
-      git add -A -- "$path"
-    fi
-  done
-}
-
-stage_if_exists_or_tracked \
-  ".gitignore" \
-  "workspace"
+git add -A .
 
 if git diff --cached --quiet; then
   echo "No workspace backup changes to commit."

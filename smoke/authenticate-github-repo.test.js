@@ -114,7 +114,11 @@ exit 1
 
   t.after(() => {
     fs.rmSync(tempDir, { recursive: true, force: true });
-    fs.rmSync(tempRoot, { recursive: true, force: true });
+    try {
+      fs.rmdirSync(tempRoot);
+    } catch {
+      // Another test may still be using the shared temp root.
+    }
   });
 
   return {

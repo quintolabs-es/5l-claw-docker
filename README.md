@@ -46,7 +46,7 @@ curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/
 
 `update` does not target agent state or workspace data. It only updates the Docker packaging and managed helper files used to run this agent in Docker.
 
-`update` is for an existing project. Always use the latest script from the repo through `curl`, not a possibly outdated local copy. It preserves the current port by default, keeps `README.md` if it already exists, keeps `./.openclaw/.gitignore` if it already exists, and leaves existing git/SSH setup in place. If the current port cannot be detected safely, pass `--port`.
+`update` is for an existing project. Always use the latest script from the repo through `curl`, not a possibly outdated local copy. It preserves the current port by default, keeps `README.md` if it already exists, and leaves existing git/SSH setup in place. If the current port cannot be detected safely, pass `--port`.
 
 `update` prompts for confirmation and then fully replaces these managed folders:
 
@@ -61,12 +61,12 @@ It also refreshes these managed files outside those folders:
 
 - `Dockerfile`
 - `docker-compose.yml`
+- `./.openclaw/.gitignore`
 - `./.openclaw/_secrets/.env.example`
 
 It preserves:
 
 - `README.md`
-- `./.openclaw/.gitignore`
 
 If you have files that must not be overwritten, keep them outside those managed folders and outside those managed files, for example in a dedicated folder or at the project root.
 

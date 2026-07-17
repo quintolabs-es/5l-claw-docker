@@ -4,7 +4,7 @@ set -euo pipefail
 # Usage:
 #   /home/node/.openclaw/_scripts/initialize-workspace.sh <path-to-restored-.openclaw>
 
-TARGET_DIR="/home/node/.openclaw"
+TARGET_DIR="${TARGET_DIR:-/home/node/.openclaw}"
 
 usage() {
   cat <<'EOF'
@@ -33,6 +33,13 @@ if [[ -d "${SOURCE_DIR}/workspace" ]]; then
   initialized_any="1"
 fi
 
+if [[ -d "${SOURCE_DIR}/skills" ]]; then
+  rm -rf "${TARGET_DIR}/skills"
+  cp -R "${SOURCE_DIR}/skills" "${TARGET_DIR}/skills"
+  echo "Initialized workspace: skills"
+  initialized_any="1"
+fi
+
 if [[ -e "${SOURCE_DIR}/.gitignore" ]]; then
   rm -rf "${TARGET_DIR}/.gitignore"
   cp -R "${SOURCE_DIR}/.gitignore" "${TARGET_DIR}/.gitignore"
@@ -41,6 +48,6 @@ if [[ -e "${SOURCE_DIR}/.gitignore" ]]; then
 fi
 
 if [[ "$initialized_any" != "1" ]]; then
-  echo "Error: source does not contain workspace/ or .gitignore: ${SOURCE_DIR}" >&2
+  echo "Error: source does not contain workspace/, skills/, or .gitignore: ${SOURCE_DIR}" >&2
   exit 1
 fi
