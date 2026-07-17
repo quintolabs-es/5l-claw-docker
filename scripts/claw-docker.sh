@@ -368,9 +368,11 @@ print_init_version_check() {
   echo "  target version to be installed now: ${target_version:-unknown}"
   echo
 
-  if [[ -n "$latest_version" ]]; then
+  if [[ -n "$latest_version" && "$latest_version" != "$target_version" ]]; then
     echo "To install the latest version instead, abort now and update:"
     echo "  Dockerfile -> ARG OPENCLAW_VERSION=${latest_version}"
+  elif [[ -n "$latest_version" ]]; then
+    echo "You are already targeting the latest available OpenClaw version."
   else
     echo "To change the target version, update:"
     echo "  Dockerfile -> ARG OPENCLAW_VERSION=<version>"
@@ -378,8 +380,10 @@ print_init_version_check() {
 
   echo
   echo "Press Enter to continue with target version ${target_version:-unknown}, or Ctrl+C to abort."
-  echo "Note: if you move this template to a newer OpenClaw version,"
-  echo "some documented OpenClaw CLI/config commands may also need to be updated."
+  if [[ -n "$latest_version" && "$latest_version" != "$target_version" ]]; then
+    echo "Note: if you move this template to a newer OpenClaw version,"
+    echo "some documented OpenClaw CLI/config commands may also need to be updated."
+  fi
 }
 
 prompt_init_version_confirmation() {
