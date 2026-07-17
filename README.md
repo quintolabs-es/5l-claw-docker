@@ -44,7 +44,7 @@ curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/
 curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/scripts/claw-docker-qnap.sh?skip-cache=$(date +%s)" | bash -s -- update
 ```
 
-`update` does not target agent state or workspace data. It only updates the Docker packaging and managed helper files used to run this agent in Docker.
+`update` does not target agent state or workspace data. It only updates the agent harness, i.e., Docker packaging and managed helper files used to run this agent in Docker.
 
 `update` is for an existing project. Always use the latest script from the repo through `curl`, not a possibly outdated local copy. It preserves the current port by default, keeps `README.md` if it already exists, and leaves existing git/SSH setup in place. If the current port cannot be detected safely, pass `--port`.
 
