@@ -42,15 +42,13 @@ openclaw channels status --probe
 From `openclaw-standalone-cli`, remove the streaming tool chatter with:
 
 ```bash
-openclaw config set agents.defaults.verboseDefault off
-openclaw config set agents.defaults.reasoningDefault off
+openclaw config set channels.telegram.streaming.mode off
 ```
 
 To confirm the current streaming config:
 
 ```bash
-openclaw config get agents.defaults.verboseDefault
-openclaw config get agents.defaults.reasoningDefault
+openclaw config get channels.telegram.streaming --json
 ```
 
 ## Approve The First DM
