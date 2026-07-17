@@ -17,6 +17,7 @@ OPENCLAW_DIST_TAGS_URL="https://registry.npmjs.org/-/package/openclaw/dist-tags"
 SELF_PATH_RELATIVE="scripts/claw-docker-qnap.sh"
 SELF_REFRESH_ENV_VAR="CLAW_DOCKER_MULTIPLATFORM_SKIP_SELF_REFRESH"
 DEFAULT_GATEWAY_PORT="18789"
+CACHE_BUST_TOKEN="$(printf '%04x%04x' "$((RANDOM & 0xffff))" "$((RANDOM & 0xffff))")"
 TMP_SELF_SCRIPT=""
 SCRIPT_DIR=""
 SCRIPT_SOURCE_PATH=""
@@ -190,6 +191,12 @@ path_in_list() {
   return 1
 }
 
+build_raw_template_url() {
+  local relative_path="$1"
+
+  printf '%s/%s?skip-cache=%s\n' "$RAW_BASE_URL" "$relative_path" "$CACHE_BUST_TOKEN"
+}
+
 download_file_atomic() {
   local remote_name="$1"
   local target_path="$2"
@@ -201,7 +208,7 @@ download_file_atomic() {
   mkdir -p "$target_dir"
   temp_path="$(mktemp "${target_dir}/.${target_name}.tmp.XXXXXX")"
 
-  if ! curl -fsSL "${RAW_BASE_URL}/${remote_name}" -o "$temp_path"; then
+  if ! curl -fsSL "$(build_raw_template_url "$remote_name")" -o "$temp_path"; then
     rm -f "$temp_path"
     return 1
   fi
@@ -226,7 +233,7 @@ resolve_target_openclaw_version() {
   fi
 
   if [[ -z "$version" ]]; then
-    remote_dockerfile="$(curl -fsSL "${RAW_BASE_URL}/Dockerfile" 2>/dev/null || true)"
+    remote_dockerfile="$(curl -fsSL "$(build_raw_template_url "Dockerfile")" 2>/dev/null || true)"
     if [[ -n "$remote_dockerfile" ]]; then
       version="$(printf '%s\n' "$remote_dockerfile" | extract_openclaw_version_from_dockerfile_content)"
     fi
@@ -554,7 +561,7 @@ refresh_self_for_update() {
 
   TMP_SELF_SCRIPT="$(mktemp)"
 
-  if ! curl -fsSL "${RAW_BASE_URL}/${SELF_PATH_RELATIVE}" -o "${TMP_SELF_SCRIPT}"; then
+  if ! curl -fsSL "$(build_raw_template_url "$SELF_PATH_RELATIVE")" -o "${TMP_SELF_SCRIPT}"; then
     echo "Error: failed to download the latest scripts/claw-docker-qnap.sh for update." >&2
     exit 1
   fi
