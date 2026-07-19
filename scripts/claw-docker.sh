@@ -2,19 +2,19 @@
 set -euo pipefail
 
 # Usage:
-#   bash ./scripts/claw-docker-mac.sh init
-#   bash ./scripts/claw-docker-mac.sh init --port 19001
-#   bash ./scripts/claw-docker-mac.sh update
-#   bash ./scripts/claw-docker-mac.sh update --port 19001
-#   curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/scripts/claw-docker-mac.sh?skip-cache=$(date +%s)" | bash -s -- init
-#   curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/scripts/claw-docker-mac.sh?skip-cache=$(date +%s)" | bash -s -- init --port 19001
-#   curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/scripts/claw-docker-mac.sh?skip-cache=$(date +%s)" | bash -s -- update
-#   curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/scripts/claw-docker-mac.sh?skip-cache=$(date +%s)" | bash -s -- update --port 19001
+#   bash ./scripts/claw-docker.sh init
+#   bash ./scripts/claw-docker.sh init --port 19001
+#   bash ./scripts/claw-docker.sh update
+#   bash ./scripts/claw-docker.sh update --port 19001
+#   curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/scripts/claw-docker.sh?skip-cache=$(date +%s)" | bash -s -- init
+#   curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/scripts/claw-docker.sh?skip-cache=$(date +%s)" | bash -s -- init --port 19001
+#   curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/scripts/claw-docker.sh?skip-cache=$(date +%s)" | bash -s -- update
+#   curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/scripts/claw-docker.sh?skip-cache=$(date +%s)" | bash -s -- update --port 19001
 
 ROOT_DIR="${PWD}"
 RAW_BASE_URL="${CLAW_DOCKER_RAW_BASE_URL:-https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main}"
 OPENCLAW_DIST_TAGS_URL="https://registry.npmjs.org/-/package/openclaw/dist-tags"
-SELF_PATH_RELATIVE="scripts/claw-docker-mac.sh"
+SELF_PATH_RELATIVE="scripts/claw-docker.sh"
 SELF_REFRESH_ENV_VAR="CLAW_DOCKER_SKIP_SELF_REFRESH"
 DEFAULT_GATEWAY_PORT="18789"
 CACHE_BUST_TOKEN="$(printf '%04x%04x' "$((RANDOM & 0xffff))" "$((RANDOM & 0xffff))")"
@@ -51,7 +51,7 @@ MANAGED_DOWNLOAD_SPECS=(
   "scripts/git-commit-push-workspace-from-host.sh:scripts/git-commit-push-workspace-from-host.sh"
   "scripts/install-docker-raspberry.sh:scripts/install-docker-raspberry.sh"
   "scripts/journey-to-seed.sh:scripts/journey-to-seed.sh"
-  "scripts/claw-docker-mac.sh:scripts/claw-docker-mac.sh"
+  "scripts/claw-docker.sh:scripts/claw-docker.sh"
 )
 
 EXECUTABLE_MANAGED_FILES=(
@@ -65,7 +65,7 @@ EXECUTABLE_MANAGED_FILES=(
   "scripts/git-commit-push-workspace-from-host.sh"
   "scripts/install-docker-raspberry.sh"
   "scripts/journey-to-seed.sh"
-  "scripts/claw-docker-mac.sh"
+  "scripts/claw-docker.sh"
 )
 
 MANAGED_OUTPUT_PATHS=(
@@ -88,7 +88,7 @@ MANAGED_OUTPUT_PATHS=(
   "docs/README.pi.md"
   "docs/README.run.md"
   "docs/README.telegram.md"
-  "scripts/claw-docker-mac.sh"
+  "scripts/claw-docker.sh"
   "scripts/git-commit-push-workspace-from-host.sh"
   "scripts/install-docker-raspberry.sh"
   "scripts/journey-to-seed.sh"
@@ -136,8 +136,8 @@ cleanup_temp_files() {
 usage() {
   cat <<'EOF'
 Usage:
-  scripts/claw-docker-mac.sh init [--port <port>]
-  scripts/claw-docker-mac.sh update [--port <port>]
+  scripts/claw-docker.sh init [--port <port>]
+  scripts/claw-docker.sh update [--port <port>]
 EOF
 }
 
@@ -487,7 +487,7 @@ assert_directory_empty() {
 
   first_entry="$(find "$root_dir" -mindepth 1 -maxdepth 1 -print -quit)"
   if [[ -n "$first_entry" ]]; then
-    echo "Error: target directory is not empty: ${root_dir}. Use scripts/claw-docker-mac.sh update for existing projects." >&2
+    echo "Error: target directory is not empty: ${root_dir}. Use scripts/claw-docker.sh update for existing projects." >&2
     exit 1
   fi
 }
@@ -504,7 +504,7 @@ refresh_self_for_update() {
   TMP_SELF_SCRIPT="$(mktemp)"
 
   if ! curl -fsSL "$(build_raw_template_url "$SELF_PATH_RELATIVE")" -o "${TMP_SELF_SCRIPT}"; then
-    echo "Error: failed to download the latest scripts/claw-docker-mac.sh for update." >&2
+    echo "Error: failed to download the latest scripts/claw-docker.sh for update." >&2
     exit 1
   fi
 
