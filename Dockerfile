@@ -6,6 +6,7 @@ ARG TARGETARCH
 
 USER root
 
+# Base system packages required by OpenClaw plus Git/build/runtime utilities.
 RUN apt-get update \
  && apt-get install -y --no-install-recommends \
     bash \
@@ -19,9 +20,26 @@ RUN apt-get update \
     python3 \
  && rm -rf /var/lib/apt/lists/*
 
-RUN mkdir -p /ms-playwright \
- && chown -R node:node /ms-playwright
+USER node
 
+ENV HOME=/home/node \
+    OPENCLAW_HOME=/home/node \
+    OPENCLAW_STATE_DIR=/home/node/.openclaw \
+    OPENCLAW_NO_ONBOARD=1 \
+    OPENCLAW_NO_PROMPT=1 \
+    PLAYWRIGHT_BROWSERS_PATH=/ms-playwright \
+    PATH=/home/node/.local/bin:/home/node/.npm-global/bin:$PATH
+
+WORKDIR /home/node
+
+RUN mkdir -p /home/node/.openclaw /home/node/.local/bin /home/node/.npm-global
+
+# Install OpenClaw through the official installer.
+RUN curl -fsSL https://openclaw.ai/install.sh | bash -s -- --version "${OPENCLAW_VERSION}"
+
+USER root
+
+# Install gog CLI for Google integrations used by this template.
 RUN set -eux; \
     arch="${TARGETARCH:-$(dpkg --print-architecture)}"; \
     case "$arch" in \
@@ -39,21 +57,13 @@ RUN set -eux; \
     install -m 0755 /tmp/gog /usr/local/bin/gog; \
     rm -f /tmp/gog /tmp/gogcli.tar.gz /tmp/gogcli-checksums.txt
 
+# Install Playwright-managed Chromium for OpenClaw's built-in browser tool.
+## Chromium downloaded by Playwright is stored here inside the image.
+RUN mkdir -p /ms-playwright \
+ && chown -R node:node /ms-playwright
+
 USER node
 
-ENV HOME=/home/node \
-    OPENCLAW_HOME=/home/node \
-    OPENCLAW_STATE_DIR=/home/node/.openclaw \
-    OPENCLAW_NO_ONBOARD=1 \
-    OPENCLAW_NO_PROMPT=1 \
-    PLAYWRIGHT_BROWSERS_PATH=/ms-playwright \
-    PATH=/home/node/.local/bin:/home/node/.npm-global/bin:$PATH
-
-WORKDIR /home/node
-
-RUN mkdir -p /home/node/.openclaw /home/node/.local/bin /home/node/.npm-global
-
-RUN curl -fsSL https://openclaw.ai/install.sh | bash -s -- --version "${OPENCLAW_VERSION}"
 
 RUN set -eux; \
     NPM_ROOT="$(npm root -g)"; \
