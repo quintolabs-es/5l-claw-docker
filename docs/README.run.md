@@ -2,11 +2,17 @@
 
 For first-time setup, use [README.onboard.md](./README.onboard.md).
 
-## Start Gateway
+## Start/Restart Gateway
 ```bash
 docker compose up -d openclaw-gateway
 ### in qnap
 docker-compose -f docker-compose-qnap.yml up -d openclaw-gateway
+
+
+# restart
+docker compose restart openclaw-gateway
+### in qnap
+docker-compose -f docker-compose-qnap.yml restart openclaw-gateway
 ```
 
 This repo does not install an OpenClaw host daemon. Docker is the process supervisor for the gateway container.

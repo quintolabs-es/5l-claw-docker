@@ -36,6 +36,7 @@ services:
     env_file: *openclaw-google-env-file
     environment: *openclaw-env
     init: true
+    shm_size: "1gb" 
     command: ["openclaw", "gateway", "run", "--bind", "lan", "--port", "18789"]
     ports:
       - "18789:18789"

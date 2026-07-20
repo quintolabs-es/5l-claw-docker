@@ -55,6 +55,15 @@ Example:
 openclaw config set tools.alsoAllow '["web_search","browser"]' --strict-json
 ```
 
+## Configure Chromium
+
+Inside `openclaw-standalone-cli`:
+
+```bash
+openclaw config set browser.noSandbox true
+openclaw config set browser.extraArgs '["--user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36","--lang=es-ES","--window-size=1440,1000"]' --strict-json
+```
+
 ## Restart The Gateway
 
 Browser config changes require a gateway restart.

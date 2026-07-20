@@ -57,21 +57,22 @@ RUN set -eux; \
     install -m 0755 /tmp/gog /usr/local/bin/gog; \
     rm -f /tmp/gog /tmp/gogcli.tar.gz /tmp/gogcli-checksums.txt
 
-# Install Playwright-managed Chromium for OpenClaw's built-in browser tool.
-## Chromium downloaded by Playwright is stored here inside the image.
-RUN mkdir -p /ms-playwright \
- && chown -R node:node /ms-playwright
-
+# Install Playwright Chromium and its Debian runtime dependencies.                                                             
+# This must run as root because Playwright invokes apt-get.                                                                    
+USER root                                                                                                                      
+                                                                                                                                
+RUN set -eux; \                                                                                                                
+    PW_CLI="$(find /home/node/.npm-global/lib/node_modules \                                                                   
+    -path '*/playwright-core/cli.js' \                                                                                       
+    -type f \                                                                                                                
+    -print \                                                                                                                 
+    -quit)"; \                                                                                                               
+    test -n "$PW_CLI"; \                                                                                                       
+    mkdir -p /ms-playwright; \                                                                                                 
+    node "$PW_CLI" install --with-deps chromium; \                                                                             
+    chown -R node:node /ms-playwright                                                                                          
+                                                                                                                                 
 USER node
-
-
-RUN set -eux; \
-    NPM_ROOT="$(npm root -g)"; \
-    PW_CLI="$NPM_ROOT/openclaw/node_modules/playwright-core/cli.js"; \
-    if [ ! -f "$PW_CLI" ]; then \
-      PW_CLI="$NPM_ROOT/playwright-core/cli.js"; \
-    fi; \
-    node "$PW_CLI" install chromium
 
 EXPOSE 18789
 
