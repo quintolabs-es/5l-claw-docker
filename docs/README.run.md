@@ -16,7 +16,7 @@ This repo does not install an OpenClaw host daemon. Docker is the process superv
 ## Open Control UI
 Browse to `http://localhost:18789/`
 
-Or run in CLI
+Or, from `openclaw-gateway-cli`, run:
 ```bash
 openclaw dashboard
 ```
@@ -37,6 +37,20 @@ docker-compose -f docker-compose-qnap.yml run --rm --no-deps openclaw-standalone
 docker compose run --rm openclaw-gateway-cli
 ### in qnap
 docker-compose -f docker-compose-qnap.yml run --rm openclaw-gateway-cli
+```
+
+## Open Terminal CLI
+Open `openclaw-gateway-cli` and run:
+
+```bash
+openclaw tui
+
+## Aliases that open the same terminal CLI:
+openclaw chat
+openclaw terminal
+
+## Exit cleanly with 
+/exit
 ```
 
 ## Useful Commands
@@ -89,7 +103,7 @@ With `restart: unless-stopped`, a manually stopped gateway stays down across reb
 ---
 
 ## One off commands
-For one-off commands without bashing into a terminal session, replace openclaw with `docker compose run --rm --entrypoint openclaw openclaw-gateway-cli`
+For one-off commands without opening `openclaw-gateway-cli`, replace openclaw with `docker compose run --rm --entrypoint openclaw openclaw-gateway-cli`
 ```bash
 # e.g.: openclaw devices list:
 openclaw devices list

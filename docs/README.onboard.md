@@ -23,9 +23,10 @@ docker-compose -f docker-compose-qnap.yml run --rm --no-deps openclaw-standalone
 ### => go for quick start
 ### => do not configure the channel. you'll be sent to specific instructions later for Telegram
 ### => anything your are not sure, skip
-### => do NOT hatch in terminal at the end.
 openclaw onboard --mode local --no-install-daemon
 
+### => at the end, OpenClaw opens the openclaw terminal CLI; close it to continue.
+/exit
 
 # complete onboard for Docker and initialize the local .openclaw git repo
 ## `--gateway-token` is required. Generate a safe token and use it. It is set for both the gateway and the local CLI configs, so the gateway requires it and the local CLI commands already use it to auth against the gateway.
@@ -33,6 +34,7 @@ openclaw onboard --mode local --no-install-daemon
 ##   --github-remote-url-new-workspace      when the target repo is empty/new and will become this agent's future workspace repo
 ##   --github-remote-url-existing-workspace when the target repo already contains the repo-tracked agent contents to recover, the current repo-tracked workspace contents get overwritten, and that repo should remain the future push target
 ## git name and email are optional and have a default value set
+# follow the instructions in the terminal to complete the github authentication configuration.
 bash _scripts/complete-onboard.sh --gateway-token <openclaw-gateway-token> --github-remote-url-new-workspace <https://github.com/owner/repo> --git-name <"name-for-git-commits"> --git-email <email-for-git-commits>
 # OR
 bash _scripts/complete-onboard.sh --gateway-token <openclaw-gateway-token> --github-remote-url-existing-workspace <https://github.com/owner/repo> --git-name <"name-for-git-commits"> --git-email <email-for-git-commits>
@@ -99,28 +101,29 @@ docker compose stop openclaw-gateway
 docker-compose -f docker-compose-qnap.yml stop openclaw-gateway
 ```
 
-#### Test gateway CLI
-To run gateway CLI commands, run the gateway CLI container and bash into it. This tests connectivity between `openclaw-gateway-cli` and the running gateway.
+## Open Agent CLI
+Open the agent terminal CLI through `openclaw-gateway-cli`.
+
 ```bash
 docker compose run --rm openclaw-gateway-cli
 ### in qnap
 docker-compose -f docker-compose-qnap.yml run --rm openclaw-gateway-cli
-# test it 
-openclaw devices list
+
+openclaw tui
+
+## to exit cleanly
+/exit
 ```
 
+## Pair Control UI (First Time Only)
+Open `openclaw-gateway-cli` and run:
 
-## Setup Control UI (paring)
-Open gateway cli and run dashboard
 ```bash
-docker compose run --rm openclaw-gateway-cli
-### in qnap
-docker-compose -f docker-compose-qnap.yml run --rm openclaw-gateway-cli
 openclaw dashboard
 ```
 Get tokenized url or plane url and add the gateway token where requested.
 
-#### On first time open Control UI: Device pairing required
+#### Device pairing required the first time
 [Official doc](https://docs.openclaw.ai/web/control-ui#device-pairing-first-connection)
 ```bash
 openclaw devices list
@@ -168,16 +171,3 @@ openclaw configure --section web
 
 ## To run the agent from now on:
 - use [README.run.md](./README.run.md) for normal day-to-day usage
-
----
-
-## One off commands in cli
-For one-off commands without bashing into a terminal session, replace openclaw with `docker compose run --rm --entrypoint openclaw openclaw-gateway-cli`
-```bash
-# e.g.: openclaw devices list:
-openclaw devices list
-# OR
-docker compose run --rm --entrypoint openclaw openclaw-gateway-cli devices list
-### in qnap
-docker-compose -f docker-compose-qnap.yml run --rm --entrypoint openclaw openclaw-gateway-cli devices list
-```
