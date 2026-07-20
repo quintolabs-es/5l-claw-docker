@@ -109,6 +109,7 @@ docker compose run --rm openclaw-gateway-cli
 ### in qnap
 docker-compose -f docker-compose-qnap.yml run --rm openclaw-gateway-cli
 
+# run the openclaw agent CLI
 openclaw tui
 
 ## to exit cleanly
