@@ -220,6 +220,17 @@ resolve_target_openclaw_version() {
   printf '%s\n' "$version"
 }
 
+resolve_local_openclaw_version() {
+  local root_dir="$1"
+  local dockerfile_path="${root_dir}/Dockerfile"
+
+  if [[ ! -f "$dockerfile_path" ]]; then
+    return 0
+  fi
+
+  extract_openclaw_version_from_dockerfile_content < "$dockerfile_path"
+}
+
 resolve_latest_openclaw_version() {
   local dist_tags_json=""
   local version=""
@@ -305,6 +316,15 @@ rewrite_port_in_targets() {
   for relative_path in "${PORT_REWRITE_TARGETS[@]}"; do
     rewrite_port_in_file "${root_dir}/${relative_path}" "$port"
   done
+}
+
+rewrite_openclaw_version_in_file() {
+  local path="$1"
+  local version="$2"
+
+  if [[ -f "$path" && -n "$version" ]]; then
+    OPENCLAW_VERSION="$version" perl -0pi -e 's/^ARG[[:space:]]+OPENCLAW_VERSION=\S+$/ARG OPENCLAW_VERSION=$ENV{OPENCLAW_VERSION}/m' "$path"
+  fi
 }
 
 rewrite_project_name_in_file() {
@@ -459,6 +479,77 @@ prompt_update_confirmation() {
   fi
 }
 
+print_post_update_version_check() {
+  local current_version="$1"
+  local updated_version="$2"
+  local latest_version="$3"
+
+  echo "OpenClaw version check:"
+  echo "  current running OpenClaw version: ${current_version:-unknown}"
+  echo "  updated OpenClaw version: ${updated_version:-unknown}"
+  echo "  latest available OpenClaw version: ${latest_version:-unavailable}"
+  echo
+}
+
+prompt_post_update_version_selection() {
+  local current_version="$1"
+  local updated_version="$2"
+  local latest_version="$3"
+  local response=""
+
+  if [[ -z "$updated_version" || -z "$latest_version" || "$updated_version" == "$latest_version" ]]; then
+    print_post_update_version_check "$current_version" "$updated_version" "$latest_version"
+    if [[ -n "$updated_version" && "$updated_version" == "$latest_version" ]]; then
+      echo "The updated harness already targets the latest available OpenClaw version."
+    else
+      echo "Latest available OpenClaw version could not be compared. Keep the updated OpenClaw version or adjust it manually later."
+    fi
+    return 0
+  fi
+
+  if [[ -t 0 && -t 1 ]]; then
+    print_post_update_version_check "$current_version" "$updated_version" "$latest_version"
+    {
+      echo "Press Enter to keep the updated OpenClaw version ${updated_version}."
+      echo "Type 2 then Enter to switch to the latest available OpenClaw version ${latest_version}."
+      echo "Press Ctrl+C to stop here and keep the updated OpenClaw version."
+      echo
+      printf "Selection: "
+    }
+    IFS= read -r response || true
+  else
+    if [[ ! -e /dev/tty ]]; then
+      print_post_update_version_check "$current_version" "$updated_version" "$latest_version" >&2
+      echo "Update complete. To switch to the latest available OpenClaw version, edit Dockerfile manually." >&2
+      return 0
+    fi
+
+    exec 3<> /dev/tty
+    {
+      print_post_update_version_check "$current_version" "$updated_version" "$latest_version"
+      echo "Press Enter to keep the updated OpenClaw version ${updated_version}."
+      echo "Type 2 then Enter to switch to the latest available OpenClaw version ${latest_version}."
+      echo "Press Ctrl+C to stop here and keep the updated OpenClaw version."
+      echo
+      printf "Selection: "
+    } >&3
+
+    IFS= read -r response <&3 || true
+    exec 3>&-
+    exec 3<&-
+  fi
+
+  if [[ "$response" == "2" ]]; then
+    if rewrite_openclaw_version_in_file "${ROOT_DIR}/Dockerfile" "$latest_version"; then
+      echo "Switched this agent to OpenClaw version ${latest_version}."
+    else
+      echo "Warning: harness update completed, but switching to OpenClaw version ${latest_version} failed. Update Dockerfile manually if needed." >&2
+    fi
+  else
+    echo "Keeping the updated OpenClaw version ${updated_version}."
+  fi
+}
+
 detect_existing_port() {
   local root_dir="$1"
   local docker_compose_path="$root_dir/docker-compose.yml"
@@ -550,6 +641,9 @@ run_update() {
   local readme_already_exists="0"
   local gateway_port="$requested_port"
   local project_name
+  local current_running_openclaw_version=""
+  local updated_openclaw_version=""
+  local latest_openclaw_version=""
 
   project_name="$(basename "$ROOT_DIR")"
 
@@ -567,6 +661,7 @@ run_update() {
   fi
 
   validate_port "$gateway_port"
+  current_running_openclaw_version="$(resolve_local_openclaw_version "$ROOT_DIR")"
   prompt_update_confirmation
 
   mkdir -p "${ROOT_DIR}/.openclaw"
@@ -585,6 +680,14 @@ run_update() {
   rewrite_port_in_targets "$ROOT_DIR" "$gateway_port"
   rewrite_project_name_in_targets "$ROOT_DIR" "$project_name"
   rewrite_docs_readme_links "$ROOT_DIR"
+
+  updated_openclaw_version="$(resolve_local_openclaw_version "$ROOT_DIR")"
+  latest_openclaw_version="$(resolve_latest_openclaw_version)"
+  echo
+  prompt_post_update_version_selection \
+    "$current_running_openclaw_version" \
+    "$updated_openclaw_version" \
+    "$latest_openclaw_version"
 
   print_output_paths "Updated" "${MANAGED_OUTPUT_PATHS[@]}"
   if [[ "$readme_already_exists" == "1" ]]; then
