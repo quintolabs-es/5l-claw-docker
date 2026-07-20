@@ -59,7 +59,7 @@ openclaw terminal
 /exit
 ```
 
-Or ne-off command from the host to open the agent CLI directly:
+Or one-off command from the host to open the agent CLI directly:
 ```bash
 docker compose run --rm --entrypoint openclaw openclaw-gateway-cli tui
 ### in qnap
