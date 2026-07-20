@@ -61,9 +61,9 @@ openclaw terminal
 
 Or one-off command from the host to open the agent CLI directly:
 ```bash
-docker compose run --rm --entrypoint openclaw openclaw-gateway-cli tui
+docker compose run --rm --entrypoint bash openclaw-gateway-cli -lc 'openclaw tui'
 ### in qnap
-docker-compose -f docker-compose-qnap.yml run --rm --entrypoint openclaw openclaw-gateway-cli tui
+docker-compose -f docker-compose-qnap.yml run --rm --entrypoint bash openclaw-gateway-cli -lc 'openclaw tui'
 ```
 
 ## Useful Commands
