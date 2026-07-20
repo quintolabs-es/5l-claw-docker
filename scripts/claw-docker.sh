@@ -195,7 +195,7 @@ download_file_atomic() {
 }
 
 extract_openclaw_version_from_dockerfile_content() {
-  sed -n 's/^ARG[[:space:]]\+OPENCLAW_VERSION=\([^[:space:]]\+\).*$/\1/p' | head -n 1
+  sed -n 's/^ARG[[:space:]][[:space:]]*OPENCLAW_VERSION=\([^[:space:]]*\).*$/\1/p' | head -n 1
 }
 
 resolve_target_openclaw_version() {
