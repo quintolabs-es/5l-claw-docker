@@ -59,6 +59,13 @@ openclaw terminal
 /exit
 ```
 
+Or ne-off command from the host to open the agent CLI directly:
+```bash
+docker compose run --rm --entrypoint openclaw openclaw-gateway-cli tui
+### in qnap
+docker-compose -f docker-compose-qnap.yml run --rm --entrypoint openclaw openclaw-gateway-cli tui
+```
+
 ## Useful Commands
 ### Commit and push the nested `.openclaw` repo **from the host** through the standalone CLI container:
 ```bash
