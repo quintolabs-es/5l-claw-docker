@@ -496,6 +496,9 @@ prompt_post_update_version_selection() {
   local updated_version="$2"
   local latest_version="$3"
   local response=""
+  local latest_notice_message="Claw-docker has been updated but a newer latest OpenClaw version is available."
+  local latest_question_message="Update to the latest OpenClaw version ${latest_version}? [y/N]"
+  local latest_keep_message="If not, this agent will keep the updated OpenClaw version ${updated_version}."
 
   if [[ -z "$updated_version" || -z "$latest_version" || "$updated_version" == "$latest_version" ]]; then
     print_post_update_version_check "$current_version" "$updated_version" "$latest_version"
@@ -509,13 +512,9 @@ prompt_post_update_version_selection() {
 
   if [[ -t 0 && -t 1 ]]; then
     print_post_update_version_check "$current_version" "$updated_version" "$latest_version"
-    {
-      echo "Press Enter to keep the updated OpenClaw version ${updated_version}."
-      echo "Type 2 then Enter to switch to the latest available OpenClaw version ${latest_version}."
-      echo "Press Ctrl+C to stop here and keep the updated OpenClaw version."
-      echo
-      printf "Selection: "
-    }
+    echo "$latest_notice_message"
+    echo "$latest_question_message"
+    echo "$latest_keep_message"
     IFS= read -r response || true
   else
     if [[ ! -e /dev/tty ]]; then
@@ -527,11 +526,9 @@ prompt_post_update_version_selection() {
     exec 3<> /dev/tty
     {
       print_post_update_version_check "$current_version" "$updated_version" "$latest_version"
-      echo "Press Enter to keep the updated OpenClaw version ${updated_version}."
-      echo "Type 2 then Enter to switch to the latest available OpenClaw version ${latest_version}."
-      echo "Press Ctrl+C to stop here and keep the updated OpenClaw version."
-      echo
-      printf "Selection: "
+      echo "$latest_notice_message"
+      echo "$latest_question_message"
+      echo "$latest_keep_message"
     } >&3
 
     IFS= read -r response <&3 || true
@@ -539,7 +536,7 @@ prompt_post_update_version_selection() {
     exec 3<&-
   fi
 
-  if [[ "$response" == "2" ]]; then
+  if [[ "$response" == "y" || "$response" == "Y" ]]; then
     if rewrite_openclaw_version_in_file "${ROOT_DIR}/Dockerfile" "$latest_version"; then
       echo "Switched this agent to OpenClaw version ${latest_version}."
     else
