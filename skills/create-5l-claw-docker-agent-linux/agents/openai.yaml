@@ -1,0 +1,4 @@
+interface:
+  display_name: "Create 5L Claw Docker Agent (Linux)"
+  short_description: "Create an OpenClaw Docker agent on Linux Mint"
+  default_prompt: "Use $create-5l-claw-docker-agent-linux to create a 5L Claw Docker agent on Linux Mint."
