@@ -30,13 +30,14 @@ openclaw onboard --mode local --no-install-daemon
 
 # complete onboard for Docker and initialize the local .openclaw git repo
 ## `--gateway-token` is required. Generate a safe token and use it. It is set for both the gateway and the local CLI configs, so the gateway requires it and the local CLI commands already use it to auth against the gateway.
-## optionally pass one GitHub remote mode:
-##   --github-remote-url-new-workspace      when the target repo is empty/new and will become this agent's future workspace repo
-##   --github-remote-url-existing-workspace when the target repo already contains the repo-tracked agent contents to recover, the current repo-tracked workspace contents get overwritten, and that repo should remain the future push target
-## git name and email are optional and have a default value set
-# follow the instructions in the terminal to complete the github authentication configuration.
+## choose one:
+##   no workspace backup repository
+bash _scripts/complete-onboard.sh --gateway-token <openclaw-gateway-token>
+
+##   new empty workspace repository
 bash _scripts/complete-onboard.sh --gateway-token <openclaw-gateway-token> --github-remote-url-new-workspace <https://github.com/owner/repo> --git-name <"name-for-git-commits"> --git-email <email-for-git-commits>
-# OR
+
+##   existing workspace repository to recover and keep as the future push target
 bash _scripts/complete-onboard.sh --gateway-token <openclaw-gateway-token> --github-remote-url-existing-workspace <https://github.com/owner/repo> --git-name <"name-for-git-commits"> --git-email <email-for-git-commits>
 ```
 
