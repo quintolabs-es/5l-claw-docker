@@ -3,11 +3,11 @@ set -euo pipefail
 
 # Usage:
 #   bash ./scripts/claw-docker.sh init
-#   bash ./scripts/claw-docker.sh init --port 19001
+#   bash ./scripts/claw-docker.sh init --port 19001 [--openclaw-version <version>]
 #   bash ./scripts/claw-docker.sh update
 #   bash ./scripts/claw-docker.sh update --port 19001
 #   curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/scripts/claw-docker.sh?skip-cache=$(date +%s)" | bash -s -- init
-#   curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/scripts/claw-docker.sh?skip-cache=$(date +%s)" | bash -s -- init --port 19001
+#   curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/scripts/claw-docker.sh?skip-cache=$(date +%s)" | bash -s -- init --port 19001 [--openclaw-version <version>]
 #   curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/scripts/claw-docker.sh?skip-cache=$(date +%s)" | bash -s -- update
 #   curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/scripts/claw-docker.sh?skip-cache=$(date +%s)" | bash -s -- update --port 19001
 
@@ -136,7 +136,7 @@ cleanup_temp_files() {
 usage() {
   cat <<'EOF'
 Usage:
-  scripts/claw-docker.sh init [--port <port>]
+  scripts/claw-docker.sh init [--port <port>] [--openclaw-version <version>]
   scripts/claw-docker.sh update [--port <port>]
 EOF
 }
@@ -151,6 +151,15 @@ validate_port() {
 
   if (( port < 1 || port > 65535 )); then
     echo "Error: --port must be between 1 and 65535" >&2
+    exit 1
+  fi
+}
+
+validate_openclaw_version() {
+  local version="$1"
+
+  if [[ ! "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$ ]]; then
+    echo "Error: --openclaw-version must be a valid OpenClaw version" >&2
     exit 1
   fi
 }
@@ -603,6 +612,7 @@ refresh_self_for_update() {
 
 run_init() {
   local gateway_port="$1"
+  local selected_openclaw_version="${2:-}"
   local project_name
   local latest_openclaw_version=""
   local target_openclaw_version=""
@@ -612,9 +622,13 @@ run_init() {
   validate_port "$gateway_port"
   assert_directory_empty "$ROOT_DIR"
 
-  latest_openclaw_version="$(resolve_latest_openclaw_version)"
-  target_openclaw_version="$(resolve_target_openclaw_version)"
-  prompt_init_version_confirmation "$latest_openclaw_version" "$target_openclaw_version"
+  if [[ -n "$selected_openclaw_version" ]]; then
+    validate_openclaw_version "$selected_openclaw_version"
+  else
+    latest_openclaw_version="$(resolve_latest_openclaw_version)"
+    target_openclaw_version="$(resolve_target_openclaw_version)"
+    prompt_init_version_confirmation "$latest_openclaw_version" "$target_openclaw_version"
+  fi
 
   mkdir -p \
     "${ROOT_DIR}/.openclaw" \
@@ -624,6 +638,7 @@ run_init() {
   create_placeholder_readme "${ROOT_DIR}/README.md"
   sync_managed_downloads "$ROOT_DIR"
   mark_managed_executables "$ROOT_DIR"
+  rewrite_openclaw_version_in_file "${ROOT_DIR}/Dockerfile" "$selected_openclaw_version"
   rewrite_port_in_targets "$ROOT_DIR" "$gateway_port"
   rewrite_project_name_in_targets "$ROOT_DIR" "$project_name"
   rewrite_docs_readme_links "$ROOT_DIR"
@@ -721,6 +736,7 @@ case "$COMMAND" in
 esac
 
 PORT_ARG=""
+OPENCLAW_VERSION_ARG=""
 UPDATE_ARGS=()
 
 if [[ $# -gt 0 ]]; then
@@ -742,6 +758,19 @@ while [[ $# -gt 0 ]]; do
       PORT_ARG="${1#*=}"
       shift
       ;;
+    --openclaw-version)
+      if [[ $# -lt 2 ]]; then
+        echo "Error: --openclaw-version requires a value" >&2
+        usage >&2
+        exit 1
+      fi
+      OPENCLAW_VERSION_ARG="$2"
+      shift 2
+      ;;
+    --openclaw-version=*)
+      OPENCLAW_VERSION_ARG="${1#*=}"
+      shift
+      ;;
     -h|--help)
       usage
       exit 0
@@ -759,9 +788,13 @@ case "$COMMAND" in
     if [[ -z "$PORT_ARG" ]]; then
       PORT_ARG="$DEFAULT_GATEWAY_PORT"
     fi
-    run_init "$PORT_ARG"
+    run_init "$PORT_ARG" "$OPENCLAW_VERSION_ARG"
     ;;
   update)
+    if [[ -n "$OPENCLAW_VERSION_ARG" ]]; then
+      echo "Error: --openclaw-version is only supported by init" >&2
+      exit 1
+    fi
     run_update "$PORT_ARG"
     ;;
 esac

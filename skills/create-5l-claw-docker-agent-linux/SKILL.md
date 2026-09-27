@@ -26,23 +26,47 @@ Optional, depending on choices:
 
 ## Workflow
 
-1. Create the harness. Do not reconstruct the `5l-claw-docker` command sequence ad hoc:
+1. Read the available versions. Do not infer or select a version yourself:
+
+```bash
+skills/create-5l-claw-docker-agent-linux/scripts/get-openclaw-versions-linux.sh
+```
+
+Interpret its stable output:
+
+- If `latest_status=available` and the versions differ, present exactly:
+  1. Install the configured version: `<configured_version>`.
+  2. Install the latest version: `<latest_version>`.
+  3. Cancel.
+- If `latest_status=available` and the versions match, present exactly:
+  1. Install version `<configured_version>`.
+  2. Cancel.
+- If `latest_status=not_published` or `latest_status=query_failed`, present exactly:
+  1. Install the configured version: `<configured_version>`.
+  2. Cancel.
+
+Wait for an unambiguous answer. Do not choose a default. Stop on cancellation.
+
+2. Create the harness with the version explicitly selected by the user. Do not reconstruct the `5l-claw-docker` command sequence ad hoc:
 
 ```bash
 skills/create-5l-claw-docker-agent-linux/scripts/create-5l-claw-docker-agent-linux-harness.sh \
   --agent-dir <path> \
+  --openclaw-version <selected-version> \
   [--port <port>]
 ```
 
-2. Tell the user to open a terminal in `<path>` and run:
+The harness applies and verifies the selected version before reporting success.
+
+3. Tell the user to open a terminal in `<path>` and run:
 
 ```bash
 docker compose run --rm --no-deps --entrypoint openclaw openclaw-standalone-cli onboard --mode local --no-install-daemon
 ```
 
-3. Tell the user to complete the wizard. When OpenClaw opens its terminal CLI, they must type `/exit`, then notify you that onboarding is complete.
+4. Tell the user to complete the wizard. When OpenClaw opens its terminal CLI, they must type `/exit`, then notify you that onboarding is complete.
 
-4. Only after the user confirms, complete creation:
+5. Only after the user confirms, complete creation:
 
 ```bash
 skills/create-5l-claw-docker-agent-linux/scripts/complete-5l-claw-docker-agent-linux.sh \
@@ -56,7 +80,7 @@ skills/create-5l-claw-docker-agent-linux/scripts/complete-5l-claw-docker-agent-l
   [--github-ssh-host-alias <alias>]
 ```
 
-5. If Telegram is enabled, the completion script configures the channel but does not approve pairing. After the user provides a pairing code, approve it with:
+6. If Telegram is enabled, the completion script configures the channel but does not approve pairing. After the user provides a pairing code, approve it with:
 
 ```bash
 skills/create-5l-claw-docker-agent-linux/scripts/approve-telegram-pairing-linux.sh \

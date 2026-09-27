@@ -18,6 +18,22 @@ curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/
 
 `init` creates the Docker harness and managed OpenClaw folders. The default gateway port is `18789`; multiple agents on the same machine need distinct host ports.
 
+For the skill-managed creation flow, the user-selected OpenClaw version is explicit and does not prompt:
+
+```bash
+curl -fsSL "https://raw.githubusercontent.com/quintolabs-es/5l-claw-docker/main/scripts/claw-docker.sh?skip-cache=$(date +%s)" | bash -s -- init --port <port> --openclaw-version <version>
+```
+
+## OpenClaw Versions
+
+Use the version query script before creating a harness:
+
+```bash
+skills/create-5l-claw-docker-agent-linux/scripts/get-openclaw-versions-linux.sh
+```
+
+It returns `configured_version`, `latest_status`, and `latest_version`. The caller presents the available options to the user and passes the chosen version to the harness script. The query script does not choose a version.
+
 ## Build
 
 ```bash

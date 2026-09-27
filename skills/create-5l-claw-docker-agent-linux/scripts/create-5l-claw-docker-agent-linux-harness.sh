@@ -7,11 +7,12 @@ MAX_PORT="65535"
 
 agent_dir=""
 requested_port=""
+openclaw_version=""
 
 usage() {
   cat <<'EOF'
 Usage:
-  create-5l-claw-docker-agent-linux-harness.sh --agent-dir <path> [--port <port>]
+  create-5l-claw-docker-agent-linux-harness.sh --agent-dir <path> --openclaw-version <version> [--port <port>]
 EOF
 }
 
@@ -29,6 +30,12 @@ validate_port() {
 
   [[ "$port" =~ ^[0-9]+$ ]] || fail "port must be numeric"
   (( port >= 1 && port <= MAX_PORT )) || fail "port must be between 1 and ${MAX_PORT}"
+}
+
+validate_openclaw_version() {
+  local version="$1"
+
+  [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$ ]] || fail "--openclaw-version must be a valid OpenClaw version"
 }
 
 port_listening() {
@@ -69,8 +76,8 @@ select_port() {
 
 run_claw_docker_init() {
   local port="$1"
+  local selected_openclaw_version="$2"
   local temp_script=""
-  local command_text=""
 
   (
     cd "$agent_dir"
@@ -78,8 +85,7 @@ run_claw_docker_init() {
     trap 'rm -f "$temp_script"' EXIT
     curl -fsSL "${RAW_CLAW_DOCKER_SCRIPT}?skip-cache=$(date +%s)" -o "$temp_script"
     chmod +x "$temp_script"
-    printf -v command_text '%q ' bash "$temp_script" init --port "$port"
-    printf '\n' | script -qefc "$command_text" /dev/null
+    bash "$temp_script" init --port "$port" --openclaw-version "$selected_openclaw_version"
   )
 }
 
@@ -87,6 +93,24 @@ build_agent_image() {
   (
     cd "$agent_dir"
     docker compose build
+  )
+}
+
+extract_openclaw_version() {
+  grep -Eo '[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?' | head -n 1 || true
+}
+
+verify_installed_openclaw_version() {
+  local expected_version="$1"
+  local version_output=""
+  local installed_version=""
+
+  (
+    cd "$agent_dir"
+    version_output="$(docker compose run --rm --no-deps --entrypoint openclaw openclaw-standalone-cli --version)"
+    installed_version="$(printf '%s\n' "$version_output" | extract_openclaw_version)"
+    [[ -n "$installed_version" ]] || fail "could not determine the installed OpenClaw version"
+    [[ "$installed_version" == "$expected_version" ]] || fail "installed OpenClaw version ${installed_version} does not match requested version ${expected_version}"
   )
 }
 
@@ -102,6 +126,11 @@ while [[ $# -gt 0 ]]; do
       requested_port="$2"
       shift 2
       ;;
+    --openclaw-version)
+      [[ $# -ge 2 ]] || fail "--openclaw-version requires a value"
+      openclaw_version="$2"
+      shift 2
+      ;;
     -h|--help)
       usage
       exit 0
@@ -114,10 +143,11 @@ done
 
 [[ -n "$agent_dir" ]] || fail "--agent-dir is required"
 [[ ! -e "$agent_dir" ]] || fail "agent directory already exists: ${agent_dir}"
+[[ -n "$openclaw_version" ]] || fail "--openclaw-version is required"
+validate_openclaw_version "$openclaw_version"
 
 require_command curl
 require_command docker
-require_command script
 docker compose version >/dev/null 2>&1 || fail "Docker Compose is not available as 'docker compose'"
 
 gateway_port="$(select_port)"
@@ -125,11 +155,13 @@ gateway_port="$(select_port)"
 mkdir -p "$(dirname "$agent_dir")"
 mkdir "$agent_dir"
 
-run_claw_docker_init "$gateway_port"
+run_claw_docker_init "$gateway_port" "$openclaw_version"
 build_agent_image
+verify_installed_openclaw_version "$openclaw_version"
 
 cat <<EOF
 OpenClaw Docker harness created.
   folder: ${agent_dir}
   gateway_port: ${gateway_port}
+  openclaw_version: ${openclaw_version}
 EOF
